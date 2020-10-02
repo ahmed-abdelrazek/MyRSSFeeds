@@ -19,6 +19,7 @@
         <toolkitConverters:BoolToVisibilityConverter x:Name="ReverseBoolToVisibility" TrueValue="Collapsed" FalseValue="Visible" />
         <toolkitConverters:CollectionVisibilityConverter x:Name="CollectionToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
     </Page.Resources>
+
     <Grid x:Name="ContentArea">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -26,8 +27,6 @@
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-
-            <muxc:ProgressRing x:Name="progressRing" IsActive="{x:Bind ViewModel.IsLoadingData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Width, ElementName=progressRing}" Width="200" />
 
             <!--Feeds List-->
             <controls:DockPanel LastChildFill="True">
@@ -62,6 +61,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
+                <muxc:ProgressBar controls:DockPanel.Dock="Top" Visibility="{x:Bind ViewModel.IsLoadingData, Converter={StaticResource BoolToVisibility}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsIndeterminate="True" ShowPaused="False" ShowError="False" />
                 <ListView ItemsSource="{x:Bind ViewModel.Feeds}"
                           SelectionMode="Single"
                           SelectedItem="{x:Bind ViewModel.SelectedRSS, Mode=TwoWay}"
@@ -216,7 +216,7 @@
                     <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" x:Uid="WebView_Retry" HorizontalAlignment="Center" />
                 </StackPanel>
 
-                <Grid VerticalAlignment="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+                <Grid VerticalAlignment="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}" Grid.Row="1">
                     <StackPanel Orientation="Horizontal">
                         <!--<Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.BrowserBackCommand, Mode=OneWay}" x:Uid="WebView_BrowserBackButton">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" />

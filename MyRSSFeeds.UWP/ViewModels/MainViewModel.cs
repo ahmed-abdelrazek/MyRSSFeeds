@@ -517,6 +517,7 @@ namespace MyRSSFeeds.ViewModels
             }
             finally
             {
+                Feeds.Clear();
                 foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
                 {
                     Feeds.Add(rss);
