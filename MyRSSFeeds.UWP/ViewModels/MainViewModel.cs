@@ -408,8 +408,9 @@ namespace MyRSSFeeds.ViewModels
         }
 
         /// <summary>
-        /// Gets all the new stuff from your sources
-        /// add the new one to the database
+        /// Gets all the feeds from database (with-in limits in settings)
+        /// the try to gets all the new stuff from your sources
+        /// add the new ones to the database if there is any
         /// then show the latest (with-in limits in settings)
         /// </summary>
         /// <returns>Task Type</returns>
@@ -418,6 +419,11 @@ namespace MyRSSFeeds.ViewModels
             IsLoadingData = true;
             FilterSources.Clear();
             Feeds.Clear();
+
+            foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+            {
+                Feeds.Add(rss);
+            }
 
             SyndicationFeed feed = new SyndicationFeed();
 
