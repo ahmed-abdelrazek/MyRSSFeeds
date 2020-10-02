@@ -289,6 +289,11 @@ namespace MyRSSFeeds.ViewModels
 
         public RelayCommand OpenInBrowserCommand { get; private set; }
 
+        private bool CanOpenInBrowser()
+        {
+            return SelectedRSS != null && SelectedRSS.LaunchURL != null;
+        }
+
         /// <summary>
         /// Open selected rss as full post in the user default browser
         /// </summary>
@@ -395,7 +400,7 @@ namespace MyRSSFeeds.ViewModels
 
         private void LoadCommands()
         {
-            OpenInBrowserCommand = new RelayCommand(async () => await OpenInBrowser(), CanOpenPostInApp);
+            OpenInBrowserCommand = new RelayCommand(async () => await OpenInBrowser(), CanOpenInBrowser);
             MarkAsReadCommand = new RelayCommand(async () => await MarkAsRead(), CanMarkAsRead);
             ClearSelectedRSSCommand = new RelayCommand(ClearSelectedRSS, CanClearSelectedRSS);
             RefreshFeedsCommand = new RelayCommand(async () => await RefreshFeeds());
