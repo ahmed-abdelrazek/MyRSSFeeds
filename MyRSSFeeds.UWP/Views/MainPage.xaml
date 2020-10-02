@@ -1,0 +1,240 @@
+﻿<Page x:Name="MainView"
+    x:Class="MyRSSFeeds.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:toolkitConverters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:customConverters="using:MyRSSFeeds.Converters"
+    xmlns:coreModel="using:MyRSSFeeds.Core.Models"
+    Style="{StaticResource PageStyle}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <customConverters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter"/>
+        <toolkitConverters:BoolToVisibilityConverter x:Name="BoolToVisibility" TrueValue="Visible" FalseValue="Collapsed" />
+        <toolkitConverters:BoolToVisibilityConverter x:Name="ReverseBoolToVisibility" TrueValue="Collapsed" FalseValue="Visible" />
+        <toolkitConverters:CollectionVisibilityConverter x:Name="CollectionToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
+    </Page.Resources>
+    <Grid x:Name="ContentArea">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="200" Width="500"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <muxc:ProgressRing x:Name="progressRing" IsActive="{x:Bind ViewModel.IsLoadingData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Width, ElementName=progressRing}" Width="200" />
+
+            <!--Feeds List-->
+            <controls:DockPanel LastChildFill="True">
+                <Grid controls:DockPanel.Dock="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Mark all as read" CornerRadius="0" Command="{x:Bind ViewModel.MarkAsReadCommand}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7B3;" />
+                        </Button>
+                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Filter Content" CornerRadius="0">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71C;" />
+                            <Button.Flyout>
+                                <Flyout>
+                                    <StackPanel>
+                                        <ComboBox Header="Sources" PlaceholderText="Select a source" ItemsSource="{x:Bind ViewModel.FilterSources}" SelectedItem="{x:Bind ViewModel.FilterSelectedSource, Mode=TwoWay}" DisplayMemberPath="SiteTitle" Margin="5" />
+                                        <TextBox Header="Title" PlaceholderText="Enter a Title or part of a Title" Text="{x:Bind ViewModel.FilterTitle}" Margin="5" />
+                                        <TextBox Header="Author" Text="{x:Bind ViewModel.FilterCreator}" Margin="5" />
+                                        <Button Content="Done" Command="{x:Bind ViewModel.FilterCommand}" Margin="5" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Refresh Feeds Now" CornerRadius="0" Command="{x:Bind ViewModel.RefreshFeedsCommand}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
+                        </Button>
+                    </StackPanel >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Clear Selection" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedRSSCommand}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
+                        </Button>
+                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Open Full Post" CornerRadius="0" Command="{x:Bind ViewModel.OpenPostInAppCommand}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A0;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                <ListView ItemsSource="{x:Bind ViewModel.Feeds}"
+                          SelectionMode="Single"
+                          SelectedItem="{x:Bind ViewModel.SelectedRSS, Mode=TwoWay}"
+                          MinWidth="300"
+                          BorderThickness="0,1,0,1"
+                          BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="coreModel:RSS">
+                            <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Guid}">
+                                <StackPanel Margin="5">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <TextBlock x:Name="Source" Text="{x:Bind PostSource.SiteTitle}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,0" LineHeight="18" />
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEDAD;" Foreground="{ThemeResource SystemListAccentHighColor}" Visibility="{x:Bind IsRead, Mode=TwoWay, Converter={StaticResource ReverseBoolToVisibility}}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="Title" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20" FontWeight="{x:Bind Path=IsRead, Mode=TwoWay, Converter={StaticResource BoolToFontWeightConverter}, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
+                                    <!--<TextBlock Text="{x:Bind Description}" Foreground="{StaticResource SystemChromeDisabledLowColor}" Style="{StaticResource BodyTextBlockStyle}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalAlignment="Left"/>-->
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEE56;" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" />
+                                        <ListView ItemsSource="{x:Bind Authors, Mode=OneWay}" Padding="0,-5,0,0" MaxHeight="25" MaxWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" Margin="5,0,5,0">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="coreModel:Author">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <HyperlinkButton Content="{x:Bind Username}" NavigateUri="{x:Bind SendEmail}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE787;" Foreground="{ThemeResource SystemChromeDisabledLowColor}"/>
+                                        <TextBlock Text="{x:Bind CreatedAt}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Style="{StaticResource CaptionTextBlockStyle}" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+
+                    </ListView.ItemTemplate>
+                </ListView>
+            </controls:DockPanel>
+
+            <!--Column Grid Splitter-->
+            <controls:GridSplitter Grid.Column="1" Width="2" Margin="2 0" ResizeBehavior="BasedOnAlignment"
+            ResizeDirection="Auto" Background="Gray" Foreground="{StaticResource SystemBaseMediumColor}" FontSize="13">
+                <controls:GridSplitter.Element>
+                    <Grid>
+                        <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center"  
+                               Text="&#xE784;" Foreground="{StaticResource SystemBaseMediumColor}" FontFamily="Segoe MDL2 Assets">
+                        </TextBlock>
+                    </Grid>
+                </controls:GridSplitter.Element>
+            </controls:GridSplitter>
+
+            <!--Web View-->
+            <Grid Grid.Column="2">
+                <Grid.Resources>
+                    <Style x:Key="BrowserButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
+                        <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
+                        <Setter Property="Padding" Value="8,4,8,4" />
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontWeight" Value="Normal" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                        <Setter Property="FocusVisualMargin" Value="-3" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal">
+                                                    <Storyboard>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Disabled">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <WebView x:Name="webView" Source="{x:Bind ViewModel.WebViewSource, Mode=OneWay}" >
+                    <i:Interaction.Behaviors>
+                        <ic:EventTriggerBehavior EventName="NavigationCompleted">
+                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.NavCompletedCommand}" />
+                        </ic:EventTriggerBehavior>
+                        <ic:EventTriggerBehavior EventName="NavigationFailed">
+                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.NavFailedCommand}" />
+                        </ic:EventTriggerBehavior>
+                        <ic:EventTriggerBehavior EventName="OnNewWindowRequested">
+                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.OnNewWindowRequestedCommand}" />
+                        </ic:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
+                </WebView>
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsLoadingVisibility, Mode=OneWay}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+                    <TextBlock x:Uid="WebView_Loading" />
+                </StackPanel>
+                <StackPanel Visibility="{x:Bind ViewModel.FailedMesageVisibility, Mode=OneWay}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center" x:Uid="WebView_FailedMessage" TextWrapping="WrapWholeWords" />
+                    <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" x:Uid="WebView_Retry" HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <Grid VerticalAlignment="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.BrowserBackCommand, Mode=OneWay}" x:Uid="WebView_BrowserBackButton">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" />
+                        </Button>
+                        <Button Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.BrowserForwardCommand, Mode=OneWay}" x:Uid="WebView_BrowserForwardButton">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72A;" />
+                        </Button>-->
+                    </StackPanel >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Refresh" CornerRadius="0" Command="{x:Bind ViewModel.RefreshCommand}" x:Uid="WebView_RefreshBrowserButton">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
+                        </Button>
+                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Open Post in Your Default Browser" CornerRadius="0" Command="{x:Bind ViewModel.OpenInBrowserCommand}" x:Uid="WebView_OpenInBrowserButton">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE774;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
