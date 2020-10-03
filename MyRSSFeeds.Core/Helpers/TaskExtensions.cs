@@ -1,14 +1,30 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MyRSSFeeds.Core.Helpers
 {
     public static class TaskExtensions
     {
-        public static void FireAndForget(this Task task)
+        /// <summary>
+        /// Fire Task method in property or constructor 
+        /// that can handle await and exception
+        /// </summary>
+        /// <param name="task">The task to complete</param>
+        /// <param name="completedCallback">To do on complete</param>
+        /// <param name="errorCallback">To do on exception</param>
+        public async static void FireAndGet(this Task task, Action completedCallback = null, Action<Exception> errorCallback = null)
         {
-            // This method allows you to call an async method without awaiting it.
-            // Use it when you don't want or need to wait for the task to complete.
+            try
+            {
+                await task;
+                completedCallback?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                errorCallback?.Invoke(ex);
+            }
         }
     }
 }
