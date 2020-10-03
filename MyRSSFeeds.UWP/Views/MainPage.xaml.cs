@@ -1,4 +1,5 @@
 ﻿using MyRSSFeeds.ViewModels;
+using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -17,7 +18,7 @@ namespace MyRSSFeeds.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ViewModel.LoadDataAsync().ConfigureAwait(true);
+            ViewModel.LoadDataAsync(new Progress<int>(percent => ViewModel.ProgressCurrent = percent), ViewModel.TokenSource.Token).ConfigureAwait(true);
         }
     }
 }

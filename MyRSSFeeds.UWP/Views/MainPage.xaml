@@ -61,7 +61,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                <muxc:ProgressBar controls:DockPanel.Dock="Top" Visibility="{x:Bind ViewModel.IsLoadingData, Converter={StaticResource BoolToVisibility}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsIndeterminate="True" ShowPaused="False" ShowError="False" />
+                <muxc:ProgressBar controls:DockPanel.Dock="Top" Visibility="{x:Bind ViewModel.IsLoadingData, Converter={StaticResource BoolToVisibility}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsIndeterminate="False" ShowPaused="False" ShowError="False" Value="{x:Bind ViewModel.ProgressCurrent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="{x:Bind ViewModel.ProgressMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <ListView ItemsSource="{x:Bind ViewModel.Feeds}"
                           SelectionMode="Single"
                           SelectedItem="{x:Bind ViewModel.SelectedRSS, Mode=TwoWay}"
