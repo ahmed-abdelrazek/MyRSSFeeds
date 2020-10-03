@@ -497,13 +497,13 @@ namespace MyRSSFeeds.ViewModels
 
                     var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl);
 
-                    if (feedString.Item1)
+                    if (string.IsNullOrWhiteSpace(feedString))
                     {
-                        feed.Load(feedString.Item2);
+                        return;
                     }
                     else
                     {
-                        continue;
+                        feed.Load(feedString);
                     }
 
                     // Iterate through each feed item.

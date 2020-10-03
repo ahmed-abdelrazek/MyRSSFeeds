@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
+using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.Helpers;
@@ -6,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml;
 using Windows.UI.Popups;
 
 namespace MyRSSFeeds.ViewModels
@@ -118,24 +121,49 @@ namespace MyRSSFeeds.ViewModels
 
             try
             {
-                var exist = await SourceDataService.SourceExistAsync(SourceUrl.TrimEnd('/'));
+                string trimedUrl = SourceUrl.TrimEnd('/');
+                var exist = await SourceDataService.SourceExistAsync(trimedUrl);
                 if (exist)
                 {
                     await new MessageDialog("Source Already Exist").ShowAsync();
                 }
                 else
                 {
-                    var source = await SourceDataService.GetSourceInfoFromRssAsync(SourceUrl.TrimEnd('/'));
-                    if (source == null)
+                    try
                     {
-                        await new MessageDialog("Make sure you entered a vaild working xml/rss url that allow access to anonymous visitors").ShowAsync();
-                        return;
+                        var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl);
+
+                        var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
+                        if (source == null)
+                        {
+                            await new MessageDialog("Make sure you entered a vaild working xml/rss url that allow access to anonymous visitors").ShowAsync();
+                            return;
+                        }
+                        Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
+
+                        await new MessageDialog("The Source Has Been Added").ShowAsync();
+
+                        ClearPopups();
                     }
-                    Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
-
-                    await new MessageDialog("The Source Has Been Added").ShowAsync();
-
-                    ClearPopups();
+                    catch (HttpRequestException ex)
+                    {
+                        await new MessageDialog("Please check your internet connection and make sure that the app can connect to it.").ShowAsync();
+                        Debug.WriteLine(ex);
+                    }
+                    catch (XmlException ex)
+                    {
+                        await new MessageDialog("Make sure you entered a vaild working xml/rss").ShowAsync();
+                        Debug.WriteLine(ex);
+                    }
+                    catch (ArgumentNullException ex)
+                    {
+                        await new MessageDialog("Make sure you entered a Source Url").ShowAsync();
+                        Debug.WriteLine(ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                    }
                 }
             }
             catch (Exception ex)
