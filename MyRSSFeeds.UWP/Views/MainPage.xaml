@@ -61,7 +61,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                <muxc:ProgressBar controls:DockPanel.Dock="Top" Visibility="{x:Bind ViewModel.IsLoadingData, Converter={StaticResource BoolToVisibility}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsIndeterminate="False" ShowPaused="False" ShowError="False" Value="{x:Bind ViewModel.ProgressCurrent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="{x:Bind ViewModel.ProgressMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <muxc:ProgressBar x:Name="FeedListProgressbar" controls:DockPanel.Dock="Top" Visibility="{x:Bind ViewModel.IsLoadingData, Converter={StaticResource BoolToVisibility}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsIndeterminate="False" ShowPaused="False" ShowError="False" Value="{x:Bind ViewModel.ProgressCurrent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Maximum="{x:Bind ViewModel.ProgressMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <ListView ItemsSource="{x:Bind ViewModel.Feeds}"
                           SelectionMode="Single"
                           SelectedItem="{x:Bind ViewModel.SelectedRSS, Mode=TwoWay}"
@@ -203,10 +203,8 @@
                     </i:Interaction.Behaviors>
                 </WebView>
 
-                <StackPanel Visibility="{x:Bind ViewModel.IsLoadingVisibility, Mode=OneWay}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.IsLoadingVisibility, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <muxc:ProgressRing x:Name="BrowserLoadingRing" IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
                     <TextBlock x:Uid="WebView_Loading" />
                 </StackPanel>
                 <StackPanel Visibility="{x:Bind ViewModel.FailedMesageVisibility, Mode=OneWay}"
