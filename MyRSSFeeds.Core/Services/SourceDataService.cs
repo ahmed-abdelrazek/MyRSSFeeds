@@ -80,15 +80,10 @@ namespace MyRSSFeeds.Core.Services
             {
                 try
                 {
-                    var feedString = await RssRequest.GetFeedAsStringAsync(source);
-
-                    if (feedString.Item1)
+                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(await RssRequest.GetFeedAsStringAsync(source))))
                     {
-                        using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString.Item2)))
-                        {
-                            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                            return true;
-                        }
+                        SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+                        return true;
                     }
                 }
                 catch (Exception ex)
@@ -102,42 +97,27 @@ namespace MyRSSFeeds.Core.Services
         /// <summary>
         /// Get source info from rss url
         /// </summary>
-        /// <param name="source">string for source rss url</param>
+        /// <param name="source">string for rss/xml content</param>        
+        /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
-        public static async Task<Source> GetSourceInfoFromRssAsync(string source)
+        public static async Task<Source> GetSourceInfoFromRssAsync(string source, string rssUrl)
         {
-            var feedString = await RssRequest.GetFeedAsStringAsync(source);
-
             return await Task.Run(() =>
             {
-                if (!string.IsNullOrWhiteSpace(source))
-                {
-                    try
-                    {
-                        if (feedString.Item1)
-                        {
-                            using XmlReader xmlReader = XmlReader.Create(new StringReader(feedString.Item2));
-                            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                            Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
+                using XmlReader xmlReader = XmlReader.Create(new StringReader(source));
+                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+                Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
 
-                            return new Source
-                            {
-                                SiteTitle = feed.Title.Text,
-                                Description = feed.Description.Text,
-                                Language = feed.Language,
-                                LastBuildDate = feed.LastUpdatedTime,
-                                BaseUrl = baseLink,
-                                RssUrl = new Uri(source),
-                                IsWorking = true
-                            };
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                    }
-                }
-                return null;
+                return new Source
+                {
+                    SiteTitle = feed.Title.Text,
+                    Description = feed.Description.Text,
+                    Language = feed.Language,
+                    LastBuildDate = feed.LastUpdatedTime,
+                    BaseUrl = baseLink,
+                    RssUrl = new Uri(rssUrl),
+                    IsWorking = true
+                };
             });
         }
 

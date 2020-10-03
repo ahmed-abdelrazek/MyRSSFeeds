@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -24,47 +23,23 @@ namespace MyRSSFeeds.Core.Helpers
 
         /// <summary>
         /// Gets source data from a website as string
-        /// the bool is true if the url is vaild and the string is the source
-        /// the bool is false if the url isn't and the string is empty
         /// </summary>
         /// <param name="url">Vaild url as string</param>
-        /// <returns>Task (bool, string) as item1 and item2</returns>
-        public static async Task<(bool, string)> GetFeedAsStringAsync(string url)
+        /// <returns>Task string for the webpage source hopefully a xml one</returns>
+        public static async Task<string> GetFeedAsStringAsync(string url)
         {
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                try
-                {
-                    HttpResponseMessage response = await HttpClient.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    return (true, responseBody);
-                }
-                catch (HttpRequestException ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-            }
-            return (false, string.Empty);
+            HttpResponseMessage response = await HttpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
         /// <summary>
         /// Gets source data from website as string
-        /// the bool is true if the url is vaild and the string is the source
-        /// the bool is false if the url isn't and the string is empty
         /// </summary>
-        /// <param name="url">Vaild url as Uri</param>
-        /// <returns>Task (bool, string) as item1 and item2</returns>
-        public static async Task<(bool, string)> GetFeedAsStringAsync(Uri url)
+        /// <param name="url">Vaild url as Uri</param>        
+        /// <returns>Task string for the webpage source hopefully a xml one</returns>
+        public static async Task<string> GetFeedAsStringAsync(Uri url)
         {
-            if (url == null)
-            {
-                return (false, string.Empty);
-            }
             return await GetFeedAsStringAsync(url.ToString());
         }
     }
