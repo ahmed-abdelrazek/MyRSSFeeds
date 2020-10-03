@@ -4,6 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>MyRSSFeeds.Core</RootNamespace>
     <LangVersion>8.0</LangVersion>
+    <Version>1.0.1</Version>
+    <Company>ShababConquer</Company>
+    <Authors>Ahmed Mohamed Abdel-Razek</Authors>
+    <Product>MyRSSFeeds</Product>
   </PropertyGroup>
 
    <ItemGroup>
