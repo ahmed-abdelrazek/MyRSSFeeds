@@ -1,7 +1,6 @@
 ﻿using MyRSSFeeds.Core.Helpers;
-﻿using MyRSSFeeds.ViewModels;
+using MyRSSFeeds.ViewModels;
 using System;
-
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
