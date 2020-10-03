@@ -104,16 +104,16 @@ namespace MyRSSFeeds.ViewModels
             {
                 return _isLoading;
             }
-
             set
             {
-                if (value)
+                Set(ref _isLoading, value, nameof(IsLoading), () =>
                 {
-                    IsShowingFailedMessage = false;
-                }
-
-                Set(ref _isLoading, value);
-                IsLoadingVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                    if (value)
+                    {
+                        IsShowingFailedMessage = false;
+                    }
+                    IsLoadingVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                });
             }
         }
 
@@ -133,15 +133,16 @@ namespace MyRSSFeeds.ViewModels
             {
                 return _isShowingFailedMessage;
             }
-
             set
             {
-                if (value)
+                Set(ref _isShowingFailedMessage, value, nameof(IsShowingFailedMessage), () =>
                 {
-                    IsLoading = false;
-                }
 
-                Set(ref _isShowingFailedMessage, value);
+                    if (value)
+                    {
+                        IsLoading = false;
+                    }
+                });
                 FailedMesageVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             }
         }
