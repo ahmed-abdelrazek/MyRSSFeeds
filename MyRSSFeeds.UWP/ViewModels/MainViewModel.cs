@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
@@ -25,6 +26,8 @@ namespace MyRSSFeeds.ViewModels
         Windows.UI.ViewManagement.UISettings _systemTheme;
         ElementTheme _appTheme;
         string _uiTheme;
+
+        public CancellationTokenSource TokenSource { get; set; } = null;
 
         private RSS _selectedRSS;
 
@@ -183,6 +186,28 @@ namespace MyRSSFeeds.ViewModels
             set
             {
                 Set(ref _filterCreator, value);
+            }
+        }
+
+        private int _progressMax;
+
+        public int ProgressMax
+        {
+            get { return _progressMax; }
+            set
+            {
+                Set(ref _progressMax, value);
+            }
+        }
+
+        private int _progressCurrent;
+
+        public int ProgressCurrent
+        {
+            get { return _progressCurrent; }
+            set
+            {
+                Set(ref _progressCurrent, value);
             }
         }
 
@@ -348,7 +373,7 @@ namespace MyRSSFeeds.ViewModels
         /// <returns>Task Type</returns>
         private async Task RefreshFeeds()
         {
-            await LoadDataAsync();
+            await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
         }
 
         public RelayCommand ClearSelectedRSSCommand { get; private set; }
@@ -396,6 +421,7 @@ namespace MyRSSFeeds.ViewModels
             LoadCommands();
             IsLoading = true;
             WebViewSource = new Uri(_defaultUrl);
+            TokenSource = new CancellationTokenSource();
         }
 
         private void LoadCommands()
@@ -413,8 +439,10 @@ namespace MyRSSFeeds.ViewModels
         /// add the new ones to the database if there is any
         /// then show the latest (with-in limits in settings)
         /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="ct"></param>
         /// <returns>Task Type</returns>
-        public async Task LoadDataAsync()
+        public async Task LoadDataAsync(IProgress<int> progress, CancellationToken token)
         {
             IsLoadingData = true;
             FilterSources.Clear();
@@ -427,19 +455,43 @@ namespace MyRSSFeeds.ViewModels
 
             SyndicationFeed feed = new SyndicationFeed();
 
-            foreach (var source in await SourceDataService.GetSourcesDataAsync())
+            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+
+            ProgressMax = sourcesDataList.Count();
+            ProgressCurrent = 0;
+            int progressCount = 0;
+
+            foreach (var source in sourcesDataList)
             {
                 FilterSources.Add(source);
+
+                if (token.IsCancellationRequested)
+                {
+                    IsLoadingData = false;
+                    return;
+                }
             }
 
             try
             {
+                bool isNetworkConnected = NetworkInterface.GetIsNetworkAvailable();
+                if (!isNetworkConnected)
+                {
+                    await new MessageDialog("Check your internet connection").ShowAsync();
+                }
+
                 foreach (var sourceItem in FilterSources)
                 {
-                    bool isNetworkConnected = NetworkInterface.GetIsNetworkAvailable();
+                    if (token.IsCancellationRequested)
+                    {
+                        IsLoadingData = false;
+                        return;
+                    }
+
+                    progress.Report(progressCount++);
+
                     if (!isNetworkConnected)
                     {
-                        await new MessageDialog("Check your internet connection").ShowAsync();
                         break;
                     }
 
@@ -457,6 +509,12 @@ namespace MyRSSFeeds.ViewModels
                     // Iterate through each feed item.
                     foreach (SyndicationItem syndicationItem in feed.Items)
                     {
+                        if (token.IsCancellationRequested)
+                        {
+                            IsLoadingData = false;
+                            return;
+                        }
+
                         //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
                         if (syndicationItem.Title == null)
                         {
