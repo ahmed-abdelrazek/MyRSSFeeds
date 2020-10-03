@@ -44,7 +44,7 @@ namespace MyRSSFeeds.ViewModels
                         if (!_selectedRSS.IsRead)
                         {
                             _selectedRSS.IsRead = true;
-                            RSSDataService.UpdateFeedAsync(_selectedRSS).ConfigureAwait(false);
+                            RSSDataService.UpdateFeedAsync(_selectedRSS).FireAndGet();
                         }
                         GetTheme();
 
