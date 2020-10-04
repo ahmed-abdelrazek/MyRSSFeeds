@@ -371,7 +371,7 @@ namespace MyRSSFeeds.ViewModels
 
                 Sources.Add(source);
 
-                progress.Report(progressCount++);
+                progress.Report(++progressCount);
             }
 
             foreach (var item in Sources)
