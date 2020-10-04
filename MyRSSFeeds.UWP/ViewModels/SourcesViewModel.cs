@@ -70,6 +70,42 @@ namespace MyRSSFeeds.ViewModels
             set { Set(ref _isWorking, value); }
         }
 
+        private int _progressMax;
+
+        public int ProgressMax
+        {
+            get { return _progressMax; }
+            set
+            {
+                Set(ref _progressMax, value);
+            }
+        }
+
+        private int _progressCurrent;
+
+        public int ProgressCurrent
+        {
+            get { return _progressCurrent; }
+            set
+            {
+                Set(ref _progressCurrent, value);
+            }
+        }
+
+        private bool _isLoadingData;
+
+        public bool IsLoadingData
+        {
+            get
+            {
+                return _isLoadingData;
+            }
+            set
+            {
+                Set(ref _isLoadingData, value);
+            }
+        }
+
         private Source _selectedSource;
 
         public Source SelectedSource
@@ -301,8 +337,10 @@ namespace MyRSSFeeds.ViewModels
         /// <summary>
         /// Gets all the sources from the database and checks if they still works or not
         /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="ct"></param>
         /// <returns>Task Type</returns>
-        public async Task LoadDataAsync()
+        public async Task LoadDataAsync(IProgress<int> progress, CancellationToken token)
         {
             if (SystemInformation.IsFirstRun)
             {
@@ -310,21 +348,40 @@ namespace MyRSSFeeds.ViewModels
                 await messageDialog.ShowAsync();
             }
 
+            IsLoadingData = true;
             Sources.Clear();
-            List<Source> sources = new List<Source>(await SourceDataService.GetSourcesDataAsync());
 
-            foreach (var item in sources)
+            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+
+            ProgressMax = sourcesDataList.Count();
+            ProgressCurrent = 0;
+            int progressCount = 0;
+
+            foreach (var source in sourcesDataList)
             {
-                Sources.Add(item);
+                if (token.IsCancellationRequested)
+                {
+                    IsLoadingData = false;
+                    return;
+                }
+
+                Sources.Add(source);
+
+                progress.Report(progressCount++);
             }
 
-            foreach (var item in sources)
+            foreach (var item in Sources)
             {
+                if (token.IsCancellationRequested)
+                {
+                    IsLoadingData = false;
+                    return;
+                }
+
                 await item.CheckIfSourceWorking();
             }
 
             RefreshSourcesCommand.OnCanExecuteChanged();
-
         }
 
         /// <summary>
