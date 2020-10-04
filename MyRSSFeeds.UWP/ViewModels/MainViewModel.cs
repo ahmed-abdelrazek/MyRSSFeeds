@@ -12,6 +12,7 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -22,6 +23,7 @@ namespace MyRSSFeeds.ViewModels
 {
     public class MainViewModel : Observable
     {
+        private readonly ResourceLoader _loader = new ResourceLoader();
         private const string _defaultUrl = "about:blank";
         Windows.UI.ViewManagement.UISettings _systemTheme;
         ElementTheme _appTheme;
@@ -478,7 +480,7 @@ namespace MyRSSFeeds.ViewModels
                 bool isNetworkConnected = NetworkInterface.GetIsNetworkAvailable();
                 if (!isNetworkConnected)
                 {
-                    await new MessageDialog("Check your internet connection").ShowAsync();
+                    await new MessageDialog(_loader.GetString("CheckInternetMessageDialog")).ShowAsync();
                 }
 
                 foreach (var sourceItem in FilterSources)
@@ -519,11 +521,11 @@ namespace MyRSSFeeds.ViewModels
                         //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
                         if (syndicationItem.Title == null)
                         {
-                            syndicationItem.Title = new SyndicationText("No Title Found");
+                            syndicationItem.Title = new SyndicationText(_loader.GetString("MainViewModelNoTitleFound"));
                         }
                         if (syndicationItem.Summary == null)
                         {
-                            syndicationItem.Summary = new SyndicationText("No Summary Found");
+                            syndicationItem.Summary = new SyndicationText(_loader.GetString("MainViewModelNoSummaryFound"));
                         }
                         if (syndicationItem.PublishedDate.Year < 2000)
                         {

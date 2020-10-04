@@ -11,14 +11,17 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 
 namespace MyRSSFeeds.ViewModels
 {
     public class SourcesViewModel : Observable
     {
+        private readonly ResourceLoader _loader = new ResourceLoader();
+
         public CancellationTokenSource TokenSource { get; set; } = null;
-        
+
         private bool _isButtonEnabled;
 
         public bool IsButtonEnabled
@@ -164,7 +167,7 @@ namespace MyRSSFeeds.ViewModels
                 var exist = await SourceDataService.SourceExistAsync(trimedUrl);
                 if (exist)
                 {
-                    await new MessageDialog("Source Already Exist").ShowAsync();
+                    await new MessageDialog(_loader.GetString("SourcesViewModelSourceExistMessageDialog")).ShowAsync();
                 }
                 else
                 {
@@ -175,28 +178,28 @@ namespace MyRSSFeeds.ViewModels
                         var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
                         if (source == null)
                         {
-                            await new MessageDialog("Make sure you entered a vaild working xml/rss url that allow access to anonymous visitors").ShowAsync();
+                            await new MessageDialog(_loader.GetString("SourcesViewModelSourceInfoNotValidMessageDialog")).ShowAsync();
                             return;
                         }
                         Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
 
-                        await new MessageDialog("The Source Has Been Added").ShowAsync();
+                        await new MessageDialog(_loader.GetString("SourcesViewModelSourceAddedMessageDialog")).ShowAsync();
 
                         ClearPopups();
                     }
                     catch (HttpRequestException ex)
                     {
-                        await new MessageDialog("Please check your internet connection and make sure that the app can connect to it.").ShowAsync();
+                        await new MessageDialog(_loader.GetString("HttpRequestExceptionMessageDialog")).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (XmlException ex)
                     {
-                        await new MessageDialog("Make sure you entered a vaild working xml/rss").ShowAsync();
+                        await new MessageDialog(_loader.GetString("XmlExceptionMessageDialog")).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (ArgumentNullException ex)
                     {
-                        await new MessageDialog("Make sure you entered a Source Url").ShowAsync();
+                        await new MessageDialog(_loader.GetString("SourcesViewModelSourceUrlNullExceptionMessageDialog")).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (Exception ex)
@@ -243,12 +246,12 @@ namespace MyRSSFeeds.ViewModels
                 var source = await SourceDataService.UpdateSourceAsync(SelectedSource);
                 if (source == null)
                 {
-                    await new MessageDialog("Make sure you entered a vaild working xml/rss url that allow access to anonymous visitors").ShowAsync();
+                    await new MessageDialog(_loader.GetString("SourcesViewModelSourceInfoNotValidMessageDialog")).ShowAsync();
                     return;
                 }
                 Sources[Sources.IndexOf(SelectedSource)] = SelectedSource;
 
-                await new MessageDialog("The Source has been updated").ShowAsync();
+                await new MessageDialog(_loader.GetString("SourcesViewModelSourceUpdatedMessageDialog")).ShowAsync();
 
                 ClearPopups();
             }
@@ -348,7 +351,7 @@ namespace MyRSSFeeds.ViewModels
         {
             if (SystemInformation.IsFirstRun)
             {
-                var messageDialog = new MessageDialog("Welcome To My RSS Feeds, Please add some sources to start.");
+                var messageDialog = new MessageDialog(_loader.GetString("WelcomeMessageForFirstRun"));
                 await messageDialog.ShowAsync();
             }
 
