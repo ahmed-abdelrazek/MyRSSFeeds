@@ -16,6 +16,8 @@ namespace MyRSSFeeds.ViewModels
 {
     public class SourcesViewModel : Observable
     {
+        public CancellationTokenSource TokenSource { get; set; } = null;
+        
         private bool _isButtonEnabled;
 
         public bool IsButtonEnabled
@@ -306,7 +308,7 @@ namespace MyRSSFeeds.ViewModels
         /// <returns></returns>
         private async Task RefreshSources()
         {
-            await LoadDataAsync();
+            await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
         }
 
         public RelayCommand ClearSelectedSourceCommand { get; private set; }
@@ -332,6 +334,7 @@ namespace MyRSSFeeds.ViewModels
             DeleteSourceCommand = new RelayCommand(async () => await DeleteSource(), CanDeleteSource);
             RefreshSourcesCommand = new RelayCommand(async () => await RefreshSources(), CanRefreshSources);
             ClearSelectedSourceCommand = new RelayCommand(ClearSelectedSource, CanClearSelectedSource);
+            TokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
