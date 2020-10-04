@@ -178,6 +178,7 @@
     <Compile Include="Helpers\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\IBackNavigationHandler.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
+    <Compile Include="Helpers\NetworkInformationHelper.cs" />
     <Compile Include="Helpers\Observable.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />

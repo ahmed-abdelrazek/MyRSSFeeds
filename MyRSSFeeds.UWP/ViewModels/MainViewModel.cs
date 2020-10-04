@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -477,10 +476,11 @@ namespace MyRSSFeeds.ViewModels
 
             try
             {
-                bool isNetworkConnected = NetworkInterface.GetIsNetworkAvailable();
-                if (!isNetworkConnected)
+                // if there is no internet just cut our loses and get out of here we already loaded the local data
+                if (!new NetworkInformationHelper().HasInternetAccess)
                 {
                     await new MessageDialog(_loader.GetString("CheckInternetMessageDialog")).ShowAsync();
+                    return;
                 }
 
                 foreach (var sourceItem in FilterSources)
@@ -491,18 +491,18 @@ namespace MyRSSFeeds.ViewModels
                         return;
                     }
 
-                    progress.Report(progressCount++);
-
-                    if (!isNetworkConnected)
+                    if (!new NetworkInformationHelper().HasInternetAccess)
                     {
-                        break;
+                        continue;
                     }
+
+                    progress.Report(++progressCount);
 
                     var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl);
 
                     if (string.IsNullOrWhiteSpace(feedString))
                     {
-                        return;
+                        continue;
                     }
                     else
                     {
