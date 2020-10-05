@@ -80,7 +80,10 @@ namespace MyRSSFeeds.Core.Services
             {
                 try
                 {
-                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(await RssRequest.GetFeedAsStringAsync(source))))
+                    var feedString = await RssRequest.GetFeedAsStringAsync(source);
+                    var xmlSource = feedString.TrimStart();
+
+                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(xmlSource)))
                     {
                         SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
                         return true;
