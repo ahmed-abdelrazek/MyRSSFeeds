@@ -506,7 +506,8 @@ namespace MyRSSFeeds.ViewModels
                     }
                     else
                     {
-                        feed.Load(feedString);
+                        var xmlFeed = feedString.TrimStart();
+                        feed.Load(xmlFeed);
                     }
                 }
                 catch (Exception ex)
