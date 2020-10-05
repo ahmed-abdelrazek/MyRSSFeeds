@@ -40,7 +40,9 @@ namespace MyRSSFeeds.Core.Helpers
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
         public static async Task<string> GetFeedAsStringAsync(Uri url)
         {
-            return await GetFeedAsStringAsync(url.ToString());
+            HttpResponseMessage response = await HttpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

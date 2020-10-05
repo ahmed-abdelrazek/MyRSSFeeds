@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -22,7 +21,6 @@ namespace MyRSSFeeds.ViewModels
 {
     public class MainViewModel : Observable
     {
-        private readonly ResourceLoader _loader = new ResourceLoader();
         private const string _defaultUrl = "about:blank";
         Windows.UI.ViewManagement.UISettings _systemTheme;
         ElementTheme _appTheme;
@@ -449,6 +447,7 @@ namespace MyRSSFeeds.ViewModels
             IsLoadingData = true;
             FilterSources.Clear();
             Feeds.Clear();
+            bool hasLoadedFeedNewItems = false;
 
             foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
@@ -473,31 +472,32 @@ namespace MyRSSFeeds.ViewModels
                     return;
                 }
             }
-
-            try
+            // if there is no internet just cut our loses and get out of here we already loaded the local data
+            if (!new NetworkInformationHelper().HasInternetAccess)
             {
-                // if there is no internet just cut our loses and get out of here we already loaded the local data
-                if (!new NetworkInformationHelper().HasInternetAccess)
+                await new MessageDialog("CheckInternetMessageDialog".GetLocalized()).ShowAsync();
+                return;
+            }
+
+            foreach (var sourceItem in FilterSources)
+            {
+                if (token.IsCancellationRequested)
                 {
-                    await new MessageDialog(_loader.GetString("CheckInternetMessageDialog")).ShowAsync();
+                    IsLoadingData = false;
                     return;
                 }
 
-                foreach (var sourceItem in FilterSources)
+                if (!new NetworkInformationHelper().HasInternetAccess)
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        IsLoadingData = false;
-                        return;
-                    }
+                    continue;
+                }
 
-                    if (!new NetworkInformationHelper().HasInternetAccess)
-                    {
-                        continue;
-                    }
+                progress.Report(++progressCount);
 
-                    progress.Report(++progressCount);
-
+                //if getting the feed crushed for (internet - not xml rss - other reasons)
+                //move to the next source on the list to try it instead of stoping every thing
+                try
+                {
                     var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl);
 
                     if (string.IsNullOrWhiteSpace(feedString))
@@ -508,84 +508,88 @@ namespace MyRSSFeeds.ViewModels
                     {
                         feed.Load(feedString);
                     }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    continue;
+                }
 
-                    // Iterate through each feed item.
-                    foreach (SyndicationItem syndicationItem in feed.Items)
+                // Iterate through each feed item.
+                foreach (SyndicationItem syndicationItem in feed.Items)
+                {
+                    if (token.IsCancellationRequested)
                     {
-                        if (token.IsCancellationRequested)
-                        {
-                            IsLoadingData = false;
-                            return;
-                        }
+                        IsLoadingData = false;
+                        return;
+                    }
 
-                        //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
-                        if (syndicationItem.Title == null)
-                        {
-                            syndicationItem.Title = new SyndicationText(_loader.GetString("MainViewModelNoTitleFound"));
-                        }
-                        if (syndicationItem.Summary == null)
-                        {
-                            syndicationItem.Summary = new SyndicationText(_loader.GetString("MainViewModelNoSummaryFound"));
-                        }
-                        if (syndicationItem.PublishedDate.Year < 2000)
-                        {
-                            syndicationItem.PublishedDate = syndicationItem.LastUpdatedTime.Year > 2000 ? syndicationItem.LastUpdatedTime : DateTimeOffset.Now;
-                        }
+                    //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
+                    if (syndicationItem.Title == null)
+                    {
+                        syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
+                    }
+                    if (syndicationItem.Summary == null)
+                    {
+                        syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
+                    }
+                    if (syndicationItem.PublishedDate.Year < 2000)
+                    {
+                        syndicationItem.PublishedDate = syndicationItem.LastUpdatedTime.Year > 2000 ? syndicationItem.LastUpdatedTime : DateTimeOffset.Now;
+                    }
 
-                        Uri itemNewUri = syndicationItem.ItemUri;
-                        if (itemNewUri == null)
+                    Uri itemNewUri = syndicationItem.ItemUri;
+                    if (itemNewUri == null)
+                    {
+                        if (syndicationItem.Links.Count > 0)
                         {
-                            if (syndicationItem.Links.Count > 0)
-                            {
-                                itemNewUri = syndicationItem.Links.FirstOrDefault().Uri;
-                            }
-                        }
-
-                        var rss = new RSS
-                        {
-                            PostTitle = syndicationItem.Title.Text,
-                            Description = syndicationItem.Summary.Text,
-                            Authors = new List<Author>(),
-                            URL = itemNewUri,
-                            CreatedAt = syndicationItem.PublishedDate.DateTime,
-                            Guid = syndicationItem.Id,
-                            PostSource = sourceItem
-                        };
-
-                        foreach (var author in syndicationItem.Authors)
-                        {
-                            rss.Authors.Add(new Author
-                            {
-                                Name = author.Name,
-                                Email = author.Email,
-                                Uri = author.Uri
-                            });
-                        }
-
-                        if (!await RSSDataService.FeedExistAsync(rss))
-                        {
-                            var g = await RSSDataService.AddNewFeedAsync(rss);
+                            itemNewUri = syndicationItem.Links.FirstOrDefault().Uri;
                         }
                     }
 
-                    //shorten the text for windows 10 Live Tile
-                    Singleton<LiveTileService>.Instance.SampleUpdate(feed.Title.Text, ShortenText(feed.Items.FirstOrDefault()?.Title.Text, 80), ShortenText(feed.Items.FirstOrDefault()?.Summary.Text, 95));
+                    var rss = new RSS
+                    {
+                        PostTitle = syndicationItem.Title.Text,
+                        Description = syndicationItem.Summary.Text,
+                        Authors = new List<Author>(),
+                        URL = itemNewUri,
+                        CreatedAt = syndicationItem.PublishedDate.DateTime,
+                        Guid = syndicationItem.Id,
+                        PostSource = sourceItem
+                    };
+
+                    foreach (var author in syndicationItem.Authors)
+                    {
+                        rss.Authors.Add(new Author
+                        {
+                            Name = author.Name,
+                            Email = author.Email,
+                            Uri = author.Uri
+                        });
+                    }
+
+                    if (!await RSSDataService.FeedExistAsync(rss))
+                    {
+                        var newRss = await RSSDataService.AddNewFeedAsync(rss);
+                        Feeds.Add(newRss);
+                        hasLoadedFeedNewItems = true;
+                    }
                 }
+
+                //shorten the text for windows 10 Live Tile
+                Singleton<LiveTileService>.Instance.SampleUpdate(feed.Title.Text, ShortenText(feed.Items.FirstOrDefault()?.Title.Text, 80), ShortenText(feed.Items.FirstOrDefault()?.Summary.Text, 95));
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            finally
+
+            if (hasLoadedFeedNewItems)
             {
                 Feeds.Clear();
                 foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
                 {
                     Feeds.Add(rss);
                 }
-                MarkAsReadCommand.OnCanExecuteChanged();
-                IsLoadingData = false;
             }
+            MarkAsReadCommand.OnCanExecuteChanged();
+            IsLoadingData = false;
         }
 
         public void Initialize(WebView webView)
