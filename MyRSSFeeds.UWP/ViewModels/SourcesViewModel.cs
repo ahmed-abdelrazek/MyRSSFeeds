@@ -11,15 +11,12 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 
 namespace MyRSSFeeds.ViewModels
 {
     public class SourcesViewModel : Observable
     {
-        private readonly ResourceLoader _loader = new ResourceLoader();
-
         public CancellationTokenSource TokenSource { get; set; } = null;
 
         private bool _isButtonEnabled;
@@ -167,7 +164,7 @@ namespace MyRSSFeeds.ViewModels
                 var exist = await SourceDataService.SourceExistAsync(trimedUrl);
                 if (exist)
                 {
-                    await new MessageDialog(_loader.GetString("SourcesViewModelSourceExistMessageDialog")).ShowAsync();
+                    await new MessageDialog("SourcesViewModelSourceExistMessageDialog".GetLocalized()).ShowAsync();
                 }
                 else
                 {
@@ -178,28 +175,28 @@ namespace MyRSSFeeds.ViewModels
                         var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
                         if (source == null)
                         {
-                            await new MessageDialog(_loader.GetString("SourcesViewModelSourceInfoNotValidMessageDialog")).ShowAsync();
+                            await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
                             return;
                         }
                         Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
 
-                        await new MessageDialog(_loader.GetString("SourcesViewModelSourceAddedMessageDialog")).ShowAsync();
+                        await new MessageDialog("SourcesViewModelSourceAddedMessageDialog".GetLocalized()).ShowAsync();
 
                         ClearPopups();
                     }
                     catch (HttpRequestException ex)
                     {
-                        await new MessageDialog(_loader.GetString("HttpRequestExceptionMessageDialog")).ShowAsync();
+                        await new MessageDialog("HttpRequestExceptionMessageDialog".GetLocalized()).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (XmlException ex)
                     {
-                        await new MessageDialog(_loader.GetString("XmlExceptionMessageDialog")).ShowAsync();
+                        await new MessageDialog("XmlExceptionMessageDialog".GetLocalized()).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (ArgumentNullException ex)
                     {
-                        await new MessageDialog(_loader.GetString("SourcesViewModelSourceUrlNullExceptionMessageDialog")).ShowAsync();
+                        await new MessageDialog("SourcesViewModelSourceUrlNullExceptionMessageDialog".GetLocalized()).ShowAsync();
                         Debug.WriteLine(ex);
                     }
                     catch (Exception ex)
@@ -246,12 +243,12 @@ namespace MyRSSFeeds.ViewModels
                 var source = await SourceDataService.UpdateSourceAsync(SelectedSource);
                 if (source == null)
                 {
-                    await new MessageDialog(_loader.GetString("SourcesViewModelSourceInfoNotValidMessageDialog")).ShowAsync();
+                    await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
                     return;
                 }
                 Sources[Sources.IndexOf(SelectedSource)] = SelectedSource;
 
-                await new MessageDialog(_loader.GetString("SourcesViewModelSourceUpdatedMessageDialog")).ShowAsync();
+                await new MessageDialog("SourcesViewModelSourceUpdatedMessageDialog".GetLocalized()).ShowAsync();
 
                 ClearPopups();
             }
@@ -351,7 +348,7 @@ namespace MyRSSFeeds.ViewModels
         {
             if (SystemInformation.IsFirstRun)
             {
-                var messageDialog = new MessageDialog(_loader.GetString("WelcomeMessageForFirstRun"));
+                var messageDialog = new MessageDialog("WelcomeMessageForFirstRun".GetLocalized());
                 await messageDialog.ShowAsync();
             }
 

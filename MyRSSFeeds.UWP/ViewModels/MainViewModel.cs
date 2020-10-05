@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -22,7 +21,6 @@ namespace MyRSSFeeds.ViewModels
 {
     public class MainViewModel : Observable
     {
-        private readonly ResourceLoader _loader = new ResourceLoader();
         private const string _defaultUrl = "about:blank";
         Windows.UI.ViewManagement.UISettings _systemTheme;
         ElementTheme _appTheme;
@@ -477,7 +475,7 @@ namespace MyRSSFeeds.ViewModels
             // if there is no internet just cut our loses and get out of here we already loaded the local data
             if (!new NetworkInformationHelper().HasInternetAccess)
             {
-                await new MessageDialog(_loader.GetString("CheckInternetMessageDialog")).ShowAsync();
+                await new MessageDialog("CheckInternetMessageDialog".GetLocalized()).ShowAsync();
                 return;
             }
 
@@ -529,11 +527,11 @@ namespace MyRSSFeeds.ViewModels
                     //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
                     if (syndicationItem.Title == null)
                     {
-                        syndicationItem.Title = new SyndicationText(_loader.GetString("MainViewModelNoTitleFound"));
+                        syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
                     }
                     if (syndicationItem.Summary == null)
                     {
-                        syndicationItem.Summary = new SyndicationText(_loader.GetString("MainViewModelNoSummaryFound"));
+                        syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
                     }
                     if (syndicationItem.PublishedDate.Year < 2000)
                     {
