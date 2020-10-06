@@ -163,7 +163,10 @@ namespace MyRSSFeeds.ViewModels
             get { return _filterSelectedSource; }
             set
             {
-                Set(ref _filterSelectedSource, value);
+                Set(ref _filterSelectedSource, value, nameof(FilterSelectedSource), () =>
+                {
+                    ClearFilterSourceCommand.OnCanExecuteChanged();
+                });
             }
         }
 
@@ -360,9 +363,30 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
+        public RelayCommand ClearFilterSourceCommand { get; private set; }
+
         private async Task Filter()
         {
-            await new MessageDialog("Filtring the feed is coming soon").ShowAsync();
+            var query = from feed in await RSSDataService.GetFeedsDataAsync(0) select feed;
+
+            if (FilterSelectedSource != null)
+            {
+                query = query.Where(x => x.PostSource.Id == FilterSelectedSource.Id);
+            }
+            if (!string.IsNullOrWhiteSpace(FilterTitle))
+            {
+                query = query.Where(x => x.PostTitle.Contains(FilterTitle));
+            }
+            if (!string.IsNullOrWhiteSpace(FilterCreator))
+            {
+                query = query.Where(x => x.Authors.Any(x => x.Name == FilterCreator || x.Username == FilterCreator));
+            }
+
+            Feeds.Clear();
+            foreach (var item in query)
+            {
+                Feeds.Add(item);
+            }
         }
 
         public ICommand RefreshFeedsCommand { get; private set; }
@@ -426,11 +450,22 @@ namespace MyRSSFeeds.ViewModels
 
         private void LoadCommands()
         {
+            ClearFilterSourceCommand = new RelayCommand(ClearFilterSource, CanClearFilterSource);
             OpenInBrowserCommand = new RelayCommand(async () => await OpenInBrowser(), CanOpenInBrowser);
             MarkAsReadCommand = new RelayCommand(async () => await MarkAsRead(), CanMarkAsRead);
             ClearSelectedRSSCommand = new RelayCommand(ClearSelectedRSS, CanClearSelectedRSS);
             RefreshFeedsCommand = new RelayCommand(async () => await RefreshFeeds());
             OpenPostInAppCommand = new RelayCommand(OpenPostInApp, CanOpenPostInApp);
+        }
+
+        private bool CanClearFilterSource()
+        {
+            return FilterSelectedSource != null;
+        }
+
+        private void ClearFilterSource()
+        {
+            FilterSelectedSource = null;
         }
 
         /// <summary>

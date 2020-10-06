@@ -40,9 +40,14 @@
                             <Button.Flyout>
                                 <Flyout>
                                     <StackPanel>
-                                        <ComboBox Header="Sources" PlaceholderText="Select a source" ItemsSource="{x:Bind ViewModel.FilterSources}" SelectedItem="{x:Bind ViewModel.FilterSelectedSource, Mode=TwoWay}" DisplayMemberPath="SiteTitle" Margin="5" />
-                                        <TextBox Header="Title" PlaceholderText="Enter a Title or part of a Title" Text="{x:Bind ViewModel.FilterTitle}" Margin="5" />
-                                        <TextBox Header="Author" Text="{x:Bind ViewModel.FilterCreator}" Margin="5" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <ComboBox Header="Sources" PlaceholderText="Select a source" ItemsSource="{x:Bind ViewModel.FilterSources}" SelectedItem="{x:Bind ViewModel.FilterSelectedSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="SiteTitle" Margin="5" />
+                                            <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 5" ToolTipService.ToolTip="Clear Filter Source Selection" VerticalAlignment="Bottom" CornerRadius="0" Command="{x:Bind ViewModel.ClearFilterSourceCommand}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" />
+                                            </Button>
+                                        </StackPanel>
+                                        <TextBox Header="Title" PlaceholderText="Enter a Title or part of a Title" Text="{x:Bind ViewModel.FilterTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+                                        <TextBox Header="Author" Text="{x:Bind ViewModel.FilterCreator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
                                         <Button Content="Done" Command="{x:Bind ViewModel.FilterCommand}" Margin="5" />
                                     </StackPanel>
                                 </Flyout>
