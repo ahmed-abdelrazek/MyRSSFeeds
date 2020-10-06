@@ -1,7 +1,9 @@
 ﻿using LiteDB;
+using LiteDB.Engine;
 using MyRSSFeeds.Core.Models;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace MyRSSFeeds.Core.Data
 {
@@ -26,7 +28,7 @@ namespace MyRSSFeeds.Core.Data
                 throw new ArgumentNullException("Db Path is Null or Empty");
             }
 
-            ConnectionString = $"Filename={DbPath};Mode=Shared";
+            ConnectionString = $"Filename={DbPath};";
 
             LiteDb = new LiteDatabase(ConnectionString);
             try
@@ -48,6 +50,7 @@ namespace MyRSSFeeds.Core.Data
                 var col2 = LiteDb.GetCollection<Source>(Sources).Query();
                 col2.ToEnumerable();
 
+                LiteDb.Rebuild(new RebuildOptions { Collation = new Collation($"{CultureInfo.CurrentCulture.TextInfo.CultureName}/IgnoreCase,IgnoreSymbols") });
                 LiteDb.Dispose();
             }
             catch (Exception ex)
