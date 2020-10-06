@@ -375,11 +375,11 @@ namespace MyRSSFeeds.ViewModels
             }
             if (!string.IsNullOrWhiteSpace(FilterTitle))
             {
-                query = query.Where(x => x.PostTitle.Contains(FilterTitle));
+                query = query.Where(x => x.PostTitle.ToLower().Contains(FilterTitle.ToLower()));
             }
             if (!string.IsNullOrWhiteSpace(FilterCreator))
             {
-                query = query.Where(x => x.Authors.Any(x => x.Name == FilterCreator || x.Username == FilterCreator));
+                query = query.Where(x => x.Authors.Any(x => x.Email.ToLower() == FilterCreator.ToLower()));
             }
 
             Feeds.Clear();
