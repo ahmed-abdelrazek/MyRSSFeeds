@@ -367,6 +367,8 @@ namespace MyRSSFeeds.ViewModels
 
         private async Task Filter()
         {
+            TokenSource.Cancel();
+
             var query = from feed in await RSSDataService.GetFeedsDataAsync(0) select feed;
 
             if (FilterSelectedSource != null)
