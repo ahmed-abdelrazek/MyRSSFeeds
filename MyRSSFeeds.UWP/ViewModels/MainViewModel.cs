@@ -50,7 +50,24 @@ namespace MyRSSFeeds.ViewModels
                         }
                         GetTheme();
 
-                        var hyperLinkDescription = SelectedRSS.Description.Replace("[…]", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
+                        string hyperLinkDescription = string.Empty;
+                        if (SelectedRSS.Description.EndsWith("[…]"))
+                        {
+                            hyperLinkDescription = SelectedRSS.Description.Replace("[…]", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
+                        }
+                        else if (SelectedRSS.Description.EndsWith("…"))
+                        {
+                            hyperLinkDescription = SelectedRSS.Description.Replace("…", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
+                        }
+                        else if (SelectedRSS.Description.EndsWith("..."))
+                        {
+                            hyperLinkDescription = SelectedRSS.Description.Replace("...", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
+                        }
+                        else
+                        {
+                            hyperLinkDescription = string.Concat(SelectedRSS.Description, $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
+                        }
+
                         if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
                         {
                             _webView.NavigateToString($"<html><head><title>{SelectedRSS.PostTitle}</title><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
