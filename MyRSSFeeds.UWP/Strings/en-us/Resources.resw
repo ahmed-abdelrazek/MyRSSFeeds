@@ -170,7 +170,7 @@
     <comment>Open in browser button automation name property for WebView</comment>
   </data>
   <data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Open in your default browser</value>
+    <value>Open Post in Your Default Browser</value>
     <comment>Open in browser button automation tooltip property for WebView</comment>
   </data>
   <data name="Shell_SourcesView.Content" xml:space="preserve">
@@ -278,5 +278,89 @@
   </data>
   <data name="XmlExceptionMessageDialog" xml:space="preserve">
     <value>Make sure you entered a vaild working xml/rss.</value>
+  </data>
+  <data name="MainView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear Selection</value>
+  </data>
+  <data name="MainView_Filter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filter Content</value>
+  </data>
+  <data name="MainView_FilterAuthor.Header" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="MainView_FilterClearButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear Filter Source Selection</value>
+  </data>
+  <data name="MainView_FilterDoneButton.Content" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="MainView_FilterSources.Header" xml:space="preserve">
+    <value>Sources</value>
+  </data>
+  <data name="MainView_FilterSources.PlaceholderText" xml:space="preserve">
+    <value>Select a source</value>
+  </data>
+  <data name="MainView_FilterTitle.Header" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="MainView_FilterTitle.PlaceholderText" xml:space="preserve">
+    <value>Enter a Title or part of a Title</value>
+  </data>
+  <data name="MainView_MarkAsRead.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mark all as read</value>
+  </data>
+  <data name="MainView_OpenFullPostButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Full Post</value>
+  </data>
+  <data name="MainView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Refresh Feeds Now</value>
+  </data>
+  <data name="SourcesView_AddNewSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add New Source</value>
+  </data>
+  <data name="SourcesView_AddSource.Header" xml:space="preserve">
+    <value>RSS Url</value>
+  </data>
+  <data name="SourcesView_AddSource.PlaceholderText" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="SourcesView_AddSourceDoneButton.Content" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="SourcesView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear Selection</value>
+  </data>
+  <data name="SourcesView_DeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Delete Selected Source</value>
+  </data>
+  <data name="SourcesView_DeletePopupButton.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SourcesView_DeletePopupMsg.Text" xml:space="preserve">
+    <value>Are you sure you want to delete selected source?</value>
+  </data>
+  <data name="SourcesView_EditSelectedSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit Selected Source</value>
+  </data>
+  <data name="SourcesView_EditSourceDescription.Header" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="SourcesView_EditSourceDoneButton.Content" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="SourcesView_EditSourceRssUrl.Header" xml:space="preserve">
+    <value>RSS Url</value>
+  </data>
+  <data name="SourcesView_EditSourceRssUrl.PlaceholderText" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="SourcesView_EditSourceTitle.Header" xml:space="preserve">
+    <value>Source Name</value>
+  </data>
+  <data name="SourcesView_EditSourceTitle.PlaceholderText" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="SourcesView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Refresh Sources</value>
   </data>
 </root>

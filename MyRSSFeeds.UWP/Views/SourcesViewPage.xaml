@@ -23,47 +23,47 @@
         <controls:DockPanel LastChildFill="True">
             <Grid controls:DockPanel.Dock="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Add New Source" CornerRadius="0">
+                    <Button x:Uid="SourcesView_AddNewSourceButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" />
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel>
-                                    <TextBox Header="RSS Url" PlaceholderText="Required" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300"/>
+                                    <TextBox x:Uid="SourcesView_AddSource" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MinWidth="150" MaxWidth="300"/>
                                     <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                                    <Button Content="Done" Command="{x:Bind ViewModel.AddNewSourceCommand}"/>
+                                    <Button x:Uid="SourcesView_AddSourceDoneButton" Command="{x:Bind ViewModel.AddNewSourceCommand}"/>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <Button Style="{StaticResource ButtonRevealStyle}" IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTipService.ToolTip="Edit Selected Source" CornerRadius="0">
+                    <Button x:Uid="SourcesView_EditSelectedSourceButton" Style="{StaticResource ButtonRevealStyle}" IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="0">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;" />
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel>
-                                    <TextBox Header="Source Name" PlaceholderText="Required" Text="{x:Bind ViewModel.SourceTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300" />
-                                    <TextBox Header="RSS Url" PlaceholderText="Required" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300" />
-                                    <TextBox Header="Description" Text="{x:Bind ViewModel.SourceDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300" />
+                                    <TextBox x:Uid="SourcesView_EditSourceTitle" Text="{x:Bind ViewModel.SourceTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MinWidth="150" MaxWidth="300" />
+                                    <TextBox x:Uid="SourcesView_EditSourceRssUrl" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300" />
+                                    <TextBox x:Uid="SourcesView_EditSourceDescription" Text="{x:Bind ViewModel.SourceDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MaxWidth="300" />
                                     <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                                    <Button Content="Done" Command="{x:Bind ViewModel.UpdateSourceCommand}"/>
+                                    <Button x:Uid="SourcesView_EditSourceDoneButton" Command="{x:Bind ViewModel.UpdateSourceCommand}"/>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <Button Style="{StaticResource ButtonRevealStyle}" IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1 0" ToolTipService.ToolTip="Delete Selected Source" CornerRadius="0">
+                    <Button x:Uid="SourcesView_DeleteButton" Style="{StaticResource ButtonRevealStyle}" IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="1 0" CornerRadius="0">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel>
-                                    <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to delete selected source?" Margin="5" VerticalAlignment="Center" />
-                                    <Button Content="Delete" Command="{x:Bind ViewModel.DeleteSourceCommand}"/>
+                                    <TextBlock x:Uid="SourcesView_DeletePopupMsg" Style="{ThemeResource BaseTextBlockStyle}" Margin="5" VerticalAlignment="Center" />
+                                    <Button x:Uid="SourcesView_DeletePopupButton" Command="{x:Bind ViewModel.DeleteSourceCommand}"/>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Refresh Sources" CornerRadius="0" Command="{x:Bind ViewModel.RefreshSourcesCommand}">
+                    <Button x:Uid="SourcesView_RefreshButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.RefreshSourcesCommand}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
                     </Button>
-                    <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Clear Selection" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedSourceCommand}">
+                    <Button x:Uid="SourcesView_ClearSelectionButton" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedSourceCommand}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
                     </Button>
                 </StackPanel >
@@ -88,7 +88,6 @@
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
-
                 </ListView.ItemTemplate>
             </ListView>
         </controls:DockPanel>

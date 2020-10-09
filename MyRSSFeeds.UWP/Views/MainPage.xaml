@@ -32,36 +32,36 @@
             <controls:DockPanel LastChildFill="True">
                 <Grid controls:DockPanel.Dock="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
                     <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Mark all as read" CornerRadius="0" Command="{x:Bind ViewModel.MarkAsReadCommand}">
+                        <Button x:Uid="MainView_MarkAsRead" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.MarkAsReadCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7B3;" />
                         </Button>
-                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Filter Content" CornerRadius="0">
+                        <Button x:Uid="MainView_Filter" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71C;" />
                             <Button.Flyout>
                                 <Flyout>
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
-                                            <ComboBox Header="Sources" PlaceholderText="Select a source" ItemsSource="{x:Bind ViewModel.FilterSources}" SelectedItem="{x:Bind ViewModel.FilterSelectedSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="SiteTitle" Margin="5" />
-                                            <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 5" ToolTipService.ToolTip="Clear Filter Source Selection" VerticalAlignment="Bottom" CornerRadius="0" Command="{x:Bind ViewModel.ClearFilterSourceCommand}">
+                                            <ComboBox x:Uid="MainView_FilterSources" ItemsSource="{x:Bind ViewModel.FilterSources}" SelectedItem="{x:Bind ViewModel.FilterSelectedSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="SiteTitle" Margin="5" />
+                                            <Button x:Uid="MainView_FilterClearButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 5" VerticalAlignment="Bottom" CornerRadius="0" Command="{x:Bind ViewModel.ClearFilterSourceCommand}">
                                                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" />
                                             </Button>
                                         </StackPanel>
-                                        <TextBox Header="Title" PlaceholderText="Enter a Title or part of a Title" Text="{x:Bind ViewModel.FilterTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
-                                        <TextBox Header="Author" Text="{x:Bind ViewModel.FilterCreator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
-                                        <Button Content="Done" Command="{x:Bind ViewModel.FilterCommand}" Margin="5" />
+                                        <TextBox x:Uid="MainView_FilterTitle" Text="{x:Bind ViewModel.FilterTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+                                        <TextBox x:Uid="MainView_FilterAuthor" Text="{x:Bind ViewModel.FilterCreator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+                                        <Button x:Uid="MainView_FilterDoneButton" Command="{x:Bind ViewModel.FilterCommand}" Margin="5" />
                                     </StackPanel>
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
-                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Refresh Feeds Now" CornerRadius="0" Command="{x:Bind ViewModel.RefreshFeedsCommand}">
+                        <Button x:Uid="MainView_RefreshButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.RefreshFeedsCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
                         </Button>
                     </StackPanel >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Clear Selection" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedRSSCommand}">
+                        <Button x:Uid="MainView_ClearSelectionButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedRSSCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
                         </Button>
-                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Open Full Post" CornerRadius="0" Command="{x:Bind ViewModel.OpenPostInAppCommand}">
+                        <Button x:Uid="MainView_OpenFullPostButton" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.OpenPostInAppCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A0;" />
                         </Button>
                     </StackPanel>
@@ -82,7 +82,6 @@
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEDAD;" Foreground="{ThemeResource SystemListAccentHighColor}" Visibility="{x:Bind IsRead, Mode=TwoWay, Converter={StaticResource ReverseBoolToVisibility}}"/>
                                     </StackPanel>
                                     <TextBlock x:Name="Title" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20" FontWeight="{x:Bind Path=IsRead, Mode=TwoWay, Converter={StaticResource BoolToFontWeightConverter}, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
-                                    <!--<TextBlock Text="{x:Bind Description}" Foreground="{StaticResource SystemChromeDisabledLowColor}" Style="{StaticResource BodyTextBlockStyle}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalAlignment="Left"/>-->
                                     <StackPanel Orientation="Horizontal">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEE56;" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" />
                                         <ListView ItemsSource="{x:Bind Authors, Mode=OneWay}" Padding="0,-5,0,0" MaxHeight="25" MaxWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" Margin="5,0,5,0">
@@ -105,7 +104,6 @@
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
-
                     </ListView.ItemTemplate>
                 </ListView>
             </controls:DockPanel>
@@ -115,9 +113,7 @@
             ResizeDirection="Auto" Background="Gray" Foreground="{StaticResource SystemBaseMediumColor}" FontSize="13">
                 <controls:GridSplitter.Element>
                     <Grid>
-                        <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center"  
-                               Text="&#xE784;" Foreground="{StaticResource SystemBaseMediumColor}" FontFamily="Segoe MDL2 Assets">
-                        </TextBlock>
+                        <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center" Text="&#xE784;" Foreground="{StaticResource SystemBaseMediumColor}" FontFamily="Segoe MDL2 Assets"/>
                     </Grid>
                 </controls:GridSplitter.Element>
             </controls:GridSplitter>
@@ -220,19 +216,11 @@
                 </StackPanel>
 
                 <Grid VerticalAlignment="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}" Grid.Row="1">
-                    <StackPanel Orientation="Horizontal">
-                        <!--<Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.BrowserBackCommand, Mode=OneWay}" x:Uid="WebView_BrowserBackButton">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" />
-                        </Button>
-                        <Button Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.BrowserForwardCommand, Mode=OneWay}" x:Uid="WebView_BrowserForwardButton">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72A;" />
-                        </Button>-->
-                    </StackPanel >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource ButtonRevealStyle}" Margin="1 0" ToolTipService.ToolTip="Refresh" CornerRadius="0" Command="{x:Bind ViewModel.RefreshCommand}" x:Uid="WebView_RefreshBrowserButton">
+                        <Button x:Uid="WebView_RefreshBrowserButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.RefreshCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
                         </Button>
-                        <Button Style="{StaticResource ButtonRevealStyle}" ToolTipService.ToolTip="Open Post in Your Default Browser" CornerRadius="0" Command="{x:Bind ViewModel.OpenInBrowserCommand}" x:Uid="WebView_OpenInBrowserButton">
+                        <Button x:Uid="WebView_OpenInBrowserButton" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.OpenInBrowserCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE774;" />
                         </Button>
                     </StackPanel>

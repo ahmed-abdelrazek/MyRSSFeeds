@@ -28,12 +28,6 @@
         PaneDisplayMode="LeftCompact"
         Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
         <winui:NavigationView.MenuItems>
-            <!--
-            TODO WTS: Change the symbols for each item as appropriate for your app
-            More on Segoe UI Symbol icons: https://docs.microsoft.com/windows/uwp/style/segoe-ui-symbol-font
-            Or to use an IconElement instead of a Symbol see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/projectTypes/navigationpane.md
-            Edit String/en-US/Resources.resw: Add a menu item title for each page
-            -->
             <winui:NavigationViewItem x:Uid="Shell_Main" Icon="Home" helpers:NavHelper.NavigateTo="views:MainPage">
             </winui:NavigationViewItem>
             <winui:NavigationViewItem x:Uid="Shell_SourcesView" helpers:NavHelper.NavigateTo="views:SourcesViewPage" >
@@ -43,15 +37,11 @@
             </winui:NavigationViewItem>
         </winui:NavigationView.MenuItems>
         <i:Interaction.Behaviors>
-            <behaviors:NavigationViewHeaderBehavior
-                DefaultHeader="{x:Bind ViewModel.Selected.Content, Mode=OneWay}">
+            <behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ViewModel.Selected.Content, Mode=OneWay}">
                 <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                     <DataTemplate>
                         <Grid>
-                            <TextBlock
-                                Text="{Binding}"
-                                Style="{ThemeResource TitleTextBlockStyle}"
-                                Margin="{StaticResource SmallLeftRightMargin}" />
+                            <TextBlock Text="{Binding}" Style="{ThemeResource TitleTextBlockStyle}" Margin="{StaticResource SmallLeftRightMargin}" />
                         </Grid>
                     </DataTemplate>
                 </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
