@@ -48,6 +48,7 @@
                                         </StackPanel>
                                         <TextBox x:Uid="MainView_FilterTitle" Text="{x:Bind ViewModel.FilterTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
                                         <TextBox x:Uid="MainView_FilterAuthor" Text="{x:Bind ViewModel.FilterCreator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
+                                        <CheckBox x:Uid="MainView_FilterIsUnreadOnly" IsChecked="{x:Bind ViewModel.FilterIsUnreadOnly, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" />
                                         <Button x:Uid="MainView_FilterDoneButton" Command="{x:Bind ViewModel.FilterCommand}" Margin="5" />
                                     </StackPanel>
                                 </Flyout>

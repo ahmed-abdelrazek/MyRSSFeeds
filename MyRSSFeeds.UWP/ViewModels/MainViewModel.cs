@@ -209,6 +209,17 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
+        private bool _filterIsUnreadOnly;
+
+        public bool FilterIsUnreadOnly
+        {
+            get { return _filterIsUnreadOnly; }
+            set
+            {
+                Set(ref _filterIsUnreadOnly, value);
+            }
+        }
+
         private int _progressMax;
 
         public int ProgressMax
@@ -399,6 +410,10 @@ namespace MyRSSFeeds.ViewModels
             if (!string.IsNullOrWhiteSpace(FilterCreator))
             {
                 query = query.Where(x => x.Authors.Any(x => x.Email.ToLower() == FilterCreator.ToLower()));
+            }
+            if (FilterIsUnreadOnly)
+            {
+                query = query.Where(x => x.IsRead == false);
             }
 
             Feeds.Clear();

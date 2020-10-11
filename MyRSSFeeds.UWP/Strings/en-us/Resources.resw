@@ -363,4 +363,7 @@
   <data name="SourcesView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh Sources</value>
   </data>
+  <data name="MainView_FilterIsUnreadOnly.Content" xml:space="preserve">
+    <value>Show Unread Only</value>
+  </data>
 </root>
