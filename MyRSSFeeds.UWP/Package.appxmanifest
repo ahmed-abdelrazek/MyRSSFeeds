@@ -10,7 +10,7 @@
   <Identity
     Name="60518ShababConquer.MyRSSFeeds"
     Publisher="CN=7057FB6A-382B-456B-8887-AB017ABBA140"
-    Version="1.0.11.0" />
+    Version="1.0.12.0" />
 
   <mp:PhoneIdentity PhoneProductId="e71db590-b6ae-4164-85ef-3fabc2ea9c60" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
