@@ -59,6 +59,9 @@ namespace MyRSSFeeds.Core.Models
 
         public DateTimeOffset CreatedAt { get; set; }
 
+        [BsonIgnore]
+        public DateTime CreatedAtLocalTime => CreatedAt.LocalDateTime;
+
         private bool _isRead;
 
         public bool IsRead

@@ -99,7 +99,7 @@
                                             </ListView.ItemTemplate>
                                         </ListView>
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE787;" Foreground="{ThemeResource SystemChromeDisabledLowColor}"/>
-                                        <TextBlock Text="{x:Bind CreatedAt}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Style="{StaticResource CaptionTextBlockStyle}" Margin="5,0,0,0"/>
+                                        <TextBlock Text="{x:Bind CreatedAtLocalTime}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Style="{StaticResource CaptionTextBlockStyle}" Margin="5,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
