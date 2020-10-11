@@ -44,8 +44,6 @@
   <Library Name="SyndicationFeed">
     <Assembly Name="System.ServiceModel.Syndication" Activate="Required All" Browse="Required All" Serialize="Required All" Dynamic="Required All" />
     <Namespace Name="System.ServiceModel.Syndication" Dynamic="Required All" />
-    <Namespace Name="System.ServiceModel.Syndication.SyndicationFeed" Dynamic="Required All" />
-    <Namespace Name="System.ServiceModel.Syndication.SyndicationFeedFormatter" Dynamic="Required All" />
   </Library>
 
 </Directives>
