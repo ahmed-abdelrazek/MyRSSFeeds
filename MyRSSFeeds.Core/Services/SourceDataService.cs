@@ -107,7 +107,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using XmlReader xmlReader = XmlReader.Create(new StringReader(source));
+                using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
                 Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
 
