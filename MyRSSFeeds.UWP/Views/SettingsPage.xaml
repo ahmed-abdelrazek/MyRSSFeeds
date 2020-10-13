@@ -14,8 +14,7 @@
     </Page.Resources>
 
     <Grid Margin="{StaticResource MediumLeftRightMargin}">
-        <StackPanel
-            x:Name="ContentArea">
+        <StackPanel x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock x:Uid="Settings_Theme" />
@@ -60,6 +59,23 @@
                 <TextBlock x:Uid="Settings_FeedCountLimitNo" />
                 <muxc:NumberBox Value="{x:Bind ViewModel.FeedsLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="10" LargeChange="100" />
                 <TextBlock x:Uid="Settings_FeedCountLimitNote" />
+            </StackPanel>
+
+            <TextBlock x:Uid="Settings_BackupSources" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+
+            <StackPanel Margin="{StaticResource XSmallTopMargin}" Orientation="Horizontal">
+                <Button x:Uid="BackupImportButton" Style="{StaticResource ButtonRevealStyle}" Margin="5" CornerRadius="0" Command="{x:Bind ViewModel.ImportSourceAsJsonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE896;" />
+                        <TextBlock x:Uid="Settings_BackupImportButtonTextblock"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Uid="Settings_BackupExportButton" Style="{StaticResource ButtonRevealStyle}" Margin="5" CornerRadius="0" Command="{x:Bind ViewModel.ExportSourceAsJsonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE898;" />
+                        <TextBlock x:Uid="Settings_BackupExportButtonTextblock"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
 
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,20,0,0"/>

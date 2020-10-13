@@ -366,4 +366,40 @@
   <data name="MainView_FilterIsUnreadOnly.Content" xml:space="preserve">
     <value>Show Unread Only</value>
   </data>
+  <data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Export Source to the app json file.</value>
+  </data>
+  <data name="Settings_BackupExportButtonTextblock.Text" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Settings_BackupImportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Import Sources from the app json file.</value>
+  </data>
+  <data name="Settings_BackupImportButtonTextblock.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Settings_BackupSources.Text" xml:space="preserve">
+    <value>Backup Sources</value>
+  </data>
+  <data name="Settings_ExportCanceledMessageDialog" xml:space="preserve">
+    <value>Exporting operation cancelled</value>
+  </data>
+  <data name="Settings_ExportErrorMessageDialog" xml:space="preserve">
+    <value>Exporting Sources Failed</value>
+  </data>
+  <data name="Settings_ExportFailedMessageDialog" xml:space="preserve">
+    <value>Exporting Sources to {0} Failed</value>
+  </data>
+  <data name="Settings_ExportSuccessfulMessageDialog" xml:space="preserve">
+    <value>Sources exported as {0}</value>
+  </data>
+  <data name="Settings_ImportCanceledMessageDialog" xml:space="preserve">
+    <value>Importing operation cancelled</value>
+  </data>
+  <data name="Settings_ImportErrorMessageDialog" xml:space="preserve">
+    <value>Importing Sources From {0} Failed</value>
+  </data>
+  <data name="Settings_ImportSuccessfulMessageDialog" xml:space="preserve">
+    <value>File {0} Imported</value>
+  </data>
 </root>
