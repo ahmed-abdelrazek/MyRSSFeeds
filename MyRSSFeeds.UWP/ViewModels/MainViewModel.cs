@@ -70,11 +70,11 @@ namespace MyRSSFeeds.ViewModels
 
                         if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
                         {
-                            _webView.NavigateToString($"<html><head><title>{SelectedRSS.PostTitle}</title><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
+                            _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
                         }
                         else
                         {
-                            _webView.NavigateToString(hyperLinkDescription);
+                            _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
                         }
                     }
                 });
