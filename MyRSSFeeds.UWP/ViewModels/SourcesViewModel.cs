@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.Core.Helpers;
+﻿using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.Helpers;
@@ -347,19 +346,13 @@ namespace MyRSSFeeds.ViewModels
         /// <returns>Task Type</returns>
         public async Task LoadDataAsync(IProgress<int> progress, CancellationToken token)
         {
-            if (SystemInformation.IsFirstRun)
-            {
-                var messageDialog = new MessageDialog("WelcomeMessageForFirstRun".GetLocalized());
-                await messageDialog.ShowAsync();
-            }
-
             IsLoadingData = true;
+            ProgressCurrent = 0;
             Sources.Clear();
 
             var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
-            ProgressCurrent = 0;
             int progressCount = 0;
 
             foreach (var source in sourcesDataList)
