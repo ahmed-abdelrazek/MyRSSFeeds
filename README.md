@@ -1,4 +1,4 @@
-<img src="images/logo.svg" height="200" alt="App Logo">
+<div style="text-align:center"><img src="images/logo.svg" height="200" alt="App Logo"></div>
 
 ## My RSS Feeds
 Simple, Light and Local UWP Rss reader that doesn't required any logins or have any ads.
