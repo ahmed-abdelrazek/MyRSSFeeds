@@ -104,7 +104,11 @@ namespace MyRSSFeeds.ViewModels
             }
             set
             {
-                Set(ref _isLoadingData, value);
+                Set(ref _isLoadingData, value, nameof(IsLoadingData), () =>
+                {
+                    RefreshSourcesCommand.OnCanExecuteChanged();
+                    CancelLoadingCommand.OnCanExecuteChanged();
+                });
             }
         }
 
@@ -179,6 +183,8 @@ namespace MyRSSFeeds.ViewModels
                             return;
                         }
                         Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
+
+                        RefreshSourcesCommand.OnCanExecuteChanged();
 
                         await new MessageDialog("SourcesViewModelSourceAddedMessageDialog".GetLocalized()).ShowAsync();
 
@@ -285,6 +291,7 @@ namespace MyRSSFeeds.ViewModels
             {
                 await SourceDataService.DeleteSourceAsync(SelectedSource);
                 Sources.Remove(SelectedSource);
+                RefreshSourcesCommand.OnCanExecuteChanged();
             }
             catch (Exception ex)
             {
@@ -300,7 +307,7 @@ namespace MyRSSFeeds.ViewModels
 
         private bool CanRefreshSources()
         {
-            return Sources.Count > 0;
+            return Sources.Count > 0 && !IsLoadingData;
         }
 
         /// <summary>
@@ -310,6 +317,21 @@ namespace MyRSSFeeds.ViewModels
         private async Task RefreshSources()
         {
             await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
+        }
+
+        /// <summary>
+        /// Stop loading online data from sources
+        /// </summary>
+        public RelayCommand CancelLoadingCommand { get; private set; }
+
+        private bool CanCancelLoading()
+        {
+            return IsLoadingData;
+        }
+
+        private void CancelLoading()
+        {
+            TokenSource.Cancel();
         }
 
         public RelayCommand ClearSelectedSourceCommand { get; private set; }
@@ -334,6 +356,7 @@ namespace MyRSSFeeds.ViewModels
             UpdateSourceCommand = new RelayCommand(async () => await UpdateSource(), CanUpdateSource);
             DeleteSourceCommand = new RelayCommand(async () => await DeleteSource(), CanDeleteSource);
             RefreshSourcesCommand = new RelayCommand(async () => await RefreshSources(), CanRefreshSources);
+            CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             ClearSelectedSourceCommand = new RelayCommand(ClearSelectedSource, CanClearSelectedSource);
             TokenSource = new CancellationTokenSource();
         }
@@ -360,6 +383,7 @@ namespace MyRSSFeeds.ViewModels
                 if (token.IsCancellationRequested)
                 {
                     IsLoadingData = false;
+                    TokenSource = new CancellationTokenSource();
                     return;
                 }
 
@@ -368,18 +392,21 @@ namespace MyRSSFeeds.ViewModels
                 progress.Report(++progressCount);
             }
 
+            RefreshSourcesCommand.OnCanExecuteChanged();
+
             foreach (var item in Sources)
             {
                 if (token.IsCancellationRequested)
                 {
                     IsLoadingData = false;
+                    TokenSource = new CancellationTokenSource();
                     return;
                 }
 
                 await item.CheckIfSourceWorking();
             }
 
-            RefreshSourcesCommand.OnCanExecuteChanged();
+            IsLoadingData = false;
         }
 
         /// <summary>

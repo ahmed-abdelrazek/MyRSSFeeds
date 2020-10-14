@@ -395,8 +395,6 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
-        public RelayCommand ClearFilterSourceCommand { get; private set; }
-
         private async Task Filter()
         {
             TokenSource.Cancel();
@@ -427,6 +425,14 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
+        /// <summary>
+        /// Clears selected source from the Filter ComboBox
+        /// </summary>
+        public RelayCommand ClearFilterSourceCommand { get; private set; }
+
+        /// <summary>
+        /// Reloads the Feeds
+        /// </summary>
         public RelayCommand RefreshFeedsCommand { get; private set; }
 
         private bool CanRefreshFeeds()
@@ -443,6 +449,9 @@ namespace MyRSSFeeds.ViewModels
             await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
         }
 
+        /// <summary>
+        /// Stop loading online data from sources
+        /// </summary>
         public RelayCommand CancelLoadingCommand { get; private set; }
 
         private bool CanCancelLoading()
@@ -450,14 +459,14 @@ namespace MyRSSFeeds.ViewModels
             return IsLoadingData;
         }
 
-        /// <summary>
-        /// Clear the Selected rss property from the list and retun the built-in browser to blank
-        /// </summary>
         private void CancelLoading()
         {
             TokenSource.Cancel();
         }
 
+        /// <summary>
+        /// Clear the Selected rss property from the list and retun the built-in browser to blank
+        /// </summary>
         public RelayCommand ClearSelectedRSSCommand { get; private set; }
 
         private bool CanClearSelectedRSS()
@@ -465,9 +474,6 @@ namespace MyRSSFeeds.ViewModels
             return SelectedRSS != null;
         }
 
-        /// <summary>
-        /// Clear the Selected rss property from the list and retun the built-in browser to blank
-        /// </summary>
         private void ClearSelectedRSS()
         {
             SelectedRSS = null;
@@ -483,6 +489,9 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
+        /// <summary>
+        /// Open the full post in app built-in browser
+        /// </summary>
         public RelayCommand OpenPostInAppCommand { get; private set; }
 
         private bool CanOpenPostInApp()
