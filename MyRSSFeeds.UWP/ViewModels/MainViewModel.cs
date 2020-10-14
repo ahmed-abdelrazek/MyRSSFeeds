@@ -108,7 +108,11 @@ namespace MyRSSFeeds.ViewModels
             }
             set
             {
-                Set(ref _isLoadingData, value);
+                Set(ref _isLoadingData, value, nameof(IsLoadingData), () =>
+                {
+                    RefreshFeedsCommand.OnCanExecuteChanged();
+                    CancelLoadingCommand.OnCanExecuteChanged();
+                });
             }
         }
 
@@ -423,7 +427,12 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
-        public ICommand RefreshFeedsCommand { get; private set; }
+        public RelayCommand RefreshFeedsCommand { get; private set; }
+
+        private bool CanRefreshFeeds()
+        {
+            return !IsLoadingData;
+        }
 
         /// <summary>
         /// Reloads the feed by calling LoadDataAsync()
@@ -432,6 +441,21 @@ namespace MyRSSFeeds.ViewModels
         private async Task RefreshFeeds()
         {
             await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
+        }
+
+        public RelayCommand CancelLoadingCommand { get; private set; }
+
+        private bool CanCancelLoading()
+        {
+            return IsLoadingData;
+        }
+
+        /// <summary>
+        /// Clear the Selected rss property from the list and retun the built-in browser to blank
+        /// </summary>
+        private void CancelLoading()
+        {
+            TokenSource.Cancel();
         }
 
         public RelayCommand ClearSelectedRSSCommand { get; private set; }
@@ -488,7 +512,8 @@ namespace MyRSSFeeds.ViewModels
             OpenInBrowserCommand = new RelayCommand(async () => await OpenInBrowser(), CanOpenInBrowser);
             MarkAsReadCommand = new RelayCommand(async () => await MarkAsRead(), CanMarkAsRead);
             ClearSelectedRSSCommand = new RelayCommand(ClearSelectedRSS, CanClearSelectedRSS);
-            RefreshFeedsCommand = new RelayCommand(async () => await RefreshFeeds());
+            RefreshFeedsCommand = new RelayCommand(async () => await RefreshFeeds(), CanRefreshFeeds);
+            CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             OpenPostInAppCommand = new RelayCommand(OpenPostInApp, CanOpenPostInApp);
         }
 
@@ -516,6 +541,7 @@ namespace MyRSSFeeds.ViewModels
             IsLoadingData = true;
             FilterSources.Clear();
             Feeds.Clear();
+            ProgressCurrent = 0;
             bool hasLoadedFeedNewItems = false;
 
             foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
@@ -528,7 +554,6 @@ namespace MyRSSFeeds.ViewModels
             var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
-            ProgressCurrent = 0;
             int progressCount = 0;
 
             foreach (var source in sourcesDataList)
@@ -538,6 +563,7 @@ namespace MyRSSFeeds.ViewModels
                 if (token.IsCancellationRequested)
                 {
                     IsLoadingData = false;
+                    TokenSource = new CancellationTokenSource();
                     return;
                 }
             }
@@ -553,6 +579,7 @@ namespace MyRSSFeeds.ViewModels
                 if (token.IsCancellationRequested)
                 {
                     IsLoadingData = false;
+                    TokenSource = new CancellationTokenSource();
                     return;
                 }
 
@@ -591,6 +618,7 @@ namespace MyRSSFeeds.ViewModels
                     if (token.IsCancellationRequested)
                     {
                         IsLoadingData = false;
+                        TokenSource = new CancellationTokenSource();
                         return;
                     }
 

@@ -402,4 +402,7 @@
   <data name="Settings_ImportSuccessfulMessageDialog" xml:space="preserve">
     <value>File {0} Imported</value>
   </data>
+  <data name="MainView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cancel loading Feeds</value>
+  </data>
 </root>
