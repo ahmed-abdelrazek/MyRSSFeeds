@@ -475,11 +475,11 @@ namespace MyRSSFeeds.ViewModels
             if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
             {
                 //dark
-                _webView.NavigateToString($"<html><head><title>blank</title><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body></body></html>");
+                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body></body></html>");
             }
             else
             {
-                _webView.NavigateToString($"<html><head><title>blank</title></head><body></body></html>");
+                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body></body></html>");
             }
         }
 
