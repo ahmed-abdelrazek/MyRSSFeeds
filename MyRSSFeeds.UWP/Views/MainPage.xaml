@@ -63,7 +63,11 @@
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
                         </Button>
                         <Button x:Uid="MainView_OpenFullPostButton" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.OpenPostInAppCommand}">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A0;" />
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A0;" RenderTransformOrigin="0.5,0.5">
+                                <FontIcon.RenderTransform>
+                                    <RotateTransform Angle="180" />
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
                         </Button>
                     </StackPanel>
                 </Grid>
