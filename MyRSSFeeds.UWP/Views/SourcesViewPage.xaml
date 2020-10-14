@@ -63,6 +63,9 @@
                     <Button x:Uid="SourcesView_RefreshButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.RefreshSourcesCommand}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
                     </Button>
+                    <Button x:Uid="SourcesView_CancelLoadingButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.CancelLoadingCommand}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D8;" />
+                    </Button>
                     <Button x:Uid="SourcesView_ClearSelectionButton" Style="{StaticResource ButtonRevealStyle}" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedSourceCommand}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
                     </Button>

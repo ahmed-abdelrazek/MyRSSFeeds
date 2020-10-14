@@ -57,6 +57,9 @@
                         <Button x:Uid="MainView_RefreshButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.RefreshFeedsCommand}">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
                         </Button>
+                        <Button x:Uid="MainView_CancelLoadingButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.CancelLoadingCommand}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D8;" />
+                        </Button>
                     </StackPanel >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button x:Uid="MainView_ClearSelectionButton" Style="{StaticResource ButtonRevealStyle}" Margin="1 0" CornerRadius="0" Command="{x:Bind ViewModel.ClearSelectedRSSCommand}">
