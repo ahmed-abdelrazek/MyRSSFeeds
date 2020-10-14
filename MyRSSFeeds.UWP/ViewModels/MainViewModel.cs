@@ -37,10 +37,6 @@ namespace MyRSSFeeds.ViewModels
             {
                 Set(ref _selectedRSS, value, nameof(SelectedRSS), () =>
                 {
-                    ClearSelectedRSSCommand.OnCanExecuteChanged();
-                    OpenInBrowserCommand.OnCanExecuteChanged();
-                    OpenPostInAppCommand.OnCanExecuteChanged();
-
                     if (_selectedRSS != null)
                     {
                         if (!_selectedRSS.IsRead)
@@ -77,6 +73,10 @@ namespace MyRSSFeeds.ViewModels
                             _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
                         }
                     }
+
+                    ClearSelectedRSSCommand.OnCanExecuteChanged();
+                    OpenInBrowserCommand.OnCanExecuteChanged();
+                    OpenPostInAppCommand.OnCanExecuteChanged();
                 });
             }
         }
@@ -477,6 +477,8 @@ namespace MyRSSFeeds.ViewModels
         private void ClearSelectedRSS()
         {
             SelectedRSS = null;
+            WebViewSource = new Uri(_defaultUrl);
+
             GetTheme();
             if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
             {
