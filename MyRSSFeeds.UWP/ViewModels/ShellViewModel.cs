@@ -1,4 +1,5 @@
-﻿using MyRSSFeeds.Helpers;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+using MyRSSFeeds.Helpers;
 using MyRSSFeeds.Services;
 using MyRSSFeeds.Views;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.System;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
@@ -64,6 +66,12 @@ namespace MyRSSFeeds.ViewModels
             _keyboardAccelerators.Add(_altLeftKeyboardAccelerator);
             _keyboardAccelerators.Add(_backKeyboardAccelerator);
             await Task.CompletedTask;
+
+            if (SystemInformation.IsFirstRun)
+            {
+                var messageDialog = new MessageDialog("WelcomeMessageForFirstRun".GetLocalized());
+                await messageDialog.ShowAsync();
+            }
         }
 
         private void OnItemInvoked(WinUI.NavigationViewItemInvokedEventArgs args)
