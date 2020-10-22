@@ -39,28 +39,15 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        private bool? _isWorking;
+        private bool _isWorking;
 
         [BsonIgnore]
-        public bool? IsWorking
+        public bool IsWorking
         {
             get { return _isWorking; }
             set
             {
                 Set(ref _isWorking, value);
-                IsWorkingColor = _isWorking;
-            }
-        }
-
-        private bool? _isWorkingColor;
-
-        [BsonIgnore]
-        public bool? IsWorkingColor
-        {
-            get { return _isWorkingColor; }
-            set
-            {
-                Set(ref _isWorkingColor, value);
             }
         }
 
@@ -69,10 +56,12 @@ namespace MyRSSFeeds.Core.Models
         public async Task CheckIfSourceWorking()
         {
             IsChecking = true;
+
             if (RssUrl != null)
             {
-                IsWorking = await SourceDataService.IsSourceWorkingAsync(RssUrl.ToString());
+                IsWorking = await SourceDataService.IsSourceWorkingAsync(RssUrl.AbsoluteUri);
             }
+
             IsChecking = false;
         }
     }

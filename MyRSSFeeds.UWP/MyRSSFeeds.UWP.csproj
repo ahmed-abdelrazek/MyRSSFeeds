@@ -17,9 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>
-    </PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>CD6E2784A269A2615A496CF1DF4F79CC75D53C74</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>MyFeeds_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>6E044AB5AA781BFD63541B22077A762CA34BF9D9</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -171,10 +170,7 @@
     <Compile Include="Behaviors\NavigationViewHeaderBehavior.cs" />
     <Compile Include="Behaviors\NavigationViewHeaderMode.cs" />
     <Compile Include="Converters\BoolToFontWeightConverter.cs" />
-    <Compile Include="Converters\BoolToForegroundWorkingConverter.cs" />
-    <Compile Include="Converters\BoolToGlyphWorkingConverter.cs" />
-    <Compile Include="Converters\DateTimeFormatConverter.cs" />
-    <Compile Include="Converters\NullBoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\ReverseSourceBoolToVisibilityConverter.cs" />
     <Compile Include="Helpers\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\IBackNavigationHandler.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
@@ -350,9 +346,7 @@
       <Name>MyRSSFeeds.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TemplateSelectors\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

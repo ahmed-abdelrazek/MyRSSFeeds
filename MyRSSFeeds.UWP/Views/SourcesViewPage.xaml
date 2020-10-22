@@ -12,11 +12,7 @@
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
-        <toolkitConverters:BoolToVisibilityConverter x:Name="ReverseBoolToVisibility" TrueValue="Collapsed" FalseValue="Visible" />
         <toolkitConverters:BoolToVisibilityConverter x:Name="BoolToVisibility" TrueValue="Visible" FalseValue="Collapsed" />
-        <converters:DateTimeFormatConverter x:Name="dateTimeFormatConverter" />
-        <converters:BoolToGlyphWorkingConverter x:Name="BoolToGlyphWorkingConverter" />
-        <converters:BoolToForegroundWorkingConverter x:Name="BoolToForegroundWorkingConverter" />
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
@@ -80,10 +76,14 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="coreModel:Source">
                         <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind SiteTitle}">
+                            <Grid.Resources>
+                                <converters:ReverseSourceBoolToVisibilityConverter x:Name="ReverseSourceBoolToVisibility" ConverterParameter="{x:Bind IsChecking}" />
+                            </Grid.Resources>
                             <StackPanel Margin="5">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="Title" Text="{x:Bind SiteTitle}" Style="{StaticResource TitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{x:Bind IsWorkingColor, Mode=OneWay, Converter={StaticResource BoolToForegroundWorkingConverter}}" Glyph="{x:Bind IsWorking, Mode=OneWay, Converter={StaticResource BoolToGlyphWorkingConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{StaticResource OkMediumSeaGreen}" Glyph="&#xE73E;" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisibility}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{StaticResource ErrorDarkRed}" Glyph="&#xE711;" Visibility="{Binding IsWorking, Converter={StaticResource ReverseSourceBoolToVisibility}, ConverterParameter={Binding Tag}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <muxc:ProgressRing IsActive="{x:Bind IsChecking, Mode=OneWay}" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <TextBlock x:Name="Url" Text="{x:Bind BaseUrl}" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
