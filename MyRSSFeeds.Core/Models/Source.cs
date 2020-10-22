@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using MyRSSFeeds.Core.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace MyRSSFeeds.Core.Models
 
         private bool _isChecking;
 
+        [JsonIgnore]
         [BsonIgnore]
         public bool IsChecking
         {
@@ -41,6 +43,7 @@ namespace MyRSSFeeds.Core.Models
 
         private bool _isWorking;
 
+        [JsonIgnore]
         [BsonIgnore]
         public bool IsWorking
         {
@@ -51,6 +54,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
+        [JsonIgnore]
         public virtual ICollection<RSS> RSSs { get; set; }
 
         public async Task CheckIfSourceWorking()
