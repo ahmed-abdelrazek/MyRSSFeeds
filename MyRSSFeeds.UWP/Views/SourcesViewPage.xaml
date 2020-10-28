@@ -24,9 +24,11 @@
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel>
-                                    <TextBox x:Uid="SourcesView_AddSource" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MinWidth="150" MaxWidth="300"/>
-                                    <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                                    <Button x:Uid="SourcesView_AddSourceDoneButton" Command="{x:Bind ViewModel.AddNewSourceCommand}"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Uid="SourcesView_AddSource" Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" MinWidth="150" MaxWidth="300"/>
+                                        <muxc:ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Margin="5"/>
+                                    </StackPanel>
+                                    <Button x:Uid="SourcesView_AddSourceDoneButton" Command="{x:Bind ViewModel.AddNewSourceCommand}" Margin="5"/>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
