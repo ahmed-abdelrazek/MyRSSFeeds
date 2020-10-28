@@ -555,6 +555,9 @@ namespace MyRSSFeeds.ViewModels
             ProgressCurrent = 0;
             bool hasLoadedFeedNewItems = false;
 
+            // Shows the user what's new in this version
+            await WhatsNewDisplayService.ShowIfAppropriateAsync();
+
             foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
                 Feeds.Add(rss);
