@@ -29,8 +29,7 @@ namespace MyRSSFeeds.Core.Helpers
         public static async Task<string> GetFeedAsStringAsync(string url)
         {
             HttpResponseMessage response = await HttpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            return await ReadFeedAsString(response);
         }
 
         /// <summary>
@@ -41,8 +40,14 @@ namespace MyRSSFeeds.Core.Helpers
         public static async Task<string> GetFeedAsStringAsync(Uri url)
         {
             HttpResponseMessage response = await HttpClient.GetAsync(url);
+            return await ReadFeedAsString(response);
+        }
+
+        private static async Task<string> ReadFeedAsString(HttpResponseMessage response)
+        {
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            var feedXML = await response.Content.ReadAsStringAsync();
+            return feedXML.TrimStart();
         }
     }
 }

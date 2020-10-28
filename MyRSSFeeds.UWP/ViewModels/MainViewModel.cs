@@ -613,8 +613,7 @@ namespace MyRSSFeeds.ViewModels
                     }
                     else
                     {
-                        var xmlFeed = feedString.TrimStart();
-                        feed.Load(xmlFeed);
+                        feed.Load(feedString);
                     }
                 }
                 catch (Exception ex)

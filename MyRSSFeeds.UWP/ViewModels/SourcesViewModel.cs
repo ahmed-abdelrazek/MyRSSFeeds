@@ -174,9 +174,8 @@ namespace MyRSSFeeds.ViewModels
                     try
                     {
                         var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl);
-                        var xmlSource = feedString.TrimStart();
 
-                        var source = await SourceDataService.GetSourceInfoFromRssAsync(xmlSource, trimedUrl);
+                        var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
                         if (source == null)
                         {
                             await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
