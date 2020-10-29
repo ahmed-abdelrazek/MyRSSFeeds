@@ -297,6 +297,7 @@ namespace MyRSSFeeds.ViewModels
             {
                 await SourceDataService.DeleteSourceAsync(SelectedSource);
                 Sources.Remove(SelectedSource);
+                ClearPopups();
                 RefreshSourcesCommand.OnCanExecuteChanged();
             }
             catch (Exception ex)
