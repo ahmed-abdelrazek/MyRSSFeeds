@@ -191,7 +191,14 @@ namespace MyRSSFeeds.ViewModels
                     }
                     catch (HttpRequestException ex)
                     {
-                        await new MessageDialog("HttpRequestExceptionMessageDialog".GetLocalized()).ShowAsync();
+                        if (ex.Message.StartsWith("Response status code does not indicate success: 403"))
+                        {
+                            await new MessageDialog("HttpRequestException403MessageDialog".GetLocalized()).ShowAsync();
+                        }
+                        else
+                        {
+                            await new MessageDialog("HttpRequestExceptionMessageDialog".GetLocalized()).ShowAsync();
+                        }
                         Debug.WriteLine(ex);
                     }
                     catch (XmlException ex)

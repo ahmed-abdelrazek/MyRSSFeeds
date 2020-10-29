@@ -170,7 +170,7 @@
     <comment>Open in browser button automation name property for WebView</comment>
   </data>
   <data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Open Post in Your Default Browser</value>
+    <value>Open Post in Your Default Browser.</value>
     <comment>Open in browser button automation tooltip property for WebView</comment>
   </data>
   <data name="Shell_SourcesView.Content" xml:space="preserve">
@@ -231,7 +231,7 @@ Tweaks for Exported and Imported sources</value>
     <comment>What's new prompt message body</comment>
   </data>
   <data name="WhatsNewDialog.Title" xml:space="preserve">
-    <value>What's new in this version</value>
+    <value>What's new in this version?</value>
     <comment>What's new prompt message title</comment>
   </data>
   <data name="WhatsNewDialog.PrimaryButtonText" xml:space="preserve">
@@ -408,5 +408,8 @@ Tweaks for Exported and Imported sources</value>
   </data>
   <data name="SourcesView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cancel Checking on Sources</value>
+  </data>
+  <data name="HttpRequestException403MessageDialog" xml:space="preserve">
+    <value>The server understood the request, but is refusing to authorise it. Try using different "User Agent".</value>
   </data>
 </root>
