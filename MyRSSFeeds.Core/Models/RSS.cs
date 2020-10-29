@@ -38,7 +38,7 @@ namespace MyRSSFeeds.Core.Models
         {
             get
             {
-                if (Uri.IsWellFormedUriString(Guid, UriKind.Absolute))
+                if (Uri.IsWellFormedUriString(Guid, UriKind.Absolute) && (Guid.StartsWith("http://") || Guid.StartsWith("https://")))
                 {
                     return new Uri(Guid);
                 }
