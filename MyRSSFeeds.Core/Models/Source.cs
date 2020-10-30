@@ -56,9 +56,47 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public DateTimeOffset LastBuildDate { get; set; }
+        private DateTimeOffset _lastBuildDate;
 
-        public DateTime LocalLastBuildDate { get => LastBuildDate.LocalDateTime; }
+        public DateTimeOffset LastBuildDate
+        {
+            get => _lastBuildDate;
+            set
+            {
+                if (_lastBuildDate != value)
+                {
+                    _lastBuildDate = value;
+                    LocalLastBuildDate = _lastBuildDate.LocalDateTime.ToString();
+                }
+            }
+        }
+
+
+        private string _localLastBuildDate;
+
+        [JsonIgnore]
+        [BsonIgnore]
+        public string LocalLastBuildDate
+        {
+            get => _localLastBuildDate;
+            set
+            {
+                Set(ref _localLastBuildDate, value);
+            }
+        }
+
+        private int _currentRssItemsCount;
+
+        [JsonIgnore]
+        [BsonIgnore]
+        public int CurrentRssItemsCount
+        {
+            get => _currentRssItemsCount;
+            set
+            {
+                Set(ref _currentRssItemsCount, value);
+            }
+        }
 
         public string Language { get; set; }
 
