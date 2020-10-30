@@ -12,11 +12,11 @@ You can get the app from Microsoft Store [website](https://www.microsoft.com/sto
 
 #### Screenshots
 Dark Theme
-![Dark Theme Home/Feeds page with data loaded](images/Screenshot2020-10-14070933.png)
-![Dark Theme Home/Feeds page with post selected](images/Screenshot2020-10-14071012.png)
-![Dark Theme Home/Feeds page with post opened in built-in browser](images/Screenshot2020-10-14072104.png)
-![Dark Theme Sources page with a source checking if works or not](images/Screenshot2020-10-14072131.png)
-![Dark Theme Settings page](images/Screenshot2020-10-14072356.png)
+![Dark Theme Home/Feeds page with data loaded](images/01.png)
+![Dark Theme Home/Feeds page with post selected](images/02.png)
+![Dark Theme Home/Feeds page with post opened in built-in browser](images/03.png)
+![Dark Theme Sources page with a source checking if works or not](images/04.png)
+![Dark Theme Settings page](images/05.png)
 Light Theme
-![Light Theme Home/Feed page with data loaded and a post selected](images/Screenshot2020-10-14072532.png)
-![Light Theme Sources page with a source checked as working](images/Screenshot2020-10-14072603.png)
+![Light Theme Home/Feed page with data loaded and a post selected](images/06.png)
+![Light Theme Sources page with a source checked as working](images/07.png)
