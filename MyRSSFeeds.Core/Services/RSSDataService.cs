@@ -219,7 +219,21 @@ namespace MyRSSFeeds.Core.Services
             return await Task.Run(() =>
             {
                 using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                return db.GetCollection<RSS>(LiteDbContext.Sources).Delete(rss.Id);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Delete(rss.Id);
+            });
+        }
+
+        /// <summary>
+        /// Delete number of RSSs from the database
+        /// </summary>
+        /// <param name="predicate">the RSS where statement</param>
+        /// <returns>number of deleted items</returns>
+        public static async Task<int> DeleteManyFeedsAsync(Expression<Func<RSS, bool>> predicate)
+        {
+            return await Task.Run(() =>
+            {
+                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).DeleteMany(predicate);
             });
         }
     }

@@ -295,6 +295,24 @@ namespace MyRSSFeeds.ViewModels
 
             try
             {
+                MessageDialog showDialog = new MessageDialog("SourcesViewModelSourceDeleteAllRSSMessageDialog".GetLocalized());
+                showDialog.Commands.Add(new UICommand("Yes".GetLocalized())
+                {
+                    Id = 0
+                });
+                showDialog.Commands.Add(new UICommand("No".GetLocalized())
+                {
+                    Id = 1
+                });
+                showDialog.DefaultCommandIndex = 0;
+                showDialog.CancelCommandIndex = 1;
+                var result = await showDialog.ShowAsync();
+
+                if ((int)result.Id == 0)
+                {
+                    await RSSDataService.DeleteManyFeedsAsync(x => x.PostSource.Id == SelectedSource.Id);
+                }
+
                 await SourceDataService.DeleteSourceAsync(SelectedSource);
                 Sources.Remove(SelectedSource);
                 ClearPopups();

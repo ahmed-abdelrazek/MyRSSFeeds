@@ -412,4 +412,13 @@ Tweaks for Exported and Imported sources</value>
   <data name="HttpRequestException403MessageDialog" xml:space="preserve">
     <value>The server understood the request, but is refusing to authorise it. Try using different "User Agent".</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SourcesViewModelSourceDeleteAllRSSMessageDialog" xml:space="preserve">
+    <value>Do you want to delete all the feeds for that source also?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>
