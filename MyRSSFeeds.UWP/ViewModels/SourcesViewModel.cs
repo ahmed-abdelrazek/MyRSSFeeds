@@ -431,7 +431,10 @@ namespace MyRSSFeeds.ViewModels
                 try
                 {
                     item.IsChecking = true;
-                    item.IsWorking = await SourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                    var task = await SourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                    item.IsWorking = task.Item1;
+                    item.LastBuildDate = task.Item2;
+                    item.CurrentRssItemsCount = task.Item3;
                 }
                 catch (HttpRequestException ex)
                 {

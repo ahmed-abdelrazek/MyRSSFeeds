@@ -1,15 +1,14 @@
 ﻿<Page x:Name="SourcesView"
     x:Class="MyRSSFeeds.Views.SourcesViewPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:toolkitConverters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:converters="using:MyRSSFeeds.Converters"
-    xmlns:coreModel="using:MyRSSFeeds.Core.Models"
-    Style="{StaticResource PageStyle}"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+      xmlns:toolkitConverters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:coreModel="using:MyRSSFeeds.Core.Models"
+      Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
         <toolkitConverters:BoolToVisibilityConverter x:Name="BoolToVisibility" TrueValue="Visible" FalseValue="Collapsed" />
@@ -88,8 +87,11 @@
                                 <TextBlock x:Name="Url" Text="{x:Bind BaseUrl}" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
                                 <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{Binding IsShowDescription, Converter={StaticResource BoolToVisibility}}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalAlignment="Left"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Last Website Update:" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
-                                    <TextBlock Text="{x:Bind LocalLastBuildDate}" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
+                                    <TextBlock Text="Last Update Date:" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
+                                    <TextBlock Text="{x:Bind LocalLastBuildDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
+                                    <TextBlock Text=" - " Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="10,0,20,6" LineHeight="20" />
+                                    <TextBlock Text="Last Item Count:" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
+                                    <TextBlock Text="{x:Bind CurrentRssItemsCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ErrorMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="{ThemeResource Foreground100Crimson}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{Binding IsError, Converter={StaticResource BoolToVisibility}}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalAlignment="Left"/>
                             </StackPanel>

@@ -69,18 +69,46 @@ namespace MyRSSFeeds.Core.Services
         }
 
         /// <summary>
-        /// checks if a source works or not
+        /// checks if a source works with last updated time and rss items count
         /// </summary>
         /// <param name="source">string for source rss url</param>
-        /// <returns>Task true if works</returns>
-        public static async Task<bool> IsSourceWorkingAsync(string source)
+        /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
+        public static async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
             var feedString = await RssRequest.GetFeedAsStringAsync(source);
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
             {
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                return true;
+                var lastUpdatedTime = feed.LastUpdatedTime;
+                var rssItemsCount = feed.Items.Count();
+
+                if (lastUpdatedTime.Year < 2020)
+                {
+                    if (rssItemsCount > 0)
+                    {
+                        var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
+
+                        if (latestDateItem == null || lastUpdatedTime.Year < 2020)
+                        {
+                            latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
+                            lastUpdatedTime = latestDateItem.LastUpdatedTime;
+                        }
+                        else
+                        {
+                            lastUpdatedTime = latestDateItem.PublishDate;
+                        }
+                        if (lastUpdatedTime.Year < 2020)
+                        {
+                            lastUpdatedTime = DateTimeOffset.Now;
+                        }
+                    }
+                    else
+                    {
+                        lastUpdatedTime = new DateTimeOffset(2020, 10, 30, 20, 00, 00, new TimeSpan(2, 0, 0));
+                    }
+                }
+                return (true, lastUpdatedTime, rssItemsCount);
             }
         }
 
