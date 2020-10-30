@@ -251,7 +251,7 @@ Tweaks for Exported and Imported sources</value>
     <value>Check your internet connection.</value>
   </data>
   <data name="HttpRequestExceptionMessageDialog" xml:space="preserve">
-    <value>Please check your internet connection and make sure that the app can connect to it.</value>
+    <value>Please check your internet connection and make sure the app can connect to it also make sure the website and its rss feed url works.</value>
   </data>
   <data name="MainViewModelNoSummaryFound" xml:space="preserve">
     <value>No Summary Found.</value>
@@ -420,5 +420,8 @@ Tweaks for Exported and Imported sources</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="SourcesViewModelExceptionMessageDialog" xml:space="preserve">
+    <value>An error occurred</value>
   </data>
 </root>

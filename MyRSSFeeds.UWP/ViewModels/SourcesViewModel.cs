@@ -428,7 +428,46 @@ namespace MyRSSFeeds.ViewModels
                     return;
                 }
 
-                await item.CheckIfSourceWorking();
+                try
+                {
+                    item.IsChecking = true;
+                    item.IsWorking = await SourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                }
+                catch (HttpRequestException ex)
+                {
+                    if (ex.Message.StartsWith("Response status code does not indicate success: 403"))
+                    {
+                        item.ErrorMessage = "HttpRequestException403MessageDialog".GetLocalized();
+                    }
+                    else
+                    {
+                        item.ErrorMessage = "HttpRequestExceptionMessageDialog".GetLocalized();
+                    }
+                    Debug.WriteLine(ex);
+                    item.IsError = true;
+                }
+                catch (XmlException ex)
+                {
+                    item.ErrorMessage = "XmlExceptionMessageDialog".GetLocalized();
+                    Debug.WriteLine(ex);
+                    item.IsError = true;
+                }
+                catch (ArgumentNullException ex)
+                {
+                    item.ErrorMessage = "SourcesViewModelSourceUrlNullExceptionMessageDialog".GetLocalized();
+                    Debug.WriteLine(ex);
+                    item.IsError = true;
+                }
+                catch (Exception ex)
+                {
+                    item.ErrorMessage = "SourcesViewModelExceptionMessageDialog".GetLocalized();
+                    Debug.WriteLine(ex);
+                    item.IsError = true;
+                }
+                finally
+                {
+                    item.IsChecking = false;
+                }
             }
 
             IsLoadingData = false;

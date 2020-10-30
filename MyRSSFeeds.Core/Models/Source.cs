@@ -1,9 +1,7 @@
 ﻿using LiteDB;
-using MyRSSFeeds.Core.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MyRSSFeeds.Core.Models
 {
@@ -22,9 +20,45 @@ namespace MyRSSFeeds.Core.Models
 
         public Uri RssUrl { get; set; }
 
-        public string Description { get; set; }
+        private string _description;
+
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+
+                    if (string.IsNullOrWhiteSpace(_description))
+                    {
+                        IsShowDescription = false;
+                    }
+                    else
+                    {
+                        IsShowDescription = true;
+                    }
+                }
+            }
+        }
+
+        private bool _isShowDescription;
+
+        [JsonIgnore]
+        [BsonIgnore]
+        public bool IsShowDescription
+        {
+            get { return _isShowDescription; }
+            set
+            {
+                Set(ref _isShowDescription, value);
+            }
+        }
 
         public DateTimeOffset LastBuildDate { get; set; }
+
+        public DateTime LocalLastBuildDate { get => LastBuildDate.LocalDateTime; }
 
         public string Language { get; set; }
 
@@ -54,19 +88,33 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
+        private bool _isError;
+
+        [JsonIgnore]
+        [BsonIgnore]
+        public bool IsError
+        {
+            get { return _isError; }
+            set
+            {
+                Set(ref _isError, value);
+            }
+        }
+
+        private string _errorMessage;
+
+        [JsonIgnore]
+        [BsonIgnore]
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set
+            {
+                Set(ref _errorMessage, value);
+            }
+        }
+
         [JsonIgnore]
         public virtual ICollection<RSS> RSSs { get; set; }
-
-        public async Task CheckIfSourceWorking()
-        {
-            IsChecking = true;
-
-            if (RssUrl != null)
-            {
-                IsWorking = await SourceDataService.IsSourceWorkingAsync(RssUrl.AbsoluteUri);
-            }
-
-            IsChecking = false;
-        }
     }
 }

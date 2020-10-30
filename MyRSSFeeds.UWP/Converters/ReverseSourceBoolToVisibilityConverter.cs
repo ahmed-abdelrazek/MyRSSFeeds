@@ -6,22 +6,22 @@ namespace MyRSSFeeds.Converters
 {
     public class ReverseSourceBoolToVisibilityConverter : DependencyObject, IValueConverter
     {
-        public static readonly DependencyProperty ConverterParameterProperty =
-            DependencyProperty.RegisterAttached("ConverterParameter",
+        public static readonly DependencyProperty IsCheckingProperty =
+            DependencyProperty.RegisterAttached("IsChecking",
                 typeof(bool), typeof(ReverseSourceBoolToVisibilityConverter), new PropertyMetadata(false));
 
-        public static bool GetConverterParameter(DependencyObject obj) => (bool)obj.GetValue(ConverterParameterProperty);
-        public static void SetConverterParameter(DependencyObject obj, bool value) => obj.SetValue(ConverterParameterProperty, value);
+        public static bool GetIsChecking(DependencyObject obj) => (bool)obj.GetValue(IsCheckingProperty);
+        public static void SetIsChecking(DependencyObject obj, bool value) => obj.SetValue(IsCheckingProperty, value);
 
-        public object ConverterParameter
+        public object IsChecking
         {
-            get { return GetValue(ConverterParameterProperty); }
-            set { SetValue(ConverterParameterProperty, value); }
+            get { return GetValue(IsCheckingProperty); }
+            set { SetValue(IsCheckingProperty, value); }
         }
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var isChecking = (bool)ConverterParameter;
+            var isChecking = (bool)IsChecking;
             var isWorking = (bool)value;
 
             if (isChecking)

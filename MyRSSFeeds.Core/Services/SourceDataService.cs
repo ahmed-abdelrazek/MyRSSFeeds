@@ -4,7 +4,6 @@ using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -76,24 +75,13 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task true if works</returns>
         public static async Task<bool> IsSourceWorkingAsync(string source)
         {
-            if (!string.IsNullOrEmpty(source))
-            {
-                try
-                {
-                    var feedString = await RssRequest.GetFeedAsStringAsync(source);
+            var feedString = await RssRequest.GetFeedAsStringAsync(source);
 
-                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
-                    {
-                        SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                        return true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
+            {
+                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+                return true;
             }
-            return false;
         }
 
         /// <summary>

@@ -79,17 +79,22 @@
                     <DataTemplate x:DataType="coreModel:Source">
                         <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind SiteTitle}">
                             <Grid.Resources>
-                                <converters:ReverseSourceBoolToVisibilityConverter x:Name="ReverseSourceBoolToVisibility" ConverterParameter="{x:Bind IsChecking}" />
+                                <converters:ReverseSourceBoolToVisibilityConverter x:Name="ReverseSourceBoolToVisibility" IsChecking="{x:Bind IsChecking}" />
                             </Grid.Resources>
                             <StackPanel Margin="5">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Name="Title" Text="{x:Bind SiteTitle}" Style="{StaticResource TitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{StaticResource OkMediumSeaGreen}" Glyph="&#xE73E;" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisibility}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{StaticResource ErrorDarkRed}" Glyph="&#xE711;" Visibility="{Binding IsWorking, Converter={StaticResource ReverseSourceBoolToVisibility}, ConverterParameter={Binding Tag}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="Title" Text="{x:Bind SiteTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{ThemeResource OkMediumSeaGreen}" Glyph="&#xE73E;" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisibility}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Margin="0,0,5,6" Foreground="{ThemeResource ErrorDarkRed}" Glyph="&#xE711;" Visibility="{Binding IsError, Converter={StaticResource BoolToVisibility}}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <muxc:ProgressRing IsActive="{x:Bind IsChecking, Mode=OneWay}" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <TextBlock x:Name="Url" Text="{x:Bind BaseUrl}" Style="{StaticResource SubtitleTextBlockStyle}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
-                                <TextBlock Text="{x:Bind Description}" Foreground="{StaticResource SystemChromeDisabledLowColor}" Style="{StaticResource BodyTextBlockStyle}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{Binding IsShowDescription, Converter={StaticResource BoolToVisibility}}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalAlignment="Left"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Last Website Update:" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,5,6" LineHeight="20" />
+                                    <TextBlock Text="{x:Bind LocalLastBuildDate}" Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ErrorMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="{ThemeResource Foreground100Crimson}" Style="{StaticResource BodyTextBlockStyle}" Visibility="{Binding IsError, Converter={StaticResource BoolToVisibility}}" MinWidth="150" MaxWidth="800" TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalAlignment="Left"/>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
