@@ -563,7 +563,7 @@ namespace MyRSSFeeds.ViewModels
                 Feeds.Add(rss);
             }
 
-            SyndicationFeed feed = new SyndicationFeed();
+            SyndicationFeed feed = null;
 
             var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
 
@@ -590,6 +590,8 @@ namespace MyRSSFeeds.ViewModels
 
             foreach (var sourceItem in FilterSources)
             {
+                bool isFirstItemInFeed = true;
+
                 if (token.IsCancellationRequested)
                 {
                     IsLoadingData = false;
@@ -609,6 +611,7 @@ namespace MyRSSFeeds.ViewModels
                 try
                 {
                     var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl);
+                    feed = new SyndicationFeed();
 
                     if (string.IsNullOrWhiteSpace(feedString))
                     {
@@ -657,6 +660,10 @@ namespace MyRSSFeeds.ViewModels
                             itemNewUri = syndicationItem.Links.FirstOrDefault().Uri;
                         }
                     }
+                    if (string.IsNullOrWhiteSpace(syndicationItem.Id))
+                    {
+                        syndicationItem.Id = itemNewUri.ToString();
+                    }
 
                     var rss = new RSS
                     {
@@ -684,11 +691,15 @@ namespace MyRSSFeeds.ViewModels
                         var newRss = await RSSDataService.AddNewFeedAsync(rss);
                         Feeds.Add(newRss);
                         hasLoadedFeedNewItems = true;
+
+                        // Add first item in each source feed to Windows Live Tiles
+                        if (isFirstItemInFeed)
+                        {
+                            Singleton<LiveTileService>.Instance.SampleUpdate(newRss.PostSource.SiteTitle, ShortenText(newRss.PostTitle, 80), ShortenText(newRss.Description, 95));
+                        }
+                        isFirstItemInFeed = false;
                     }
                 }
-
-                //shorten the text for windows 10 Live Tile
-                Singleton<LiveTileService>.Instance.SampleUpdate(feed.Title.Text, ShortenText(feed.Items.FirstOrDefault()?.Title.Text, 80), ShortenText(feed.Items.FirstOrDefault()?.Summary.Text, 95));
             }
 
             if (hasLoadedFeedNewItems)

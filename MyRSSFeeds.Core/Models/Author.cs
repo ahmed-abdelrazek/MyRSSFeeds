@@ -27,11 +27,19 @@ namespace MyRSSFeeds.Core.Models
         }
 
         [BsonIgnore]
-        public string SendEmail
+        public Uri SendEmail
         {
             get
             {
-                return $"mailto:{Email}";
+                var isValid = Uri.TryCreate($"mailto:{Email}", UriKind.RelativeOrAbsolute, out Uri outUri);
+                if (isValid)
+                {
+                    return outUri;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

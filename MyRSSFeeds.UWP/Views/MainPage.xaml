@@ -83,7 +83,7 @@
                           BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="coreModel:RSS">
-                            <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Guid}">
+                            <Grid Margin="0,12,0,12">
                                 <StackPanel Margin="5">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                         <TextBlock x:Name="Source" Text="{x:Bind PostSource.SiteTitle}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,0" LineHeight="18" />
@@ -92,7 +92,7 @@
                                     <TextBlock x:Name="Title" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20" FontWeight="{x:Bind Path=IsRead, Mode=TwoWay, Converter={StaticResource BoolToFontWeightConverter}, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
                                     <StackPanel Orientation="Horizontal">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEE56;" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" />
-                                        <ListView ItemsSource="{x:Bind Authors, Mode=OneWay}" Padding="0,-5,0,0" MaxHeight="25" MaxWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" Margin="5,0,5,0">
+                                        <ListView ItemsSource="{x:Bind Authors, Mode=OneWay}" Padding="0,-5,0,0" MaxHeight="25" MaxWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" Margin="-8,0,5,5">
                                             <ListView.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <VirtualizingStackPanel Orientation="Horizontal" />
@@ -187,7 +187,7 @@
                                                 </VisualState>
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
-                                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        <ContentPresenter x:Name="ContentPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                     </Grid>
                                 </ControlTemplate>
                             </Setter.Value>
