@@ -558,6 +558,9 @@ namespace MyRSSFeeds.ViewModels
             // Shows the user what's new in this version
             await WhatsNewDisplayService.ShowIfAppropriateAsync();
 
+            // Set Httpclient userAgent to the user selected one
+            await RssRequest.SetCustomUserAgentAsync();
+
             foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
                 Feeds.Add(rss);

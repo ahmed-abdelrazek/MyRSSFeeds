@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,16 +10,13 @@ namespace MyRSSFeeds.Core.Helpers
     /// </summary>
     public class RssRequest
     {
-        // MyRSSFeeds/1.0
-        // Microsoft provided one "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)"
-        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.0";
+        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.1 (Windows NT 10.0; X64)";
 
-        private static readonly HttpClient HttpClient;
+        private static readonly HttpClient httpClient;
 
         static RssRequest()
         {
-            HttpClient = new HttpClient();
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", BrowserUserAgent);
+            httpClient = new HttpClient();
         }
 
         /// <summary>
@@ -28,7 +26,8 @@ namespace MyRSSFeeds.Core.Helpers
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
         public static async Task<string> GetFeedAsStringAsync(string url)
         {
-            HttpResponseMessage response = await HttpClient.GetAsync(url);
+            AddHttpClientHeaders();
+            HttpResponseMessage response = await httpClient.GetAsync(url);
             return await ReadFeedAsString(response);
         }
 
@@ -39,8 +38,26 @@ namespace MyRSSFeeds.Core.Helpers
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
         public static async Task<string> GetFeedAsStringAsync(Uri url)
         {
-            HttpResponseMessage response = await HttpClient.GetAsync(url);
+            AddHttpClientHeaders();
+            HttpResponseMessage response = await httpClient.GetAsync(url);
             return await ReadFeedAsString(response);
+        }
+
+        public static async Task SetCustomUserAgentAsync()
+        {
+            var agents = await Services.UserAgentService.GetAgentDataAsync(x => x.IsUsed);
+            var CurrentAgent = agents.FirstOrDefault();
+            if (CurrentAgent != null)
+            {
+                BrowserUserAgent = CurrentAgent.AgentString;
+            }
+        }
+
+        private static void AddHttpClientHeaders()
+        {
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/xml");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", BrowserUserAgent);
         }
 
         private static async Task<string> ReadFeedAsString(HttpResponseMessage response)
