@@ -7,6 +7,8 @@ Simple, Light and Local UWP Rss reader that doesn't required any logins or have 
 
 The app runs on windows 10 1903 or higher
 
+[![Build Status](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_apis/build/status/ahmedflix25.MyRSSFeeds?branchName=master)](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_build/latest?definitionId=2&branchName=master)
+
 #### Download
 You can get the app from Microsoft Store [website](https://www.microsoft.com/store/apps/9N24N9195ZM1) or [the app](ms-windows-store://pdp/?productid=9N24N9195ZM1)
 
