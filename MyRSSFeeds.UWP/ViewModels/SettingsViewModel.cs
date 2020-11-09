@@ -16,6 +16,9 @@ namespace MyRSSFeeds.ViewModels
     // TODO WTS: Add other settings as necessary. For help see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/pages/settings.md
     public class SettingsViewModel : Observable
     {
+
+        public bool IsLoaded { get; set; }
+
         private int _feedsLimit;
 
         public int FeedsLimit
@@ -23,11 +26,10 @@ namespace MyRSSFeeds.ViewModels
             get => _feedsLimit;
             set
             {
-                if (_feedsLimit != value)
+                Set(ref _feedsLimit, value, nameof(FeedsLimit), () =>
                 {
                     ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", value).ConfigureAwait(false);
-                }
-                Set(ref _feedsLimit, value);
+                });
             }
         }
 
@@ -195,7 +197,7 @@ namespace MyRSSFeeds.ViewModels
         {
             FeedsLimit = await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit");
             VersionDescription = GetVersionDescription();
-            await Task.CompletedTask;
+            IsLoaded = true;
         }
 
         private string GetVersionDescription()

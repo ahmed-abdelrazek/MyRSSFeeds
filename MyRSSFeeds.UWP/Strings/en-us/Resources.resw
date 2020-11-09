@@ -238,7 +238,7 @@ Fix some bugs that caused the app to crush on startup or while loading data</val
     <value>Ok</value>
     <comment>What's new prompt message primary button text</comment>
   </data>
-  <data name="Settings_FeedCountLimitNo.Text" xml:space="preserve">
+  <data name="Settings_FeedCountLimitNo.Header" xml:space="preserve">
     <value>Number of Feeds to show in the List</value>
   </data>
   <data name="Settings_FeedCountLimitNote.Text" xml:space="preserve">
