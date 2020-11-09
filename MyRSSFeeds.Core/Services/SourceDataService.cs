@@ -75,7 +75,7 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
         public static async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
-            var feedString = await RssRequest.GetFeedAsStringAsync(source);
+            var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
             {

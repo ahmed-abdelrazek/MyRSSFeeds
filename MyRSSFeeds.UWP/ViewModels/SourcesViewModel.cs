@@ -173,7 +173,7 @@ namespace MyRSSFeeds.ViewModels
                 {
                     try
                     {
-                        var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl);
+                        var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
 
                         var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
                         if (source == null)
@@ -435,6 +435,9 @@ namespace MyRSSFeeds.ViewModels
                     item.IsWorking = task.Item1;
                     item.LastBuildDate = task.Item2;
                     item.CurrentRssItemsCount = task.Item3;
+
+                    // Saves latest build date and rss items count to source
+                    await SourceDataService.UpdateSourceAsync(item);
                 }
                 catch (HttpRequestException ex)
                 {

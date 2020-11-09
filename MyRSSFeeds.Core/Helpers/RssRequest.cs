@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyRSSFeeds.Core.Helpers
@@ -24,10 +25,10 @@ namespace MyRSSFeeds.Core.Helpers
         /// </summary>
         /// <param name="url">Vaild url as string</param>
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
-        public static async Task<string> GetFeedAsStringAsync(string url)
+        public static async Task<string> GetFeedAsStringAsync(string url, CancellationToken cancellationToken)
         {
             AddHttpClientHeaders();
-            HttpResponseMessage response = await httpClient.GetAsync(url);
+            HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             return await ReadFeedAsString(response);
         }
 
@@ -36,10 +37,10 @@ namespace MyRSSFeeds.Core.Helpers
         /// </summary>
         /// <param name="url">Vaild url as Uri</param>        
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
-        public static async Task<string> GetFeedAsStringAsync(Uri url)
+        public static async Task<string> GetFeedAsStringAsync(Uri url, CancellationToken cancellationToken)
         {
             AddHttpClientHeaders();
-            HttpResponseMessage response = await httpClient.GetAsync(url);
+            HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             return await ReadFeedAsString(response);
         }
 

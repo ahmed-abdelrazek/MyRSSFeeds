@@ -613,7 +613,7 @@ namespace MyRSSFeeds.ViewModels
                 //move to the next source on the list to try it instead of stoping every thing
                 try
                 {
-                    var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl);
+                    var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
                     feed = new SyndicationFeed();
 
                     if (string.IsNullOrWhiteSpace(feedString))
@@ -623,6 +623,10 @@ namespace MyRSSFeeds.ViewModels
                     else
                     {
                         feed.Load(feedString);
+
+                        // Saves rss items count to source
+                        sourceItem.CurrentRssItemsCount = feed.Items.Count;
+                        await SourceDataService.UpdateSourceAsync(sourceItem);
                     }
                 }
                 catch (Exception ex)
