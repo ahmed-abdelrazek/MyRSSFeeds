@@ -88,7 +88,6 @@ namespace MyRSSFeeds.Core.Models
         private int _currentRssItemsCount;
 
         [JsonIgnore]
-        [BsonIgnore]
         public int CurrentRssItemsCount
         {
             get => _currentRssItemsCount;
