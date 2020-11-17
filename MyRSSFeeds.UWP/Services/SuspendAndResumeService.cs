@@ -1,5 +1,5 @@
-﻿using MyRSSFeeds.Activation;
-using MyRSSFeeds.Helpers;
+﻿using MyRSSFeeds.UWP.Activation;
+using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     // The SuspendAndResumeService allows you to save the App data before the App is being suspended (or enters in background state).
     // In case the App is terminated during suspension, the data is restored during App launch by this ActivationHandler.

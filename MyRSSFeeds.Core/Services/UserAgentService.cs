@@ -11,13 +11,17 @@ namespace MyRSSFeeds.Core.Services
 {
     public static class UserAgentService
     {
-        public static async Task<UserAgent> GetAgentAsync(UserAgent userAgent)
+        public static async Task<IEnumerable<UserAgent>> GetAgentsDataAsync()
         {
+            List<UserAgent> ls = new List<UserAgent>();
+
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<UserAgent>(LiteDbContext.UserAgents);
-                return col.FindById(userAgent.Id);
+                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                {
+                    ls = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).FindAll().ToList();
+                }
+                return ls;
             });
         }
 
@@ -33,6 +37,24 @@ namespace MyRSSFeeds.Core.Services
                 }
                 return ls;
             });
+        }
+
+        public static async Task ResetAgentUseAsync()
+        {
+            List<UserAgent> ls = new List<UserAgent>();
+            await Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                {
+                    ls = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(x => x.IsUsed).ToList();
+                }
+            });
+
+            foreach (var item in ls)
+            {
+                item.IsUsed = false;
+                await UpdateAgentAsync(item);
+            }
         }
 
         public static async Task<UserAgent> AddNewAgentAsync(UserAgent userAgent)

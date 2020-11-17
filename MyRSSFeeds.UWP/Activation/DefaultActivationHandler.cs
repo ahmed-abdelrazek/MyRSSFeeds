@@ -1,9 +1,9 @@
-﻿using MyRSSFeeds.Services;
+﻿using MyRSSFeeds.UWP.Services;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 
-namespace MyRSSFeeds.Activation
+namespace MyRSSFeeds.UWP.Activation
 {
     internal class DefaultActivationHandler : ActivationHandler<IActivatedEventArgs>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     public class SuspensionState
     {

@@ -1,9 +1,12 @@
-﻿using MyRSSFeeds.Core.Models;
-using MyRSSFeeds.Helpers;
-using MyRSSFeeds.Services;
+﻿using MyRSSFeeds.Core.Helpers;
+using MyRSSFeeds.Core.Models;
+using MyRSSFeeds.UWP.Helpers;
+using MyRSSFeeds.UWP.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel;
@@ -11,12 +14,11 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.UWP.ViewModels
 {
     // TODO WTS: Add other settings as necessary. For help see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/pages/settings.md
     public class SettingsViewModel : Observable
     {
-
         public bool IsLoaded { get; set; }
 
         private int _feedsLimit;
@@ -29,6 +31,60 @@ namespace MyRSSFeeds.ViewModels
                 Set(ref _feedsLimit, value, nameof(FeedsLimit), () =>
                 {
                     ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", value).ConfigureAwait(false);
+                });
+            }
+        }
+
+        private string _userAgentName;
+
+        public string UserAgentName
+        {
+            get => _userAgentName;
+            set
+            {
+                Set(ref _userAgentName, value, nameof(UserAgentName), () =>
+                {
+                    AddUserAgentCommand.OnCanExecuteChanged();
+                });
+            }
+        }
+
+        private string _userAgentValue;
+
+        public string UserAgentValue
+        {
+            get => _userAgentValue;
+            set
+            {
+                Set(ref _userAgentValue, value, nameof(UserAgentValue), () =>
+                {
+                    AddUserAgentCommand.OnCanExecuteChanged();
+                });
+            }
+        }
+
+        public ObservableCollection<UserAgent> UserAgents { get; private set; } = new ObservableCollection<UserAgent>();
+
+        private UserAgent _selectedUserAgent;
+
+        public UserAgent SelectedUserAgent
+        {
+            get => _selectedUserAgent;
+            set
+            {
+                Set(ref _selectedUserAgent, value, nameof(SelectedUserAgent), () =>
+                {
+                    DeleteUserAgentCommand.OnCanExecuteChanged();
+
+                    if (_selectedUserAgent != null)
+                    {
+                        Core.Services.UserAgentService.ResetAgentUseAsync().FireAndGet(async () =>
+                        {
+                            SelectedUserAgent.IsUsed = true;
+                            await Core.Services.UserAgentService.UpdateAgentAsync(SelectedUserAgent).ConfigureAwait(false);
+                        });
+
+                    }
                 });
             }
         }
@@ -189,8 +245,67 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
+        public RelayCommand AddUserAgentCommand { get; private set; }
+
+        public RelayCommand DeleteUserAgentCommand { get; private set; }
+
         public SettingsViewModel()
         {
+            AddUserAgentCommand = new RelayCommand(async () => await AddUserAgent(), CanAddUserAgent);
+            DeleteUserAgentCommand = new RelayCommand(async () => await DeleteUserAgent(), CanDeleteUserAgent);
+        }
+
+        private bool CanAddUserAgent()
+        {
+            return !string.IsNullOrWhiteSpace(UserAgentName) && !string.IsNullOrWhiteSpace(UserAgentValue);
+        }
+
+        private async Task AddUserAgent()
+        {
+            try
+            {
+                await Core.Services.UserAgentService.AddNewAgentAsync(new UserAgent
+                {
+                    Name = UserAgentName,
+                    AgentString = UserAgentValue,
+                    IsDeletable = true,
+                    IsUsed = false
+                });
+
+                await new MessageDialog("SettingsViewModelAddNewAgentMessageDialog".GetLocalized()).ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        private bool CanDeleteUserAgent()
+        {
+            return SelectedUserAgent != null;
+        }
+
+        private async Task DeleteUserAgent()
+        {
+            try
+            {
+                if (SelectedUserAgent.IsDeletable)
+                {
+                    await Core.Services.UserAgentService.DeleteAgentAsync(SelectedUserAgent);
+
+                    await new MessageDialog("SettingsViewModelDeleteAgentMessageDialog".GetLocalized()).ShowAsync();
+
+                    SelectedUserAgent = UserAgents.SingleOrDefault(x => x.IsDeletable == false);
+                }
+                else
+                {
+                    await new MessageDialog("SettingsViewModelUnDeletableAgentMessageDialog".GetLocalized()).ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         public async Task InitializeAsync()
@@ -198,6 +313,12 @@ namespace MyRSSFeeds.ViewModels
             FeedsLimit = await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit");
             VersionDescription = GetVersionDescription();
             IsLoaded = true;
+            UserAgents.Clear();
+            foreach (var item in await Core.Services.UserAgentService.GetAgentsDataAsync())
+            {
+                UserAgents.Add(item);
+            }
+            SelectedUserAgent = UserAgents.SingleOrDefault(x => x.IsUsed);
         }
 
         private string GetVersionDescription()

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Helpers
 {
     public interface IBackNavigationHandler
     {

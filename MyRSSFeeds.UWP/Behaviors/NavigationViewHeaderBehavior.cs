@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xaml.Interactivity;
-using MyRSSFeeds.Services;
+using MyRSSFeeds.UWP.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;

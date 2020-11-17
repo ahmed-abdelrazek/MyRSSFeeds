@@ -1,12 +1,12 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
 using MyRSSFeeds.Core.Helpers;
-using MyRSSFeeds.Services;
+using MyRSSFeeds.UWP.Services;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 
-namespace MyRSSFeeds
+namespace MyRSSFeeds.UWP
 {
     public sealed partial class App : Application
     {

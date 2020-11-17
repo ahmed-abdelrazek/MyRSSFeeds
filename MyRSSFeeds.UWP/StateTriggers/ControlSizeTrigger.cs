@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml;
 
-namespace MyRSSFeeds.StateTriggers
+namespace MyRSSFeeds.UWP.StateTriggers
 {
     public class ControlSizeTrigger : StateTriggerBase
     {

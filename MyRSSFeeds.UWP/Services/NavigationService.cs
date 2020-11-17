@@ -1,11 +1,11 @@
-﻿using MyRSSFeeds.Helpers;
+﻿using MyRSSFeeds.UWP.Helpers;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     public static class NavigationService
     {

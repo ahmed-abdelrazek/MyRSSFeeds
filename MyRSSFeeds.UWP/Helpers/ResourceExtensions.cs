@@ -1,6 +1,6 @@
 ﻿using Windows.ApplicationModel.Resources;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Helpers
 {
     internal static class ResourceExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.Helpers;
+using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Windows.UI.Popups;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.UWP.ViewModels
 {
     public class SourcesViewModel : Observable
     {

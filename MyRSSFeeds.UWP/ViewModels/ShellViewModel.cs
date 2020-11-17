@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.Helpers;
-using MyRSSFeeds.Services;
-using MyRSSFeeds.Views;
+using MyRSSFeeds.UWP.Helpers;
+using MyRSSFeeds.UWP.Services;
+using MyRSSFeeds.UWP.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.UWP.ViewModels
 {
     public class ShellViewModel : Observable
     {

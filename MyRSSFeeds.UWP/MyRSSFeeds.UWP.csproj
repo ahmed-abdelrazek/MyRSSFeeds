@@ -7,7 +7,7 @@
     <ProjectGuid>{1AC9557A-2460-4A97-BDEF-BC743C31181B}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyRSSFeeds</RootNamespace>
+    <RootNamespace>MyRSSFeeds.UWP</RootNamespace>
     <AssemblyName>MyRSSFeeds</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
@@ -171,7 +171,7 @@
     <Compile Include="Behaviors\NavigationViewHeaderBehavior.cs" />
     <Compile Include="Behaviors\NavigationViewHeaderMode.cs" />
     <Compile Include="Converters\BoolToFontWeightConverter.cs" />
-    <Compile Include="Helpers\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\IBackNavigationHandler.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
     <Compile Include="Helpers\NetworkInformationHelper.cs" />

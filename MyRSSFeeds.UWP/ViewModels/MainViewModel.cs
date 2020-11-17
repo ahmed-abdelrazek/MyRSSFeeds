@@ -1,8 +1,8 @@
 ﻿using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.Helpers;
-using MyRSSFeeds.Services;
+using MyRSSFeeds.UWP.Helpers;
+using MyRSSFeeds.UWP.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Syndication;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.UWP.ViewModels
 {
     public class MainViewModel : Observable
     {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     internal partial class LiveTileService
     {

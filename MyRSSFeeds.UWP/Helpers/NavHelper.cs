@@ -2,7 +2,7 @@
 using System;
 using Windows.UI.Xaml;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Helpers
 {
     public class NavHelper
     {

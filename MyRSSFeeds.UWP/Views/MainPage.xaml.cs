@@ -1,10 +1,10 @@
 ﻿using MyRSSFeeds.Core.Helpers;
-using MyRSSFeeds.ViewModels;
+using MyRSSFeeds.UWP.ViewModels;
 using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace MyRSSFeeds.Views
+namespace MyRSSFeeds.UWP.Views
 {
     public sealed partial class MainPage : Page
     {

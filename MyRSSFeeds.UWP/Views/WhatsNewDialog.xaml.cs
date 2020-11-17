@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace MyRSSFeeds.Views
+namespace MyRSSFeeds.UWP.Views
 {
     public sealed partial class WhatsNewDialog : ContentDialog
     {

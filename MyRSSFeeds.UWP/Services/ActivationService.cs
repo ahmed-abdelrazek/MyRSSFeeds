@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.Activation;
+using MyRSSFeeds.UWP.Activation;
 using MyRSSFeeds.Core.Helpers;
-using MyRSSFeeds.Helpers;
+using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     // For more information on understanding and extending activation flow see
     // https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/activation.md

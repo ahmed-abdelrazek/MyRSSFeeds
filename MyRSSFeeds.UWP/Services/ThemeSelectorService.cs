@@ -1,4 +1,4 @@
-﻿using MyRSSFeeds.Helpers;
+﻿using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -6,7 +6,7 @@ using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     public static class ThemeSelectorService
     {

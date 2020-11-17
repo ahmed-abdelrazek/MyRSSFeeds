@@ -1,13 +1,13 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
 using MyRSSFeeds.Core.Helpers;
-using MyRSSFeeds.Views;
+using MyRSSFeeds.UWP.Views;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     // Show a dialog to users after updating the app to tell them what's changed
     // also update the default UserAgent used with the httpclient

@@ -1,6 +1,6 @@
 ﻿using Windows.Networking.Connectivity;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Helpers
 {
     public class NetworkInformationHelper
     {

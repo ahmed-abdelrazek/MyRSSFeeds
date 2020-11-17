@@ -1,7 +1,7 @@
-﻿using MyRSSFeeds.ViewModels;
+﻿using MyRSSFeeds.UWP.ViewModels;
 using Windows.UI.Xaml.Controls;
 
-namespace MyRSSFeeds.Views
+namespace MyRSSFeeds.UWP.Views
 {
     // TODO WTS: Change the icons and titles for all NavigationViewItems in ShellPage.xaml.
     public sealed partial class ShellPage : Page

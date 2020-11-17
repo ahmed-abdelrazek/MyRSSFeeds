@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Helpers
 {
     public class Observable : INotifyPropertyChanged
     {

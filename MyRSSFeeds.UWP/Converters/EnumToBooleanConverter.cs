@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Extensions;
+using System;
 using Windows.UI.Xaml.Data;
 
-namespace MyRSSFeeds.Helpers
+namespace MyRSSFeeds.UWP.Converters
 {
     public class EnumToBooleanConverter : IValueConverter
     {

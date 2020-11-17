@@ -1,11 +1,11 @@
 ﻿using Microsoft.Services.Store.Engagement;
-using MyRSSFeeds.Activation;
+using MyRSSFeeds.UWP.Activation;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     internal class StoreNotificationsService : ActivationHandler<ToastNotificationActivatedEventArgs>
     {

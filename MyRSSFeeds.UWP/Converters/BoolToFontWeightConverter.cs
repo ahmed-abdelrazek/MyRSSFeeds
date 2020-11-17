@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace MyRSSFeeds.Converters
+namespace MyRSSFeeds.UWP.Converters
 {
     /// <summary>
     /// Gets a bool an return a font weight for Feed list titles

@@ -1,5 +1,5 @@
-﻿using MyRSSFeeds.Activation;
-using MyRSSFeeds.Helpers;
+﻿using MyRSSFeeds.UWP.Activation;
+using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +9,7 @@ using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.UWP.Services
 {
     internal partial class LiveTileService : ActivationHandler<LaunchActivatedEventArgs>
     {
