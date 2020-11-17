@@ -226,8 +226,9 @@
     <comment>Parameter must be an Enum name in enum to boolean converter</comment>
   </data>
   <data name="WhatsNew_Body.Text" xml:space="preserve">
-    <value>Add current RSS items count from the last updated build to Sources
-Fix some bugs that caused the app to crush on startup or while loading data</value>
+    <value>Support Custom UserAgents in Settings
+Small Tweaks for Settings Page
+Save each Source Item Count</value>
     <comment>What's new prompt message body</comment>
   </data>
   <data name="WhatsNewDialog.Title" xml:space="preserve">
