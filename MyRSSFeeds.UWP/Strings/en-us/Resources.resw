@@ -226,9 +226,8 @@
     <comment>Parameter must be an Enum name in enum to boolean converter</comment>
   </data>
   <data name="WhatsNew_Body.Text" xml:space="preserve">
-    <value>Support Custom UserAgents in Settings
-Small Tweaks for Settings Page
-Save each Source Item Count</value>
+    <value>Fix a problem with getting system info for default UserAgent
+reinstalling the app maybe required so export your sources from Settings</value>
     <comment>What's new prompt message body</comment>
   </data>
   <data name="WhatsNewDialog.Title" xml:space="preserve">
