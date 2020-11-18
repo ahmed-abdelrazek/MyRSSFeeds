@@ -55,7 +55,17 @@ namespace MyRSSFeeds.Core.Data
                 var UserAgentsCollection = LiteDb.GetCollection<UserAgent>(UserAgents);
                 if (UserAgentsCollection.Count() == 0)
                 {
-                    RssRequest.BrowserUserAgent = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
+                    //get the system info to add to the user agent
+                    //if one of them is missing will just put an empty string
+                    // and the http client will see that and use the default hardcoded one there
+                    if (string.IsNullOrEmpty(SystemInfo.AppVersion) || string.IsNullOrEmpty(SystemInfo.OperatingSystemArchitecture))
+                    {
+                        RssRequest.BrowserUserAgent = string.Empty;
+                    }
+                    else
+                    {
+                        RssRequest.BrowserUserAgent = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
+                    }
 
                     var agentsList = new List<UserAgent> {
                     new UserAgent{

@@ -11,7 +11,7 @@ namespace MyRSSFeeds.Core.Helpers
     /// </summary>
     public class RssRequest
     {
-        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.1 (Windows NT 10.0; X64)";
+        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.2 (Windows NT 10.0; X64)";
 
         private static readonly HttpClient httpClient;
 
@@ -50,7 +50,10 @@ namespace MyRSSFeeds.Core.Helpers
             var CurrentAgent = agents.FirstOrDefault();
             if (CurrentAgent != null)
             {
-                BrowserUserAgent = CurrentAgent.AgentString;
+                if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
+                {
+                    BrowserUserAgent = CurrentAgent.AgentString;
+                }
             }
         }
 

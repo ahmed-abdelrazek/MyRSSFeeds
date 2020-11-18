@@ -77,6 +77,10 @@ namespace MyRSSFeeds.UWP.Services
                 await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
             }
 
+            // Get App Version and Operating System Architecture to use with "user agent".
+            SystemInfo.OperatingSystemArchitecture = SystemInformation.OperatingSystemArchitecture.ToString();
+            SystemInfo.AppVersion = $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}";
+
             //sets the Database Path its connection string and the database itself
             Core.Data.LiteDbContext.DbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LiteDbMRF.db");
             Core.Data.LiteDbContext.InitializeDatabase();

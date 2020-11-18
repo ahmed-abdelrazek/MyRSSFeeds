@@ -34,10 +34,6 @@ namespace MyRSSFeeds.UWP
             {
                 await ActivationService.ActivateAsync(args);
             }
-
-            // Get App Version and Operating System Architecture to use with "user agent".
-            SystemInfo.OperatingSystemArchitecture = SystemInformation.OperatingSystemArchitecture.ToString();
-            SystemInfo.AppVersion = $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}";
         }
 
         protected override async void OnActivated(IActivatedEventArgs args)
