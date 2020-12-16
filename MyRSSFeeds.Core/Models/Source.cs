@@ -56,6 +56,8 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
+        public DateTimeOffset LastBuildCheck { get; set; }
+
         private DateTimeOffset _lastBuildDate;
 
         public DateTimeOffset LastBuildDate
@@ -70,7 +72,6 @@ namespace MyRSSFeeds.Core.Models
                 }
             }
         }
-
 
         private string _localLastBuildDate;
 

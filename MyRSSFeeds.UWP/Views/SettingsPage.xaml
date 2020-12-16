@@ -17,6 +17,8 @@
         <StackPanel x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization"  Style="{ThemeResource SubtitleTextBlockStyle}" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+
+                <!--Theme-->
                 <TextBlock x:Uid="Settings_Theme" />
 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
@@ -53,14 +55,22 @@
                 </StackPanel>
             </StackPanel>
 
+            <!--Customize Feed and Check Limit-->
             <TextBlock x:Uid="Settings_Customize" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <muxc:NumberBox x:Uid="Settings_FeedCountLimitNo" Value="{x:Bind ViewModel.FeedsLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="10" LargeChange="100" />
+                <muxc:NumberBox x:Uid="Settings_FeedCountLimitNo" Value="{x:Bind ViewModel.FeedsLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="10" LargeChange="100" />
                 <TextBlock x:Uid="Settings_FeedCountLimitNote" />
             </StackPanel>
 
+            <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                <muxc:NumberBox x:Uid="Settings_WaitAfterLastCheckNo" Value="{x:Bind ViewModel.WaitAfterLastCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="2" LargeChange="5" />
+                <TextBlock x:Uid="Settings_WaitAfterLastCheckNote" />
+            </StackPanel>
+
+            <!--UserAgents-->
             <TextBlock x:Uid="Settings_UserAgents" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Uid="Settings_UserAgentAddName" Text="{x:Bind ViewModel.UserAgentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" MaxWidth="250" Margin="0,5"/>
                 <TextBox x:Uid="Settings_UserAgentAddValue" Text="{x:Bind ViewModel.UserAgentValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="150" MaxWidth="300" Margin="5"/>
@@ -79,6 +89,7 @@
                 </Button>
             </StackPanel>
 
+            <!--Backups-->
             <TextBlock x:Uid="Settings_BackupSources" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}" Orientation="Horizontal">
@@ -96,6 +107,7 @@
                 </Button>
             </StackPanel>
 
+            <!--About-->
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,20,0,0"/>
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">

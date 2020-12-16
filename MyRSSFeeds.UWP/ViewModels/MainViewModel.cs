@@ -363,7 +363,7 @@ namespace MyRSSFeeds.UWP.ViewModels
 
         private bool CanMarkAsRead()
         {
-            return IsLoadingData == false && Feeds.Any(x=>x.IsRead == false);
+            return IsLoadingData == false && Feeds.Any(x => x.IsRead == false);
         }
 
         /// <summary>
@@ -587,6 +587,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 await new MessageDialog("CheckInternetMessageDialog".GetLocalized()).ShowAsync();
                 return;
             }
+            var WaitAfterLastCheckInMinutes = await ApplicationData.Current.LocalSettings.ReadAsync<int>("WaitAfterLastCheck");
 
             foreach (var sourceItem in FilterSources)
             {
@@ -598,6 +599,14 @@ namespace MyRSSFeeds.UWP.ViewModels
                     TokenSource = new CancellationTokenSource();
                     MarkAsReadCommand.OnCanExecuteChanged();
                     return;
+                }
+
+                // don't get source feed if x number of minutes haven't passed since the last one - default is 2 hours
+                var checkSourceAfter = sourceItem.LastBuildCheck.AddMinutes(WaitAfterLastCheckInMinutes);
+
+                if (checkSourceAfter >= DateTimeOffset.Now)
+                {
+                    continue;
                 }
 
                 if (!new NetworkInformationHelper().HasInternetAccess)
@@ -622,8 +631,9 @@ namespace MyRSSFeeds.UWP.ViewModels
                     {
                         feed.Load(feedString);
 
-                        // Saves rss items count to source
+                        // Saves rss items count and last check time to source 
                         sourceItem.CurrentRssItemsCount = feed.Items.Count;
+                        sourceItem.LastBuildCheck = DateTimeOffset.Now;
                         await SourceDataService.UpdateSourceAsync(sourceItem);
                     }
                 }

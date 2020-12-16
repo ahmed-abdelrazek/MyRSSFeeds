@@ -451,4 +451,10 @@ reinstalling the app maybe required so export your sources from Settings</value>
   <data name="SettingsViewModelUnDeletableAgentMessageDialog" xml:space="preserve">
     <value>You can't delete that User Agent.</value>
   </data>
+  <data name="Settings_WaitAfterLastCheckNo.Header" xml:space="preserve">
+    <value>Minutes until recheck a Source to get its Feed on Refresh</value>
+  </data>
+  <data name="Settings_WaitAfterLastCheckNote.Text" xml:space="preserve">
+    <value>Enter 0 to always recheck</value>
+  </data>
 </root>

@@ -35,6 +35,20 @@ namespace MyRSSFeeds.UWP.ViewModels
             }
         }
 
+        private int _waitAfterLastCheck;
+
+        public int WaitAfterLastCheck
+        {
+            get => _waitAfterLastCheck;
+            set
+            {
+                Set(ref _waitAfterLastCheck, value, nameof(WaitAfterLastCheck), () =>
+                {
+                    ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", value).ConfigureAwait(false);
+                });
+            }
+        }
+
         private string _userAgentName;
 
         public string UserAgentName
@@ -311,6 +325,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         public async Task InitializeAsync()
         {
             FeedsLimit = await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit");
+            WaitAfterLastCheck = await ApplicationData.Current.LocalSettings.ReadAsync<int>("WaitAfterLastCheck");
             VersionDescription = GetVersionDescription();
             IsLoaded = true;
             UserAgents.Clear();

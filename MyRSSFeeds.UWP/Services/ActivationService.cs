@@ -1,6 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.UWP.Activation;
 using MyRSSFeeds.Core.Helpers;
+using MyRSSFeeds.UWP.Activation;
 using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Collections.Generic;
@@ -75,6 +75,7 @@ namespace MyRSSFeeds.UWP.Services
             if (SystemInformation.IsFirstRun)
             {
                 await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
+                await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);
             }
 
             // Get App Version and Operating System Architecture to use with "user agent".
