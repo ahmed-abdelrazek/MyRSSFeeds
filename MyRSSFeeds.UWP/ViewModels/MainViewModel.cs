@@ -46,24 +46,20 @@ namespace MyRSSFeeds.UWP.ViewModels
                         }
                         GetTheme();
 
+                        // Add link to the end of the description to open the full post in the built-in browser
+                        string descriptionEnd = $"<a href=\"{SelectedRSS.LaunchURL}\">   [Open the full post]</a>";
                         string hyperLinkDescription = string.Empty;
-                        if (SelectedRSS.Description.EndsWith("[…]"))
-                        {
-                            hyperLinkDescription = SelectedRSS.Description.Replace("[…]", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
-                        }
-                        else if (SelectedRSS.Description.EndsWith("…"))
-                        {
-                            hyperLinkDescription = SelectedRSS.Description.Replace("…", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
-                        }
-                        else if (SelectedRSS.Description.EndsWith("..."))
-                        {
-                            hyperLinkDescription = SelectedRSS.Description.Replace("...", $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
-                        }
-                        else
-                        {
-                            hyperLinkDescription = string.Concat(SelectedRSS.Description, $"<a href=\"{SelectedRSS.LaunchURL}\">[Open the full post]</a>");
-                        }
 
+                        hyperLinkDescription = SelectedRSS.Description switch
+                        {
+                            string a when a.Contains("[…]") => SelectedRSS.Description.Replace("[…]", descriptionEnd),
+                            string a when a.Contains("…") => SelectedRSS.Description.Replace("…", descriptionEnd),
+                            string a when a.Contains("...") => SelectedRSS.Description.Replace("...", descriptionEnd),
+                            string a when a.Contains("read me") => SelectedRSS.Description.Replace("read me", descriptionEnd),
+                            string a when a.Contains("Read Me") => SelectedRSS.Description.Replace("Read Me", descriptionEnd),
+                            string a when a.Contains("Read me") => SelectedRSS.Description.Replace("Read me", descriptionEnd),
+                            _ => string.Concat(SelectedRSS.Description, descriptionEnd),
+                        };
                         if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
                         {
                             _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
@@ -367,7 +363,7 @@ namespace MyRSSFeeds.UWP.ViewModels
 
         private bool CanMarkAsRead()
         {
-            return FilterSources.Count > 0;
+            return IsLoadingData == false && Feeds.Any(x=>x.IsRead == false);
         }
 
         /// <summary>
@@ -545,7 +541,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         /// then show the latest (with-in limits in settings)
         /// </summary>
         /// <param name="progress"></param>
-        /// <param name="ct"></param>
+        /// <param name="token"></param>
         /// <returns>Task Type</returns>
         public async Task LoadDataAsync(IProgress<int> progress, CancellationToken token)
         {
@@ -581,6 +577,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 {
                     IsLoadingData = false;
                     TokenSource = new CancellationTokenSource();
+                    MarkAsReadCommand.OnCanExecuteChanged();
                     return;
                 }
             }
@@ -599,6 +596,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 {
                     IsLoadingData = false;
                     TokenSource = new CancellationTokenSource();
+                    MarkAsReadCommand.OnCanExecuteChanged();
                     return;
                 }
 
@@ -610,7 +608,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 progress.Report(++progressCount);
 
                 //if getting the feed crushed for (internet - not xml rss - other reasons)
-                //move to the next source on the list to try it instead of stoping every thing
+                //move to the next source on the list to try it instead of stopping every thing
                 try
                 {
                     var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
@@ -642,6 +640,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                     {
                         IsLoadingData = false;
                         TokenSource = new CancellationTokenSource();
+                        MarkAsReadCommand.OnCanExecuteChanged();
                         return;
                     }
 
@@ -717,8 +716,8 @@ namespace MyRSSFeeds.UWP.ViewModels
                     Feeds.Add(rss);
                 }
             }
-            MarkAsReadCommand.OnCanExecuteChanged();
             IsLoadingData = false;
+            MarkAsReadCommand.OnCanExecuteChanged();
         }
 
         public void Initialize(WebView webView)
