@@ -9,12 +9,10 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:customConverters="using:MyRSSFeeds.UWP.Converters"
     xmlns:coreModel="using:MyRSSFeeds.Core.Models"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
-        <customConverters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter"/>
         <toolkitConverters:BoolToVisibilityConverter x:Name="BoolToVisibility" TrueValue="Visible" FalseValue="Collapsed" />
         <toolkitConverters:BoolToVisibilityConverter x:Name="ReverseBoolToVisibility" TrueValue="Collapsed" FalseValue="Visible" />
         <toolkitConverters:CollectionVisibilityConverter x:Name="CollectionToVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible" />
@@ -89,7 +87,8 @@
                                         <TextBlock x:Name="Source" Text="{x:Bind PostSource.SiteTitle}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" HorizontalAlignment="Left" Margin="0,0,5,0" LineHeight="18" />
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEDAD;" Foreground="{ThemeResource SystemListAccentHighColor}" Visibility="{x:Bind IsRead, Mode=TwoWay, Converter={StaticResource ReverseBoolToVisibility}}"/>
                                     </StackPanel>
-                                    <TextBlock x:Name="Title" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20" FontWeight="{x:Bind Path=IsRead, Mode=TwoWay, Converter={StaticResource BoolToFontWeightConverter}, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" />
+                                    <TextBlock x:Name="Title" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" Visibility="{x:Bind IsRead, Mode=TwoWay, Converter={StaticResource ReverseBoolToVisibility}, UpdateSourceTrigger=LostFocus}"/>
+                                    <TextBlock x:Name="TitleRead" Text="{x:Bind PostShortTitle}" Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource Foreground100DimGray}" FontSize="18" FontWeight="Normal" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20" Visibility="{x:Bind IsRead, Mode=TwoWay, Converter={StaticResource BoolToVisibility}, UpdateSourceTrigger=LostFocus}"/>
                                     <StackPanel Orientation="Horizontal">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEE56;" Foreground="{ThemeResource SystemChromeDisabledLowColor}" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" />
                                         <ListView ItemsSource="{x:Bind Authors, Mode=OneWay}" Padding="0,-5,0,0" MaxHeight="25" MaxWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{x:Bind Path=Authors, Converter={StaticResource CollectionToVisibilityConverter}}" Margin="-8,0,5,5">
