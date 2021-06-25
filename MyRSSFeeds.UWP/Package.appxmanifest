@@ -12,7 +12,7 @@
     Publisher="CN=7057FB6A-382B-456B-8887-AB017ABBA140"
     Version="1.3.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="e71db590-b6ae-4164-85ef-3fabc2ea9c60" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="84935a4f-e471-402d-9fe1-0a88d9c05144" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>My RSS Feeds</DisplayName>

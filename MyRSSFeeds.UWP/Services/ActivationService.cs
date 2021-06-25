@@ -72,15 +72,15 @@ namespace MyRSSFeeds.UWP.Services
         private async Task InitializeAsync()
         {
             // if user is running the app for the first time then set the feed list limit to 1000
-            if (SystemInformation.IsFirstRun)
+            if (SystemInformation.Instance.IsFirstRun)
             {
                 await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
                 await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);
             }
 
             // Get App Version and Operating System Architecture to use with "user agent".
-            SystemInfo.OperatingSystemArchitecture = SystemInformation.OperatingSystemArchitecture.ToString();
-            SystemInfo.AppVersion = $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}.{SystemInformation.ApplicationVersion.Revision}";
+            SystemInfo.OperatingSystemArchitecture = SystemInformation.Instance.OperatingSystemArchitecture.ToString();
+            SystemInfo.AppVersion = $"{SystemInformation.Instance.ApplicationVersion.Major}.{SystemInformation.Instance.ApplicationVersion.Minor}.{SystemInformation.Instance.ApplicationVersion.Build}.{SystemInformation.Instance.ApplicationVersion.Revision}";
 
             //sets the Database Path its connection string and the database itself
             Core.Data.LiteDbContext.DbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LiteDbMRF.db");

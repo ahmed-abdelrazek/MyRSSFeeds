@@ -43,7 +43,7 @@ namespace MyRSSFeeds.UWP
 
         private ActivationService CreateActivationService()
         {
-            return SystemInformation.IsFirstRun
+            return SystemInformation.Instance.IsFirstRun
                 ? new ActivationService(this, typeof(Views.SourcesViewPage), new Lazy<UIElement>(CreateShell))
                 : new ActivationService(this, typeof(Views.MainPage), new Lazy<UIElement>(CreateShell));
         }

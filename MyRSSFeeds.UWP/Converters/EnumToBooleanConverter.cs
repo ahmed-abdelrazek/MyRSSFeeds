@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Extensions;
+﻿using MyRSSFeeds.UWP.Helpers;
 using System;
 using Windows.UI.Xaml.Data;
 

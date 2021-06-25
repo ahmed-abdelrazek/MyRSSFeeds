@@ -67,7 +67,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             _keyboardAccelerators.Add(_backKeyboardAccelerator);
             await Task.CompletedTask;
 
-            if (SystemInformation.IsFirstRun)
+            if (SystemInformation.Instance.IsFirstRun)
             {
                 var messageDialog = new MessageDialog("WelcomeMessageForFirstRun".GetLocalized());
                 await messageDialog.ShowAsync();

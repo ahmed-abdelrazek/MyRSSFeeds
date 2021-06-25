@@ -20,7 +20,7 @@ namespace MyRSSFeeds.UWP.Services
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal, async () =>
                 {
-                    if (SystemInformation.IsAppUpdated && !shown)
+                    if (SystemInformation.Instance.IsAppUpdated && !shown)
                     {
                         var agents = await Core.Services.UserAgentService.GetAgentDataAsync(x => x.Name == "App Default");
                         var updateAgent = agents.FirstOrDefault();
