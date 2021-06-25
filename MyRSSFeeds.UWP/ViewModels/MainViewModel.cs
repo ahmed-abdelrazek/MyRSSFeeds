@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -46,27 +47,20 @@ namespace MyRSSFeeds.UWP.ViewModels
                         }
                         GetTheme();
 
-                        // Add link to the end of the description to open the full post in the built-in browser
-                        string descriptionEnd = $"<a href=\"{SelectedRSS.LaunchURL}\">   [Open the full post]</a>";
-                        string hyperLinkDescription = string.Empty;
+                        StringBuilder authors = new StringBuilder();
 
-                        hyperLinkDescription = SelectedRSS.Description switch
+                        foreach (var a in SelectedRSS.Authors)
                         {
-                            string a when a.Contains("[…]") => SelectedRSS.Description.Replace("[…]", descriptionEnd),
-                            string a when a.Contains("…") => SelectedRSS.Description.Replace("…", descriptionEnd),
-                            string a when a.Contains("...") => SelectedRSS.Description.Replace("...", descriptionEnd),
-                            string a when a.Contains("read me") => SelectedRSS.Description.Replace("read me", descriptionEnd),
-                            string a when a.Contains("Read Me") => SelectedRSS.Description.Replace("Read Me", descriptionEnd),
-                            string a when a.Contains("Read me") => SelectedRSS.Description.Replace("Read me", descriptionEnd),
-                            _ => string.Concat(SelectedRSS.Description, descriptionEnd),
-                        };
-                        if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
+                            authors.Append($"{a.Username}; ");
+                        }
+
+                        if (_appTheme == ElementTheme.Dark || (_uiTheme == "#FF000000" && _appTheme == ElementTheme.Default))
                         {
-                            _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
+                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .body {{ background: black }} .h1 {{ color: white; }} .h4 {{ color: white; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid-area: Title; }} .Website {{ grid-area: Website; }} .Date {{ grid-area: Date; }} .Authors {{ grid-area: Authors; }} .Details {{ grid-area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
                         }
                         else
                         {
-                            _webView.NavigateToString($"<!doctype html><html><head><title>{SelectedRSS.PostTitle}</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body><h1>{SelectedRSS.PostTitle} &#91;{SelectedRSS.PostSource.SiteTitle}&#93;</h1><h4>{hyperLinkDescription}</h4></body></html>");
+                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid - area: Title; }} .Website {{ grid - area: Website; }} .Date {{ grid - area: Date; }} .Authors {{ grid - area: Authors; }} .Details {{ grid - area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
                         }
                     }
 
