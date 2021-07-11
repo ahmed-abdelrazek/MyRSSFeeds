@@ -43,7 +43,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                         if (!_selectedRSS.IsRead)
                         {
                             _selectedRSS.IsRead = true;
-                            RSSDataService.UpdateFeedAsync(_selectedRSS).FireAndGet();
+                            new RSSDataService().UpdateFeedAsync(_selectedRSS).FireAndGet();
                         }
                         GetTheme();
 
@@ -370,7 +370,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             foreach (var item in Feeds.Where(x => x.IsRead == false))
             {
                 item.IsRead = true;
-                await RSSDataService.UpdateFeedAsync(item);
+                await new RSSDataService().UpdateFeedAsync(item);
             }
         }
 
@@ -389,7 +389,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             TokenSource.Cancel();
 
-            var query = from feed in await RSSDataService.GetFeedsDataAsync(0) select feed;
+            var query = from feed in await new RSSDataService().GetFeedsDataAsync(0) select feed;
 
             if (FilterSelectedSource != null)
             {
@@ -551,14 +551,14 @@ namespace MyRSSFeeds.UWP.ViewModels
             // Set Httpclient userAgent to the user selected one
             await RssRequest.SetCustomUserAgentAsync();
 
-            foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+            foreach (var rss in await new RSSDataService().GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
                 Feeds.Add(rss);
             }
 
             SyndicationFeed feed = null;
 
-            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+            var sourcesDataList = await new SourceDataService().GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
@@ -628,7 +628,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                         // Saves rss items count and last check time to source 
                         sourceItem.CurrentRssItemsCount = feed.Items.Count;
                         sourceItem.LastBuildCheck = DateTimeOffset.Now;
-                        await SourceDataService.UpdateSourceAsync(sourceItem);
+                        await new SourceDataService().UpdateSourceAsync(sourceItem);
                     }
                 }
                 catch (Exception ex)
@@ -696,9 +696,9 @@ namespace MyRSSFeeds.UWP.ViewModels
                         });
                     }
 
-                    if (!await RSSDataService.FeedExistAsync(rss))
+                    if (!await new RSSDataService().FeedExistAsync(rss))
                     {
-                        var newRss = await RSSDataService.AddNewFeedAsync(rss);
+                        var newRss = await new RSSDataService().AddNewFeedAsync(rss);
                         Feeds.Add(newRss);
                         hasLoadedFeedNewItems = true;
 
@@ -715,7 +715,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             if (hasLoadedFeedNewItems)
             {
                 Feeds.Clear();
-                foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+                foreach (var rss in await new RSSDataService().GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
                 {
                     Feeds.Add(rss);
                 }

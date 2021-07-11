@@ -164,7 +164,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             try
             {
                 string trimedUrl = SourceUrl.TrimEnd('/');
-                var exist = await SourceDataService.SourceExistAsync(trimedUrl);
+                var exist = await new SourceDataService().SourceExistAsync(trimedUrl);
                 if (exist)
                 {
                     await new MessageDialog("SourcesViewModelSourceExistMessageDialog".GetLocalized()).ShowAsync();
@@ -175,13 +175,13 @@ namespace MyRSSFeeds.UWP.ViewModels
                     {
                         var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
 
-                        var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
+                        var source = await new SourceDataService().GetSourceInfoFromRssAsync(feedString, trimedUrl);
                         if (source == null)
                         {
                             await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
                             return;
                         }
-                        Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
+                        Sources.Insert(0, await new SourceDataService().AddNewSourceAsync(source));
 
                         RefreshSourcesCommand.OnCanExecuteChanged();
 
@@ -252,7 +252,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 SelectedSource.RssUrl = new Uri(SourceUrl);
                 SelectedSource.Description = SourceDescription;
 
-                var source = await SourceDataService.UpdateSourceAsync(SelectedSource);
+                var source = await new SourceDataService().UpdateSourceAsync(SelectedSource);
                 if (source == null)
                 {
                     await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
@@ -310,10 +310,10 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                 if ((int)result.Id == 0)
                 {
-                    await RSSDataService.DeleteManyFeedsAsync(x => x.PostSource.Id == SelectedSource.Id);
+                    await new RSSDataService().DeleteManyFeedsAsync(x => x.PostSource.Id == SelectedSource.Id);
                 }
 
-                await SourceDataService.DeleteSourceAsync(SelectedSource);
+                await new SourceDataService().DeleteSourceAsync(SelectedSource);
                 Sources.Remove(SelectedSource);
                 ClearPopups();
                 RefreshSourcesCommand.OnCanExecuteChanged();
@@ -398,7 +398,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             ProgressCurrent = 0;
             Sources.Clear();
 
-            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+            var sourcesDataList = await new SourceDataService().GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
@@ -431,13 +431,13 @@ namespace MyRSSFeeds.UWP.ViewModels
                 try
                 {
                     item.IsChecking = true;
-                    var task = await SourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                    var task = await new SourceDataService().IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
                     item.IsWorking = task.Item1;
                     item.LastBuildDate = task.Item2;
                     item.CurrentRssItemsCount = task.Item3;
 
                     // Saves latest build date and rss items count to source
-                    await SourceDataService.UpdateSourceAsync(item);
+                    await new SourceDataService().UpdateSourceAsync(item);
                 }
                 catch (HttpRequestException ex)
                 {

@@ -22,12 +22,12 @@ namespace MyRSSFeeds.UWP.Services
                 {
                     if (SystemInformation.Instance.IsAppUpdated && !shown)
                     {
-                        var agents = await Core.Services.UserAgentService.GetAgentDataAsync(x => x.Name == "App Default");
+                        var agents = await new Core.Services.UserAgentService().GetAgentDataAsync(x => x.Name == "App Default");
                         var updateAgent = agents.FirstOrDefault();
                         if (updateAgent != null)
                         {
                             updateAgent.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
-                            await Core.Services.UserAgentService.UpdateAgentAsync(updateAgent);
+                            await new Core.Services.UserAgentService().UpdateAgentAsync(updateAgent);
                         }
 
                         shown = true;
