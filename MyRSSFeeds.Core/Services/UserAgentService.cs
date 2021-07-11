@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Models;
+using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,42 +10,36 @@ using System.Threading.Tasks;
 
 namespace MyRSSFeeds.Core.Services
 {
-    public static class UserAgentService
+    public class UserAgentService : IUserAgentService
     {
-        public static async Task<IEnumerable<UserAgent>> GetAgentsDataAsync()
+        public async Task<IEnumerable<UserAgent>> GetAgentsDataAsync()
         {
-            List<UserAgent> ls = new List<UserAgent>();
-
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    ls = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).FindAll().ToList();
+                    return db.GetCollection<UserAgent>(LiteDbContext.UserAgents).FindAll().ToList();
                 }
-                return ls;
             });
         }
 
-        public static async Task<IEnumerable<UserAgent>> GetAgentDataAsync(Expression<Func<UserAgent, bool>> predicate)
+        public async Task<IEnumerable<UserAgent>> GetAgentDataAsync(Expression<Func<UserAgent, bool>> predicate)
         {
-            List<UserAgent> ls = new List<UserAgent>();
-
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    ls = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(predicate).ToList();
+                    return db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(predicate).ToList();
                 }
-                return ls;
             });
         }
 
-        public static async Task ResetAgentUseAsync()
+        public async Task ResetAgentUseAsync()
         {
             List<UserAgent> ls = new List<UserAgent>();
             await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
                     ls = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(x => x.IsUsed).ToList();
                 }
@@ -57,32 +52,32 @@ namespace MyRSSFeeds.Core.Services
             }
         }
 
-        public static async Task<UserAgent> AddNewAgentAsync(UserAgent userAgent)
+        public async Task<UserAgent> AddNewAgentAsync(UserAgent userAgent)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<UserAgent>(LiteDbContext.UserAgents);
                 col.Insert(userAgent);
-                return userAgent.Id > 0 ? userAgent : null;
+                return userAgent;
             });
         }
 
-        public static async Task<bool> UpdateAgentAsync(UserAgent userAgent)
+        public async Task<bool> UpdateAgentAsync(UserAgent userAgent)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<UserAgent>(LiteDbContext.UserAgents);
                 return col.Update(userAgent);
             });
         }
 
-        public static async Task<bool> DeleteAgentAsync(UserAgent userAgent)
+        public async Task<bool> DeleteAgentAsync(UserAgent userAgent)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 return db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Delete(userAgent.Id);
             });
         }

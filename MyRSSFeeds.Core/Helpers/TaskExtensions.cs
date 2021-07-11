@@ -13,7 +13,7 @@ namespace MyRSSFeeds.Core.Helpers
         /// <param name="task">The task to complete</param>
         /// <param name="completedCallback">To do on complete</param>
         /// <param name="errorCallback">To do on exception</param>
-        public async static void FireAndGet(this Task task, Action completedCallback = null, Action<Exception> errorCallback = null)
+        public static async void FireAndGet(this Task task, Action? completedCallback = null, Action<Exception>? errorCallback = null)
         {
             try
             {

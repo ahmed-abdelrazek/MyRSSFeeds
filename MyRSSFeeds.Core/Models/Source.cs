@@ -1,7 +1,7 @@
 ﻿using LiteDB;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace MyRSSFeeds.Core.Models
 {
@@ -14,13 +14,15 @@ namespace MyRSSFeeds.Core.Models
 
         public int Id { get; set; }
 
-        public string SiteTitle { get; set; }
+        public string? SiteTitle { get; set; }
 
-        public Uri BaseUrl { get; set; }
+        public byte[]? SiteIcon { get; set; }
 
-        public Uri RssUrl { get; set; }
+        public Uri BaseUrl { get; set; } = new Uri("");
 
-        private string _description;
+        public Uri RssUrl { get; set; } = new Uri("");
+
+        private string _description = "";
 
         public string Description
         {
@@ -73,7 +75,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        private string _localLastBuildDate;
+        private string _localLastBuildDate = "";
 
         [JsonIgnore]
         [BsonIgnore]
@@ -98,7 +100,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public string Language { get; set; }
+        public string Language { get; set; } = "en";
 
         private bool _isChecking;
 
@@ -139,11 +141,11 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        private string _errorMessage;
+        private string? _errorMessage;
 
         [JsonIgnore]
         [BsonIgnore]
-        public string ErrorMessage
+        public string? ErrorMessage
         {
             get { return _errorMessage; }
             set

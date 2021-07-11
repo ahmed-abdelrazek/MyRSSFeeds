@@ -13,25 +13,33 @@ namespace MyRSSFeeds.Core.Models
 
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [BsonIgnore]
         public string Username
         {
             get
             {
+                if (string.IsNullOrEmpty(Email))
+                {
+                    Email = "";
+                }
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = "";
+                }
                 return string.IsNullOrWhiteSpace(Name) ? Email : Name;
             }
         }
 
         [BsonIgnore]
-        public Uri SendEmail
+        public Uri? SendEmail
         {
             get
             {
-                var isValid = Uri.TryCreate($"mailto:{Email}", UriKind.RelativeOrAbsolute, out Uri outUri);
+                var isValid = Uri.TryCreate($"mailto:{Email}", UriKind.RelativeOrAbsolute, out Uri? outUri);
                 if (isValid)
                 {
                     return outUri;
@@ -43,7 +51,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public Uri Uri { get; set; }
+        public Uri? Uri { get; set; }
 
         public virtual ICollection<RSS> RSSs { get; set; }
     }

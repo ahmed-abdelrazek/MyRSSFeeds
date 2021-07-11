@@ -9,9 +9,9 @@
 
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string AgentString { get; set; }
+        public string? AgentString { get; set; }
 
         public bool IsUsed { get; set; }
 

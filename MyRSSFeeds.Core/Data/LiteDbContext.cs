@@ -11,31 +11,32 @@ namespace MyRSSFeeds.Core.Data
 {
     public class LiteDbContext
     {
-        public static string DbPath { get; set; }
-
         public static string RSSs { get; set; } = "RSSs";
         public static string Sources { get; set; } = "Sources";
         public static string UserAgents { get; set; } = "UserAgents";
 
-        public static string ConnectionString { get; set; }
-
-        public static LiteDatabase LiteDb { get; set; }
+        public static ConnectionString? DbConnectionString { get; set; }
+        public static LiteDatabase? LiteDb { get; set; }
 
         /// <summary>
         /// Set the Database Connection string and initialize the database
         /// </summary>
         public static void InitializeDatabase()
         {
-            if (string.IsNullOrEmpty(DbPath))
+            if (DbConnectionString is null)
+            {
+                throw new ArgumentNullException("Db ConnectionString is Null");
+            }
+
+            if (string.IsNullOrEmpty(DbConnectionString.Filename))
             {
                 throw new ArgumentNullException("Db Path is Null or Empty");
             }
-            ConnectionString = $"Filename={DbPath};";
 
-            LiteDb = new LiteDatabase(ConnectionString);
+            LiteDb = new LiteDatabase(DbConnectionString);
             try
             {
-                LiteDb.Mapper.RegisterType<Uri>
+                LiteDb.Mapper.RegisterType
                 (
                     serialize: (uri) => uri.AbsoluteUri,
                     deserialize: (bson) => new Uri(bson.AsString)
@@ -109,7 +110,7 @@ namespace MyRSSFeeds.Core.Data
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                throw ex;
+                throw;
             }
         }
     }

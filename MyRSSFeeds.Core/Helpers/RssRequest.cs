@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyRSSFeeds.Core.Services;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -46,9 +47,9 @@ namespace MyRSSFeeds.Core.Helpers
 
         public static async Task SetCustomUserAgentAsync()
         {
-            var agents = await Services.UserAgentService.GetAgentDataAsync(x => x.IsUsed);
+            var agents = await new UserAgentService().GetAgentDataAsync(x => x.IsUsed);
             var CurrentAgent = agents.FirstOrDefault();
-            if (CurrentAgent != null)
+            if (CurrentAgent is not null)
             {
                 if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
                 {

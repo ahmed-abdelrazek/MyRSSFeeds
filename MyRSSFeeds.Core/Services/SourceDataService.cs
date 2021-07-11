@@ -2,6 +2,7 @@
 using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
+using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,43 +13,27 @@ using System.Xml;
 
 namespace MyRSSFeeds.Core.Services
 {
-    public static class SourceDataService
+    public class SourceDataService : ISourceDataService
     {
-        private static IEnumerable<Source> AllFeedsBySource(LiteDatabase db)
+        public async Task<IEnumerable<Source>> GetSourcesDataAsync()
         {
-            return AllSources(db).Include(x => x.RSSs).FindAll();
-        }
-
-        private static ILiteCollection<Source> AllSources(LiteDatabase db)
-        {
-            return db.GetCollection<Source>(LiteDbContext.Sources);
-        }
-
-        public static async Task<IEnumerable<Source>> GetSourcesDataAsync()
-        {
-            List<Source> ls = new List<Source>();
-
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    ls = AllSources(db).FindAll().OrderByDescending(x => x.Id).ToList();
+                    return db.GetCollection<Source>(LiteDbContext.Sources).FindAll().OrderByDescending(x => x.Id);
                 }
-                return ls;
             });
         }
 
-        public static async Task<IEnumerable<Source>> GetSourcesDataWithFeedsAsync()
+        public async Task<IEnumerable<Source>> GetSourcesDataWithFeedsAsync()
         {
-            List<Source> ls = new List<Source>();
-
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
+                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    ls = AllFeedsBySource(db).ToList();
+                    return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).FindAll();
                 }
-                return ls;
             });
         }
 
@@ -57,12 +42,13 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="source">the base Uri for the source</param>
         /// <returns>Task true if the source already exist</returns>
-        public static async Task<bool> SourceExistAsync(string source)
+        public async Task<bool> SourceExistAsync(string source)
         {
             var link = new Uri(source);
+
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<Source>(LiteDbContext.Sources);
                 return col.Exists(x => x.RssUrl == link);
             });
@@ -73,7 +59,7 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="source">string for source rss url</param>
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
-        public static async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
+        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
             var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
@@ -89,18 +75,21 @@ namespace MyRSSFeeds.Core.Services
                     {
                         var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
 
-                        if (latestDateItem == null || lastUpdatedTime.Year < 2020)
+                        if (latestDateItem is null)
                         {
                             latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
-                            lastUpdatedTime = latestDateItem.LastUpdatedTime;
+                            lastUpdatedTime = DateTimeOffset.Now;
                         }
                         else
                         {
-                            lastUpdatedTime = latestDateItem.PublishDate;
-                        }
-                        if (lastUpdatedTime.Year < 2020)
-                        {
-                            lastUpdatedTime = DateTimeOffset.Now;
+                            if (latestDateItem.PublishDate.Year < 2020)
+                            {
+                                lastUpdatedTime = DateTimeOffset.Now;
+                            }
+                            else
+                            {
+                                lastUpdatedTime = latestDateItem.PublishDate;
+                            }
                         }
                     }
                     else
@@ -118,13 +107,31 @@ namespace MyRSSFeeds.Core.Services
         /// <param name="source">string for rss/xml content</param>        
         /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
-        public static async Task<Source> GetSourceInfoFromRssAsync(string source, string rssUrl)
+        public async Task<Source?> GetSourceInfoFromRssAsync(string? source, string? rssUrl)
         {
+            if (string.IsNullOrEmpty(source))
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(rssUrl))
+            {
+                return null;
+            }
+
             return await Task.Run(() =>
             {
                 using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
+                Uri baseLink = new Uri("");
+                foreach (var link in feed.Links.Where(x => x.MediaType is null))
+                {
+                    if (link.Uri is not null)
+                    {
+                        baseLink = link.BaseUri;
+                        break;
+                    }
+                }
 
                 return new Source
                 {
@@ -139,33 +146,33 @@ namespace MyRSSFeeds.Core.Services
             });
         }
 
-        public static async Task<Source> AddNewSourceAsync(Source source)
+        public async Task<Source> AddNewSourceAsync(Source source)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<Source>(LiteDbContext.Sources);
                 col.Insert(source);
                 return source;
             });
         }
 
-        public static async Task<Source> UpdateSourceAsync(Source source)
+        public async Task<Source> UpdateSourceAsync(Source source)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<Source>(LiteDbContext.Sources);
                 col.Update(source);
                 return source;
             });
         }
 
-        public static async Task<bool> DeleteSourceAsync(Source source)
+        public async Task<bool> DeleteSourceAsync(Source source)
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
                 return db.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
             });
         }

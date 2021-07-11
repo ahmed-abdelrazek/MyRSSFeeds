@@ -13,14 +13,18 @@ namespace MyRSSFeeds.Core.Models
 
         public int Id { get; set; }
 
-        public string PostTitle { get; set; }
+        public string? PostTitle { get; set; }
 
         [BsonIgnore]
         public string PostShortTitle
         {
             get
             {
-                if (PostTitle.Length > 80)
+                if (string.IsNullOrEmpty(PostTitle))
+                {
+                    return "";
+                }
+                else if (PostTitle.Length > 80)
                 {
                     return string.Concat(PostTitle.Substring(0, 80), " ...");
                 }
@@ -31,7 +35,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public Uri URL { get; set; }
+        public Uri? URL { get; set; }
 
         [BsonIgnore]
         public Uri LaunchURL
@@ -44,16 +48,23 @@ namespace MyRSSFeeds.Core.Models
                 }
                 else
                 {
-                    return URL;
+                    if (URL is null)
+                    {
+                        return new Uri("");
+                    }
+                    else
+                    {
+                        return URL;
+                    }
                 }
             }
         }
 
-        public string Thumbnail { get; set; }
+        public string? Thumbnail { get; set; }
 
-        public string Guid { get; set; }
+        public string? Guid { get; set; }
 
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         public virtual ICollection<Author> Authors { get; set; }
 
@@ -73,6 +84,6 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public virtual Source PostSource { get; set; }
+        public virtual Source? PostSource { get; set; }
     }
 }
