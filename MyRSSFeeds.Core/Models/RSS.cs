@@ -18,21 +18,7 @@ namespace MyRSSFeeds.Core.Models
         [BsonIgnore]
         public string PostShortTitle
         {
-            get
-            {
-                if (string.IsNullOrEmpty(PostTitle))
-                {
-                    return "";
-                }
-                else if (PostTitle.Length > 80)
-                {
-                    return string.Concat(PostTitle.Substring(0, 80), " ...");
-                }
-                else
-                {
-                    return PostTitle;
-                }
-            }
+            get => string.IsNullOrEmpty(PostTitle) ? "" : PostTitle.Length > 80 ? string.Concat(PostTitle.Substring(0, 80), " ...") : PostTitle;
         }
 
         public Uri? URL { get; set; }
@@ -40,24 +26,9 @@ namespace MyRSSFeeds.Core.Models
         [BsonIgnore]
         public Uri LaunchURL
         {
-            get
-            {
-                if (Uri.IsWellFormedUriString(Guid, UriKind.Absolute) && (Guid.StartsWith("http://") || Guid.StartsWith("https://")))
-                {
-                    return new Uri(Guid);
-                }
-                else
-                {
-                    if (URL is null)
-                    {
-                        return new Uri("");
-                    }
-                    else
-                    {
-                        return URL;
-                    }
-                }
-            }
+            get => Uri.IsWellFormedUriString(Guid, UriKind.Absolute) && (Guid.StartsWith("http://") || Guid.StartsWith("https://"))
+                    ? new Uri(Guid)
+                    : URL is null ? new Uri("about:blank") : URL;
         }
 
         public string? Thumbnail { get; set; }
@@ -77,11 +48,8 @@ namespace MyRSSFeeds.Core.Models
 
         public bool IsRead
         {
-            get { return _isRead; }
-            set
-            {
-                Set(ref _isRead, value);
-            }
+            get => _isRead;
+            set => Set(ref _isRead, value);
         }
 
         public virtual Source? PostSource { get; set; }

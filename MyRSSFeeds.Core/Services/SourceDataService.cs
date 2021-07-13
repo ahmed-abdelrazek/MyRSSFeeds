@@ -123,7 +123,7 @@ namespace MyRSSFeeds.Core.Services
             {
                 using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                Uri baseLink = new Uri("");
+                Uri baseLink = new("about:blank");
                 foreach (var link in feed.Links.Where(x => x.MediaType is null))
                 {
                     if (link.Uri is not null)
@@ -138,6 +138,7 @@ namespace MyRSSFeeds.Core.Services
                     SiteTitle = feed.Title.Text,
                     Description = feed.Description.Text,
                     Language = feed.Language,
+                    LastBuildCheck = feed.LastUpdatedTime,
                     LastBuildDate = feed.LastUpdatedTime,
                     BaseUrl = baseLink,
                     RssUrl = new Uri(rssUrl),

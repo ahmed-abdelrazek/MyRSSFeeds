@@ -18,9 +18,9 @@ namespace MyRSSFeeds.Core.Models
 
         public byte[]? SiteIcon { get; set; }
 
-        public Uri BaseUrl { get; set; } = new Uri("");
+        public Uri BaseUrl { get; set; } = new("about:blank");
 
-        public Uri RssUrl { get; set; } = new Uri("");
+        public Uri RssUrl { get; set; } = new("about:blank");
 
         private string _description = "";
 
