@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
-using Microsoft.UI.Xaml.Media.Imaging;
 using MyRSSFeeds.Contracts.ViewModels;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
@@ -14,7 +13,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using Windows.Storage.Streams;
 using Windows.UI.Popups;
 
 namespace MyRSSFeeds.ViewModels
@@ -30,15 +28,15 @@ namespace MyRSSFeeds.ViewModels
 
         public bool IsButtonEnabled
         {
-            get { return _isButtonEnabled; }
-            set { SetProperty(ref _isButtonEnabled, value); }
+            get => _isButtonEnabled;
+            set => SetProperty(ref _isButtonEnabled, value);
         }
 
         private string _sourceTitle;
 
         public string SourceTitle
         {
-            get { return _sourceTitle; }
+            get => _sourceTitle;
             set
             {
                 if (SetProperty(ref _sourceTitle, value))
@@ -53,7 +51,7 @@ namespace MyRSSFeeds.ViewModels
 
         public string SourceUrl
         {
-            get { return _sourceUrl; }
+            get => _sourceUrl;
             set
             {
                 if (SetProperty(ref _sourceUrl, value))
@@ -68,48 +66,39 @@ namespace MyRSSFeeds.ViewModels
 
         public string SourceDescription
         {
-            get { return _sourceDescription; }
-            set { SetProperty(ref _sourceDescription, value); }
+            get => _sourceDescription;
+            set => SetProperty(ref _sourceDescription, value);
         }
 
         private bool _isWorking;
 
         public bool IsWorking
         {
-            get { return _isWorking; }
-            set { SetProperty(ref _isWorking, value); }
+            get => _isWorking;
+            set => SetProperty(ref _isWorking, value);
         }
 
         private int _progressMax;
 
         public int ProgressMax
         {
-            get { return _progressMax; }
-            set
-            {
-                SetProperty(ref _progressMax, value);
-            }
+            get => _progressMax;
+            set => SetProperty(ref _progressMax, value);
         }
 
         private int _progressCurrent;
 
         public int ProgressCurrent
         {
-            get { return _progressCurrent; }
-            set
-            {
-                SetProperty(ref _progressCurrent, value);
-            }
+            get => _progressCurrent;
+            set => SetProperty(ref _progressCurrent, value);
         }
 
         private bool _isLoadingData;
 
         public bool IsLoadingData
         {
-            get
-            {
-                return _isLoadingData;
-            }
+            get => _isLoadingData;
             set
             {
                 if (SetProperty(ref _isLoadingData, value))
@@ -124,7 +113,7 @@ namespace MyRSSFeeds.ViewModels
 
         public Source SelectedSource
         {
-            get { return _selectedSource; }
+            get => _selectedSource;
             set
             {
                 if (SetProperty(ref _selectedSource, value))
@@ -506,22 +495,6 @@ namespace MyRSSFeeds.ViewModels
 
         public void OnNavigatedFrom()
         {
-        }
-
-        private async Task<BitmapImage> LoadImageAsync(byte[] imageBuffer)
-        {
-            using InMemoryRandomAccessStream ms = new();
-            // Writes the image byte array in an InMemoryRandomAccessStream
-            // that is needed to set the source of BitmapImage.
-            using (DataWriter writer = new(ms.GetOutputStreamAt(0)))
-            {
-                writer.WriteBytes(imageBuffer);
-                await writer.StoreAsync();
-            }
-
-            BitmapImage image = new();
-            await image.SetSourceAsync(ms);
-            return image;
         }
     }
 }

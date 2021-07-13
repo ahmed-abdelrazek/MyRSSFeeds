@@ -5,39 +5,38 @@
     xmlns:behaviors="using:MyRSSFeeds.Behaviors"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:MyRSSFeeds.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyRSSFeeds.Core.Models"
     xmlns:views="using:MyRSSFeeds.Views"
-    behaviors:NavigationViewHeaderBehavior.HeaderMode="Always"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
+        <helpers:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter" />
         <DataTemplate x:Key="ItemTemplate" x:DataType="models:Source">
             <Grid Height="60">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--<FontIcon
+                <Image
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    AutomationProperties.Name="{x:Bind SymbolName}"
-                    FontSize="32"
-                    Glyph="{x:Bind Symbol}" />
+                    Source="{x:Bind SiteIcon, Converter={StaticResource ByteArrayToImageConverter}}" />
                 <StackPanel
                     Grid.Column="1"
                     Margin="{StaticResource SmallLeftMargin}"
                     VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource ListTitleStyle}" Text="{x:Bind Company}" />
-                    <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind Status}" />
-                </StackPanel>-->
+                    <TextBlock Style="{StaticResource ListTitleStyle}" Text="{x:Bind SiteTitle}" />
+                    <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind Description}" />
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <!--<views:SourcesListDetailsDetailControl ListDetailsMenuItem="{Binding}" />-->
-                <views:SourcesListDetailsDetailControl />
+                <views:SourcesListDetailsDetailControl ListDetailsMenuItem="{Binding}" />
             </Grid>
         </DataTemplate>
 
@@ -70,34 +69,141 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
-
-    <Grid x:Name="ContentArea">
-        <controls:ListDetailsView
-            x:Name="ListDetailsViewControl"
-            x:Uid="SourcesListDetails"
-            BackButtonBehavior="Automatic"
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-            BorderBrush="Transparent"
-            DetailsTemplate="{StaticResource DetailsTemplate}"
-            ItemTemplate="{StaticResource ItemTemplate}"
-            ItemsSource="{x:Bind ViewModel.Sources}"
-            ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
-            NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
-            SelectedItem="{x:Bind ViewModel.SelectedSource, Mode=TwoWay}"
-            ViewStateChanged="OnViewStateChanged" />
-
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <!--  641 is the default CompactModeThresholdWidth in NavigationView  -->
-                        <AdaptiveTrigger MinWindowWidth="641" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ListDetailsViewControl.ListHeaderTemplate" Value="{StaticResource ListHeaderTemplate}" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-    </Grid>
+    <controls:DockPanel LastChildFill="True">
+        <Grid controls:DockPanel.Dock="Bottom" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    x:Uid="SourcesView_AddNewSourceButton"
+                    Margin="1,0"
+                    CornerRadius="0"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox
+                                        x:Uid="SourcesView_AddSource"
+                                        MinWidth="150"
+                                        MaxWidth="300"
+                                        Margin="5"
+                                        Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ProgressRing
+                                        Margin="5"
+                                        VerticalAlignment="Bottom"
+                                        IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <Button
+                                    x:Uid="SourcesView_AddSourceDoneButton"
+                                    Margin="5"
+                                    Command="{x:Bind ViewModel.AddNewSourceCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button
+                    x:Uid="SourcesView_EditSelectedSourceButton"
+                    CornerRadius="0"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBox
+                                    x:Uid="SourcesView_EditSourceTitle"
+                                    MinWidth="150"
+                                    MaxWidth="300"
+                                    Margin="5"
+                                    Text="{x:Bind ViewModel.SourceTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox
+                                    x:Uid="SourcesView_EditSourceRssUrl"
+                                    MaxWidth="300"
+                                    Margin="5"
+                                    Text="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox
+                                    x:Uid="SourcesView_EditSourceDescription"
+                                    MaxWidth="300"
+                                    Margin="5"
+                                    Text="{x:Bind ViewModel.SourceDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ProgressRing Margin="5" IsActive="{x:Bind ViewModel.IsWorking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button x:Uid="SourcesView_EditSourceDoneButton" Command="{x:Bind ViewModel.UpdateSourceCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button
+                    x:Uid="SourcesView_DeleteButton"
+                    Margin="1,0"
+                    CornerRadius="0"
+                    IsEnabled="{x:Bind ViewModel.IsButtonEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock
+                                    x:Uid="SourcesView_DeletePopupMsg"
+                                    Margin="5"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource BaseTextBlockStyle}" />
+                                <Button x:Uid="SourcesView_DeletePopupButton" Command="{x:Bind ViewModel.DeleteSourceCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button
+                    x:Uid="SourcesView_RefreshButton"
+                    Margin="1,0"
+                    Command="{x:Bind ViewModel.RefreshSourcesCommand}"
+                    CornerRadius="0"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72C;" />
+                </Button>
+                <Button
+                    x:Uid="SourcesView_CancelLoadingButton"
+                    Margin="1,0"
+                    Command="{x:Bind ViewModel.CancelLoadingCommand}"
+                    CornerRadius="0"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D8;" />
+                </Button>
+                <Button
+                    x:Uid="SourcesView_ClearSelectionButton"
+                    Command="{x:Bind ViewModel.ClearSelectedSourceCommand}"
+                    CornerRadius="0"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" />
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="ContentArea">
+            <controls:ListDetailsView
+                x:Name="ListDetailsViewControl"
+                x:Uid="SourcesListDetails"
+                BackButtonBehavior="Automatic"
+                Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+                BorderBrush="Transparent"
+                DetailsTemplate="{StaticResource DetailsTemplate}"
+                ItemTemplate="{StaticResource ItemTemplate}"
+                ItemsSource="{x:Bind ViewModel.Sources}"
+                ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
+                NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
+                SelectedItem="{x:Bind ViewModel.SelectedSource, Mode=TwoWay}"
+                ViewStateChanged="OnViewStateChanged" />
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <!--  641 is the default CompactModeThresholdWidth in NavigationView  -->
+                            <AdaptiveTrigger MinWindowWidth="641" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="ListDetailsViewControl.ListHeaderTemplate" Value="{StaticResource ListHeaderTemplate}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </controls:DockPanel>
 </Page>

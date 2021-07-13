@@ -124,13 +124,13 @@
     <value>Main</value>
   </data>
   <data name="SourcesListDetails.ListHeader" xml:space="preserve">
-    <value>SourcesListDetails</value>
+    <value>Sources List Details</value>
   </data>
   <data name="SourcesListDetails_NoSelection.Text" xml:space="preserve">
-    <value>Select an item from the list.</value>
+    <value>Select a Source from the list.</value>
   </data>
   <data name="Shell_SourcesListDetails.Content" xml:space="preserve">
-    <value>SourcesListDetails</value>
+    <value>Sources</value>
   </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
@@ -227,19 +227,19 @@
   <data name="MainViewModelNoTitleFound" xml:space="preserve">
     <value>No Title Found</value>
   </data>
-  <data name="MainView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_CancelLoadingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cancel loading Feeds</value>
   </data>
-  <data name="MainView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_ClearSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Selection</value>
   </data>
-  <data name="MainView_Filter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_Filter.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Filter Content</value>
   </data>
   <data name="MainView_FilterAuthor.Header" xml:space="preserve">
     <value>Author</value>
   </data>
-  <data name="MainView_FilterClearButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_FilterClearButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Filter Source Selection</value>
   </data>
   <data name="MainView_FilterDoneButton.Content" xml:space="preserve">
@@ -260,13 +260,13 @@
   <data name="MainView_FilterTitle.PlaceholderText" xml:space="preserve">
     <value>Enter a Title or part of a Title</value>
   </data>
-  <data name="MainView_MarkAsRead.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_MarkAsRead.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Mark all as read</value>
   </data>
-  <data name="MainView_OpenFullPostButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_OpenFullPostButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Full Post</value>
   </data>
-  <data name="MainView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_RefreshButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh Feeds Now</value>
   </data>
   <data name="No" xml:space="preserve">
@@ -281,13 +281,13 @@
   <data name="SettingsViewModelUnDeletableAgentMessageDialog" xml:space="preserve">
     <value>You can't delete that User Agent.</value>
   </data>
-  <data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_BackupExportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Export Source to the app json file.</value>
   </data>
   <data name="Settings_BackupExportButtonTextblock.Text" xml:space="preserve">
     <value>Export</value>
   </data>
-  <data name="Settings_BackupImportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_BackupImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Import Sources from the app json file.</value>
   </data>
   <data name="Settings_BackupImportButtonTextblock.Text" xml:space="preserve">
@@ -337,7 +337,7 @@
     <value>https://shababco.blogspot.com/p/apps-privacy-policies.html</value>
     <comment>Here is your Privacy Statement url for Settings</comment>
   </data>
-  <data name="Settings_UserAgentAddButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_UserAgentAddButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add New User Agent.</value>
   </data>
   <data name="Settings_UserAgentAddName.Header" xml:space="preserve">
@@ -346,7 +346,7 @@
   <data name="Settings_UserAgentAddValue.Header" xml:space="preserve">
     <value>User Agent</value>
   </data>
-  <data name="Settings_UserAgentDeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_UserAgentDeleteButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Delete Selected User Agent.</value>
   </data>
   <data name="Settings_UserAgents.Text" xml:space="preserve">
@@ -383,7 +383,7 @@
   <data name="SourcesViewModelSourceUrlNullExceptionMessageDialog" xml:space="preserve">
     <value>Make sure you entered a Source Url.</value>
   </data>
-  <data name="SourcesView_AddNewSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_AddNewSourceButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add New Source</value>
   </data>
   <data name="SourcesView_AddSource.Header" xml:space="preserve">
@@ -395,13 +395,13 @@
   <data name="SourcesView_AddSourceDoneButton.Content" xml:space="preserve">
     <value>Done</value>
   </data>
-  <data name="SourcesView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_CancelLoadingButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cancel Checking on Sources</value>
   </data>
-  <data name="SourcesView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_ClearSelectionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Selection</value>
   </data>
-  <data name="SourcesView_DeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_DeleteButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Delete Selected Source</value>
   </data>
   <data name="SourcesView_DeletePopupButton.Content" xml:space="preserve">
@@ -410,7 +410,7 @@
   <data name="SourcesView_DeletePopupMsg.Text" xml:space="preserve">
     <value>Are you sure you want to delete selected source?</value>
   </data>
-  <data name="SourcesView_EditSelectedSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_EditSelectedSourceButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit Selected Source</value>
   </data>
   <data name="SourcesView_EditSourceDescription.Header" xml:space="preserve">
@@ -431,14 +431,14 @@
   <data name="SourcesView_EditSourceTitle.PlaceholderText" xml:space="preserve">
     <value>Required</value>
   </data>
-  <data name="SourcesView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_RefreshButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh Sources</value>
   </data>
   <data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Back</value>
     <comment>WebView back button automation name property for WebView</comment>
   </data>
-  <data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Back</value>
     <comment>Back button automation tooltip property for WebView</comment>
   </data>
@@ -446,7 +446,7 @@
     <value>Forward</value>
     <comment>Forward button automation name property for WebView</comment>
   </data>
-  <data name="WebView_BrowserForwardButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Forward</value>
     <comment>Forward button automation tooltip property for WebView</comment>
   </data>
@@ -454,7 +454,7 @@
     <value>Open in browser</value>
     <comment>Open in browser button automation name property for WebView</comment>
   </data>
-  <data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Post in Your Default Browser.</value>
     <comment>Open in browser button automation tooltip property for WebView</comment>
   </data>
@@ -462,7 +462,7 @@
     <value>Refresh</value>
     <comment>Refresh button automation name property for WebView</comment>
   </data>
-  <data name="WebView_RefreshBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_RefreshBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh</value>
     <comment>Refresh button automation tooltip property for WebView</comment>
   </data>
@@ -493,5 +493,23 @@ Tweaks for how Read Full Post are shown in the Feed list.</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_Description.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_Language.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_RssUrl.Text" xml:space="preserve">
+    <value>Rss Url</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_LastBuildCheck.Text" xml:space="preserve">
+    <value>Last Build Check</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_LocalLastBuildDate.Text" xml:space="preserve">
+    <value>Local Last Build Date</value>
+  </data>
+  <data name="SourcesListDetailsDetailControl_ErrorMassage.Text" xml:space="preserve">
+    <value>Error Massage</value>
   </data>
 </root>

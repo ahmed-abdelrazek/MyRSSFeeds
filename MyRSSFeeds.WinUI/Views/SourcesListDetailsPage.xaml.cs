@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.WinUI.UI.Controls;
-
 using Microsoft.UI.Xaml.Controls;
-
 using MyRSSFeeds.ViewModels;
 
 namespace MyRSSFeeds.Views

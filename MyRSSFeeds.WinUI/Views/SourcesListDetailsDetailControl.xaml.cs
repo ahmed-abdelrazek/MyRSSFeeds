@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
 using MyRSSFeeds.Core.Models;
 
 namespace MyRSSFeeds.Views
@@ -9,8 +8,8 @@ namespace MyRSSFeeds.Views
     {
         public Source ListDetailsMenuItem
         {
-            get { return GetValue(ListDetailsMenuItemProperty) as Source; }
-            set { SetValue(ListDetailsMenuItemProperty, value); }
+            get => GetValue(ListDetailsMenuItemProperty) as Source;
+            set => SetValue(ListDetailsMenuItemProperty, value);
         }
 
         public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(Source), typeof(SourcesListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));

@@ -2,9 +2,15 @@
     x:Class="MyRSSFeeds.Views.SourcesListDetailsDetailControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:MyRSSFeeds.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <ScrollViewer
         Name="ForegroundElement"
         Padding="{StaticResource DetailPageMargin}"
@@ -14,55 +20,58 @@
         VerticalScrollMode="Enabled">
         <StackPanel HorizontalAlignment="Left">
             <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                <!--<Image
+                <Image
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    AutomationProperties.Name="{x:Bind ListDetailsMenuItem.SiteTitle, Mode=OneWay}"
-                    Source="{x:Bind ListDetailsMenuItem.SiteIcon, Mode=OneWay}" />-->
+                    Source="{x:Bind ListDetailsMenuItem.SiteIcon, Converter={StaticResource ByteArrayToImageConverter}, Mode=OneWay}" />
                 <TextBlock
                     Margin="{StaticResource SmallLeftMargin}"
                     VerticalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind ListDetailsMenuItem.SiteTitle, Mode=OneWay}"
                     Style="{ThemeResource TitleTextBlockStyle}"
                     Text="{x:Bind ListDetailsMenuItem.SiteTitle, Mode=OneWay}" />
             </StackPanel>
             <StackPanel Name="block" Padding="0,15,0,0">
-                <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Status" />
-
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.SiteTitle, Mode=OneWay}" />
-
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_Description"
                     Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Order date" />
+                    Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.Description, Mode=OneWay}" />
+
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_Language"
                     Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Company" />
+                    Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.Language, Mode=OneWay}" />
 
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_RssUrl"
                     Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Ship to" />
+                    Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.RssUrl, Mode=OneWay}" />
+
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_LastBuildCheck"
                     Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Order total" />
+                    Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.LastBuildCheck, Mode=OneWay}" />
 
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_LocalLastBuildDate"
                     Margin="{StaticResource MediumTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Note 1" />
+                    Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyStyle}" Text="{x:Bind ListDetailsMenuItem.LocalLastBuildDate, Mode=OneWay}" />
 
                 <TextBlock
+                    x:Uid="SourcesListDetailsDetailControl_ErrorMassage"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Note 2" />
-                <TextBlock Style="{StaticResource DetailBodyStyle}" Text="{x:Bind ListDetailsMenuItem.IsWorking, Mode=OneWay}" />
+                    Text="Error Massage"
+                    Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <TextBlock
+                    Style="{StaticResource DetailBodyStyle}"
+                    Text="{x:Bind ListDetailsMenuItem.ErrorMessage, Mode=OneWay}"
+                    Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
