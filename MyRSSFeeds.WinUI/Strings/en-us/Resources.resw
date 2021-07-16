@@ -509,4 +509,10 @@ Tweaks for how Read Full Post are shown in the Feed list.</value>
   <data name="SourcesListDetailsDetailControl_ErrorMassage.Text" xml:space="preserve">
     <value>Error Massage</value>
   </data>
+  <data name="FeedsListDetails.ListHeader" xml:space="preserve">
+    <value>Feed Details</value>
+  </data>
+  <data name="FeedsListDetails_NoSelection.Text" xml:space="preserve">
+    <value>Select an Item form the Feed First</value>
+  </data>
 </root>
