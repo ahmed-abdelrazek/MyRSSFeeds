@@ -5,13 +5,13 @@ using MyRSSFeeds.ViewModels;
 
 namespace MyRSSFeeds.Views
 {
-    public sealed partial class SourcesListDetailsPage : Page
+    public sealed partial class SourcesListPage : Page
     {
-        public SourcesListDetailsViewModel ViewModel { get; }
+        public SourcesListPageViewModel ViewModel { get; }
 
-        public SourcesListDetailsPage()
+        public SourcesListPage()
         {
-            ViewModel = Ioc.Default.GetService<SourcesListDetailsViewModel>();
+            ViewModel = Ioc.Default.GetService<SourcesListPageViewModel>();
             InitializeComponent();
         }
 

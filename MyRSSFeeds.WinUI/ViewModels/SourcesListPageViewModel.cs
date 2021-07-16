@@ -17,7 +17,7 @@ using Windows.UI.Popups;
 
 namespace MyRSSFeeds.ViewModels
 {
-    public class SourcesListDetailsViewModel : ObservableRecipient, INavigationAware
+    public class SourcesListPageViewModel : ObservableRecipient, INavigationAware
     {
         private readonly IRSSDataService _rssDataService;
         private readonly ISourceDataService _sourceDataService;
@@ -372,7 +372,7 @@ namespace MyRSSFeeds.ViewModels
             ClearPopups();
         }
 
-        public SourcesListDetailsViewModel(IRSSDataService rssDataService, ISourceDataService sourceDataService)
+        public SourcesListPageViewModel(IRSSDataService rssDataService, ISourceDataService sourceDataService)
         {
             _rssDataService = rssDataService;
             _sourceDataService = sourceDataService;

@@ -1,11 +1,13 @@
 ﻿<UserControl
-    x:Class="MyRSSFeeds.Views.SourcesListDetailsDetailControl"
+    x:Class="MyRSSFeeds.Views.SourcesListDetailsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:MyRSSFeeds.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyRSSFeeds.Core.Models"
+    d:DataContext="{d:DesignInstance Type=models:Source}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <helpers:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter" />

@@ -4,7 +4,7 @@ using MyRSSFeeds.Core.Models;
 
 namespace MyRSSFeeds.Views
 {
-    public sealed partial class SourcesListDetailsDetailControl : UserControl
+    public sealed partial class SourcesListDetailsControl : UserControl
     {
         public Source ListDetailsMenuItem
         {
@@ -12,16 +12,16 @@ namespace MyRSSFeeds.Views
             set => SetValue(ListDetailsMenuItemProperty, value);
         }
 
-        public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(Source), typeof(SourcesListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
+        public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(Source), typeof(SourcesListDetailsControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
 
-        public SourcesListDetailsDetailControl()
+        public SourcesListDetailsControl()
         {
             InitializeComponent();
         }
 
         private static void OnListDetailsMenuItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as SourcesListDetailsDetailControl;
+            var control = d as SourcesListDetailsControl;
             control.ForegroundElement.ChangeView(0, 0, 1);
         }
     }

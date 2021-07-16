@@ -73,8 +73,8 @@ namespace MyRSSFeeds
             services.AddTransient<ShellViewModel>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
-            services.AddTransient<SourcesListDetailsViewModel>();
-            services.AddTransient<SourcesListDetailsPage>();
+            services.AddTransient<SourcesListPageViewModel>();
+            services.AddTransient<SourcesListPage>();
             services.AddTransient<WebViewViewModel>();
             services.AddTransient<WebViewPage>();
             services.AddTransient<SettingsViewModel>();

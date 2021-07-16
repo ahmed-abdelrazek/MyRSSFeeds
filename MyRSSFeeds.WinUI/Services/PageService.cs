@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using CommunityToolkit.Mvvm.ComponentModel;
-
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
-
 using MyRSSFeeds.Contracts.Services;
 using MyRSSFeeds.ViewModels;
 using MyRSSFeeds.Views;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyRSSFeeds.Services
 {
@@ -19,7 +16,7 @@ namespace MyRSSFeeds.Services
         public PageService()
         {
             Configure<MainViewModel, MainPage>();
-            Configure<SourcesListDetailsViewModel, SourcesListDetailsPage>();
+            Configure<SourcesListPageViewModel, SourcesListPage>();
             Configure<WebViewViewModel, WebViewPage>();
             Configure<SettingsViewModel, SettingsPage>();
         }

@@ -21,7 +21,7 @@
                 x:Uid="Shell_Main"
                 helpers:NavHelper.NavigateTo="MyRSSFeeds.ViewModels.MainViewModel"
                 Icon="Home" />
-            <NavigationViewItem x:Uid="Shell_SourcesListDetails" helpers:NavHelper.NavigateTo="MyRSSFeeds.ViewModels.SourcesListDetailsViewModel">
+            <NavigationViewItem x:Uid="Shell_SourcesListPage" helpers:NavHelper.NavigateTo="MyRSSFeeds.ViewModels.SourcesListPageViewModel">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7BC;" />
                 </NavigationViewItem.Icon>

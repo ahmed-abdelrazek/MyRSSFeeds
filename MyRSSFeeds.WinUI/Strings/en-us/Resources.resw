@@ -129,9 +129,6 @@
   <data name="SourcesListDetails_NoSelection.Text" xml:space="preserve">
     <value>Select a Source from the list.</value>
   </data>
-  <data name="Shell_SourcesListDetails.Content" xml:space="preserve">
-    <value>Sources</value>
-  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
   </data>
@@ -358,7 +355,7 @@
   <data name="Settings_WaitAfterLastCheckNote.Text" xml:space="preserve">
     <value>Enter 0 to always recheck</value>
   </data>
-  <data name="Shell_SourcesView.Content" xml:space="preserve">
+  <data name="Shell_SourcesListPage.Content" xml:space="preserve">
     <value>Sources</value>
     <comment>Navigation view item name for Sources</comment>
   </data>

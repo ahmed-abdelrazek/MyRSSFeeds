@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="MyRSSFeeds.Views.SourcesListDetailsPage"
+    x:Class="MyRSSFeeds.Views.SourcesListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:MyRSSFeeds.Behaviors"
@@ -8,8 +8,10 @@
     xmlns:helpers="using:MyRSSFeeds.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyRSSFeeds.Core.Models"
+    xmlns:viewmodels="using:MyRSSFeeds.ViewModels"
     xmlns:views="using:MyRSSFeeds.Views"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SourcesListPageViewModel}"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
@@ -36,7 +38,7 @@
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <views:SourcesListDetailsDetailControl ListDetailsMenuItem="{Binding}" />
+                <views:SourcesListDetailsControl ListDetailsMenuItem="{Binding}" />
             </Grid>
         </DataTemplate>
 
