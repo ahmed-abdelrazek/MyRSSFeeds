@@ -17,7 +17,6 @@ namespace MyRSSFeeds.Services
         {
             Configure<MainViewModel, MainPage>();
             Configure<SourcesListPageViewModel, SourcesListPage>();
-            Configure<WebViewViewModel, WebViewPage>();
             Configure<SettingsViewModel, SettingsPage>();
         }
 
