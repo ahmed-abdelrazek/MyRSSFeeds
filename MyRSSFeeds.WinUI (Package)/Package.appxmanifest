@@ -10,7 +10,7 @@
   <Identity
     Name="1DDD02B6-9044-42E8-AEFA-26CDE0652F9C"
     Publisher="CN=ahmed"
-    Version="1.0.0.0" />
+    Version="2.0.0.0" />
 
   <Properties>
     <DisplayName>MyRSSFeeds (Package)</DisplayName>
