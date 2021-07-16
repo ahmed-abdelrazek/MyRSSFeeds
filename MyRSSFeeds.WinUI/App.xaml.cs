@@ -39,10 +39,11 @@ namespace MyRSSFeeds
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             base.OnLaunched(args);
-            var activationService = Ioc.Default.GetService<IActivationService>();
-            await activationService.ActivateAsync(args);
 
             await InitializeAsync();
+
+            var activationService = Ioc.Default.GetService<IActivationService>();
+            await activationService.ActivateAsync(args);
         }
 
         private IServiceProvider ConfigureServices()
@@ -100,8 +101,6 @@ namespace MyRSSFeeds
 
             Core.Data.LiteDbContext.DbConnectionString = new LiteDB.ConnectionString { Filename = dbFile, Connection = LiteDB.ConnectionType.Shared };
             Core.Data.LiteDbContext.InitializeDatabase();
-
-            //await ThemeSelectorService.InitializeAsync().ConfigureAwait(false);
         }
     }
 }
