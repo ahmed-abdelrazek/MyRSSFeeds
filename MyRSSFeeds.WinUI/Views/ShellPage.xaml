@@ -14,6 +14,7 @@
         Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"
         IsBackButtonVisible="Visible"
         IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+        IsPaneOpen="False"
         IsSettingsVisible="True"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>
@@ -26,10 +27,6 @@
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7BC;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem
-                x:Uid="Shell_WebView"
-                helpers:NavHelper.NavigateTo="MyRSSFeeds.ViewModels.WebViewViewModel"
-                Icon="Document" />
         </NavigationView.MenuItems>
         <NavigationView.HeaderTemplate>
             <DataTemplate>
