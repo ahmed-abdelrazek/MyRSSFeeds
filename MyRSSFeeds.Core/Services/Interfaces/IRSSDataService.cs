@@ -1,4 +1,5 @@
-﻿using MyRSSFeeds.Core.Models;
+﻿using LiteDB;
+using MyRSSFeeds.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -13,12 +14,12 @@ namespace MyRSSFeeds.Core.Services.Interfaces
         Task<int> DeleteManyFeedsAsync(Expression<Func<RSS, bool>> predicate);
         Task<bool> FeedExistAsync(RSS rss);
         Task<RSS> GetFeedAsync(RSS rss);
-        Task<IEnumerable<RSS>> GetFeedsDataAsync();
-        Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate);
+        Task<ILiteQueryable<RSS>> GetFeedsDataAsync();
+        Task<ILiteQueryable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate);
         Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip);
         Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip, int limit);
         Task<IEnumerable<RSS>> GetFeedsDataAsync(int limit);
-        Task<IEnumerable<RSS>> GetFeedsDataWithSourceAsync();
+        Task<ILiteQueryable<RSS>> GetFeedsDataWithSourceAsync();
         Task<bool> UpdateFeedAsync(RSS rss);
     }
 }

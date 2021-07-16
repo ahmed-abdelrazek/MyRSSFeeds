@@ -4,7 +4,6 @@ using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -15,24 +14,24 @@ namespace MyRSSFeeds.Core.Services
 {
     public class SourceDataService : ISourceDataService
     {
-        public async Task<IEnumerable<Source>> GetSourcesDataAsync()
+        public async Task<ILiteQueryable<Source>> GetSourcesDataAsync()
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    return db.GetCollection<Source>(LiteDbContext.Sources).FindAll().OrderByDescending(x => x.Id);
+                    return db.GetCollection<Source>(LiteDbContext.Sources).Query().OrderByDescending(x => x.Id);
                 }
             });
         }
 
-        public async Task<IEnumerable<Source>> GetSourcesDataWithFeedsAsync()
+        public async Task<ILiteQueryable<Source>> GetSourcesDataWithFeedsAsync()
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).FindAll();
+                    return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).Query();
                 }
             });
         }
@@ -49,8 +48,7 @@ namespace MyRSSFeeds.Core.Services
             return await Task.Run(() =>
             {
                 using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                return col.Exists(x => x.RssUrl == link);
+                return db.GetCollection<Source>(LiteDbContext.Sources).Exists(x => x.RssUrl == link);
             });
         }
 

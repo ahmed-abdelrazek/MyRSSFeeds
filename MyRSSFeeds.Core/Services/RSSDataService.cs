@@ -16,13 +16,13 @@ namespace MyRSSFeeds.Core.Services
         /// Gets all saved Feeds from database 
         /// </summary>
         /// <returns>IEnumerable of RSS</returns>
-        public async Task<IEnumerable<RSS>> GetFeedsDataAsync()
+        public async Task<ILiteQueryable<RSS>> GetFeedsDataAsync()
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).FindAll().OrderByDescending(x => x.CreatedAt);
+                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Query().OrderByDescending(x => x.CreatedAt);
                 }
             });
         }
@@ -39,8 +39,8 @@ namespace MyRSSFeeds.Core.Services
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
                     return limit == 0
-                        ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).FindAll().OrderByDescending(x => x.CreatedAt)
-                        : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).FindAll().OrderByDescending(x => x.CreatedAt).Take(limit);
+                        ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt).ToEnumerable()
+                        : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt).Limit(limit).ToEnumerable();
                 }
             });
         }
@@ -50,13 +50,13 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="predicate">Where statement to filter the data</param>
         /// <returns>IEnumerable of RSS</returns>
-        public async Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate)
+        public async Task<ILiteQueryable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate)
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Find(predicate).OrderByDescending(x => x.CreatedAt);
+                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Query().Where(predicate).OrderByDescending(x => x.CreatedAt);
                 }
             });
         }
@@ -100,13 +100,13 @@ namespace MyRSSFeeds.Core.Services
         /// Gets all the Feeds with source included
         /// </summary>
         /// <returns>IEnumerable of RSS</returns>
-        public async Task<IEnumerable<RSS>> GetFeedsDataWithSourceAsync()
+        public async Task<ILiteQueryable<RSS>> GetFeedsDataWithSourceAsync()
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).FindAll().OrderByDescending(x => x.CreatedAt);
+                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt);
                 }
             });
         }
