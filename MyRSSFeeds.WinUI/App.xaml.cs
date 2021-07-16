@@ -76,7 +76,6 @@ namespace MyRSSFeeds
             services.AddTransient<SourcesListPageViewModel>();
             services.AddTransient<SourcesListPage>();
             services.AddTransient<WebViewViewModel>();
-            services.AddTransient<WebViewPage>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
             return services.BuildServiceProvider();
