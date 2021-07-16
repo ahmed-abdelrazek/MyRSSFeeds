@@ -190,6 +190,7 @@
                 ItemTemplate="{StaticResource ItemTemplate}"
                 ItemsSource="{x:Bind ViewModel.Sources}"
                 ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
+                ListPaneWidth="400"
                 NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
                 SelectedItem="{x:Bind ViewModel.SelectedSource, Mode=TwoWay}"
                 ViewStateChanged="OnViewStateChanged" />

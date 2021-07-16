@@ -8,7 +8,6 @@ using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -402,7 +401,7 @@ namespace MyRSSFeeds.ViewModels
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
 
-            foreach (var source in sourcesDataList)
+            foreach (var source in sourcesDataList.ToList())
             {
                 if (token.IsCancellationRequested)
                 {

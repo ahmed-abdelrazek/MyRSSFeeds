@@ -35,43 +35,50 @@
             </StackPanel>
             <StackPanel Name="block" Padding="0,15,0,0">
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_Description"
+                    x:Uid="SourcesListDetailsControl_Description"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.Description, Mode=OneWay}" />
 
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_Language"
+                    x:Uid="SourcesListDetailsControl_Language"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.Language, Mode=OneWay}" />
 
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_RssUrl"
+                    x:Uid="SourcesListDetailsControl_BaseUrl"
+                    Margin="{StaticResource SmallTopMargin}"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.BaseUrl, Mode=OneWay}" />
+
+                <TextBlock
+                    x:Uid="SourcesListDetailsControl_RssUrl"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.RssUrl, Mode=OneWay}" />
 
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_LastBuildCheck"
+                    x:Uid="SourcesListDetailsControl_LastBuildCheck"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.LastBuildCheck, Mode=OneWay}" />
 
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_LocalLastBuildDate"
+                    x:Uid="SourcesListDetailsControl_LocalLastBuildDate"
                     Margin="{StaticResource MediumTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Style="{StaticResource DetailBodyStyle}" Text="{x:Bind ListDetailsMenuItem.LocalLastBuildDate, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind ListDetailsMenuItem.LocalLastBuildDate, Mode=OneWay}" />
 
                 <TextBlock
-                    x:Uid="SourcesListDetailsDetailControl_ErrorMassage"
+                    x:Uid="SourcesListDetailsControl_ErrorMassage"
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="Error Massage"
                     Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock
-                    Style="{StaticResource DetailBodyStyle}"
+                    Foreground="Red"
+                    Style="{StaticResource DetailBodyBaseMediumStyle}"
                     Text="{x:Bind ListDetailsMenuItem.ErrorMessage, Mode=OneWay}"
                     Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
