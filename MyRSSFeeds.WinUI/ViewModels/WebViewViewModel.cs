@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-
 using MyRSSFeeds.Contracts.Services;
 using MyRSSFeeds.Contracts.ViewModels;
 
@@ -20,10 +18,12 @@ namespace MyRSSFeeds.ViewModels
     public class WebViewViewModel : ObservableRecipient, INavigationAware
     {
         // TODO WTS: Set the URI of the page to show by default
-        private const string DefaultUrl = "https://docs.microsoft.com/windows/apps/";
+        private const string DefaultUrl = "about:blank";
         private Uri _source;
+        private string _description;
         private bool _isLoading = true;
         private bool _hasFailures;
+
         private ICommand _browserBackCommand;
         private ICommand _browserForwardCommand;
         private ICommand _openInBrowserCommand;
@@ -32,10 +32,27 @@ namespace MyRSSFeeds.ViewModels
 
         public IWebViewService WebViewService { get; }
 
+        public WebView2 WebView2 { get; set; }
+
         public Uri Source
         {
-            get { return _source; }
-            set { SetProperty(ref _source, value); }
+            get => _source;
+            set => SetProperty(ref _source, value);
+        }
+
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (SetProperty(ref _description, value))
+                {
+                    if (!string.IsNullOrEmpty(_description))
+                    {
+                        //WebViewService
+                    }
+                }
+            }
         }
 
         public bool IsLoading
