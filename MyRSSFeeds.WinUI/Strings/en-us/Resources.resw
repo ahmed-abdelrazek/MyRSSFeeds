@@ -491,22 +491,25 @@ Tweaks for how Read Full Post are shown in the Feed list.</value>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_Description.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_Description.Text" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_Language.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_Language.Text" xml:space="preserve">
     <value>Language</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_RssUrl.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_BaseUrl.Text" xml:space="preserve">
+    <value>Site Url</value>
+  </data>
+  <data name="SourcesListDetailsControl_RssUrl.Text" xml:space="preserve">
     <value>Rss Url</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_LastBuildCheck.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_LastBuildCheck.Text" xml:space="preserve">
     <value>Last Build Check</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_LocalLastBuildDate.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_LocalLastBuildDate.Text" xml:space="preserve">
     <value>Local Last Build Date</value>
   </data>
-  <data name="SourcesListDetailsDetailControl_ErrorMassage.Text" xml:space="preserve">
+  <data name="SourcesListDetailsControl_ErrorMassage.Text" xml:space="preserve">
     <value>Error Massage</value>
   </data>
   <data name="FeedsListDetails.ListHeader" xml:space="preserve">
