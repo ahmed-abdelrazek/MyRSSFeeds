@@ -121,27 +121,39 @@ namespace MyRSSFeeds.Core.Services
             {
                 using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                Uri baseLink = new("about:blank");
-                foreach (var link in feed.Links.Where(x => x.MediaType is null))
-                {
-                    if (link.Uri is not null)
-                    {
-                        baseLink = link.BaseUri;
-                        break;
-                    }
-                }
-
-                return new Source
+                var newSource = new Source
                 {
                     SiteTitle = feed.Title.Text,
                     Description = feed.Description.Text,
                     Language = feed.Language,
                     LastBuildCheck = feed.LastUpdatedTime,
                     LastBuildDate = feed.LastUpdatedTime,
-                    BaseUrl = baseLink,
                     RssUrl = new Uri(rssUrl),
                     IsWorking = true
                 };
+
+                foreach (var link in feed.Links.Where(x => x.MediaType is null))
+                {
+                    if (link.Uri is not null)
+                    {
+                        if (link.BaseUri is null)
+                        {
+                            newSource.BaseUrl = link.Uri;
+                        }
+                        else
+                        {
+                            newSource.BaseUrl = link.BaseUri;
+                        }
+                        break;
+                    }
+                }
+
+                if (newSource.BaseUrl is null || newSource.BaseUrl == new Uri("about:blank"))
+                {
+                    newSource.BaseUrl = new Uri(new Uri(rssUrl).Host);
+                }
+
+                return newSource;
             });
         }
 
