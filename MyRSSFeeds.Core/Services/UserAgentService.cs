@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using MyRSSFeeds.Core.Data;
+using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services.Interfaces;
 using System;
@@ -30,6 +31,23 @@ namespace MyRSSFeeds.Core.Services
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
                     return db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(predicate).ToList();
+                }
+            });
+        }
+
+        public async Task<UserAgent> GetCurrentAgentAsync()
+        {
+            return await Task.Run(() =>
+            {
+                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                var agent = db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Find(x => x.IsUsed).FirstOrDefault();
+                if (agent is null)
+                {
+                    return db.GetCollection<UserAgent>(LiteDbContext.UserAgents).Query().First();
+                }
+                else
+                {
+                    return agent;
                 }
             });
         }

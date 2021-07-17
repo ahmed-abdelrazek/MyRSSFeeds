@@ -12,6 +12,7 @@ namespace MyRSSFeeds.Core.Services.Interfaces
         Task<bool> DeleteAgentAsync(UserAgent userAgent);
         Task<IEnumerable<UserAgent>> GetAgentDataAsync(Expression<Func<UserAgent, bool>> predicate);
         Task<IEnumerable<UserAgent>> GetAgentsDataAsync();
+        Task<UserAgent> GetCurrentAgentAsync();
         Task ResetAgentUseAsync();
         Task<bool> UpdateAgentAsync(UserAgent userAgent);
     }

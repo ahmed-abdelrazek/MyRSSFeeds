@@ -12,7 +12,7 @@ namespace MyRSSFeeds.Core.Helpers
     /// </summary>
     public class RssRequest
     {
-        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.2 (Windows NT 10.0; X64)";
+        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/2.0 (Windows NT 10.0; X64)";
 
         private static readonly HttpClient httpClient;
 
@@ -47,14 +47,10 @@ namespace MyRSSFeeds.Core.Helpers
 
         public static async Task SetCustomUserAgentAsync()
         {
-            var agents = await new UserAgentService().GetAgentDataAsync(x => x.IsUsed);
-            var CurrentAgent = agents.FirstOrDefault();
-            if (CurrentAgent is not null)
+            var currentAgent = await new UserAgentService().GetCurrentAgentAsync();
+            if (!string.IsNullOrEmpty(currentAgent.AgentString))
             {
-                if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
-                {
-                    BrowserUserAgent = CurrentAgent.AgentString;
-                }
+                BrowserUserAgent = currentAgent.AgentString;
             }
         }
 
