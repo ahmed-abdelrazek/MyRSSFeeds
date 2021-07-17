@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Microsoft.UI.Xaml;
-
+﻿using Microsoft.UI.Xaml;
 using MyRSSFeeds.Contracts.Services;
 using MyRSSFeeds.Helpers;
-
+using System;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace MyRSSFeeds.Services

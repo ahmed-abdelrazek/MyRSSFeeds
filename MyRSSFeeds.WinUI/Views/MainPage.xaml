@@ -113,9 +113,9 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="DetailsTemplate" x:DataType="model:RSS">
+        <DataTemplate x:Key="DetailsTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <views:MainPageWebViewControl Description="{x:Bind Description}" />
+                <views:MainPageWebViewControl SelectedItem="{Binding}" />
             </Grid>
         </DataTemplate>
 

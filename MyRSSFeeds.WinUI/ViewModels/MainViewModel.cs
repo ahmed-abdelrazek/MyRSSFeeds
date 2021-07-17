@@ -276,7 +276,7 @@ namespace MyRSSFeeds.ViewModels
                 // don't get source feed if x number of minutes haven't passed since the last one - default is 2 hours
                 var checkSourceAfter = sourceItem.LastBuildCheck.AddMinutes(WaitAfterLastCheckInMinutes);
 
-                if (checkSourceAfter >= DateTimeOffset.Now)
+                if (checkSourceAfter >= DateTimeOffset.Now && Feeds.Count > 0)
                 {
                     continue;
                 }

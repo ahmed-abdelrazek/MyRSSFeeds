@@ -1,8 +1,6 @@
 ﻿using System;
-
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-
 using MyRSSFeeds.Contracts.Services;
 
 namespace MyRSSFeeds.Services
@@ -23,10 +21,16 @@ namespace MyRSSFeeds.Services
         {
         }
 
-        public void Initialize(WebView2 webView)
+        public async void Initialize(WebView2 webView)
         {
             _webView = webView;
             _webView.NavigationCompleted += OnWebViewNavigationCompleted;
+            await _webView.EnsureCoreWebView2Async();
+        }
+
+        public void NavigateToString(string webPage)
+        {
+            _webView.NavigateToString(webPage);
         }
 
         public void UnregisterEvents()
