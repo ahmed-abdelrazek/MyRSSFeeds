@@ -117,6 +117,8 @@ namespace MyRSSFeeds.Core.Services
                 return null;
             }
 
+            var userAgent = await new UserAgentService().GetCurrentAgentAsync();
+
             return await Task.Run(() =>
             {
                 using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
@@ -132,6 +134,7 @@ namespace MyRSSFeeds.Core.Services
                     IsWorking = true
                 };
 
+                // try to get the base url for the feed from the rss xml
                 foreach (var link in feed.Links.Where(x => x.MediaType is null))
                 {
                     if (link.Uri is not null)
@@ -148,10 +151,19 @@ namespace MyRSSFeeds.Core.Services
                     }
                 }
 
+                // try to get the base url for the feed from the rss url
                 if (newSource.BaseUrl is null || newSource.BaseUrl == new Uri("about:blank"))
                 {
                     newSource.BaseUrl = new Uri(new Uri(rssUrl).Host);
                 }
+
+                // try to get the favicon for the site via duckduckgo service
+                System.Net.WebClient webClient = new();
+                if (!string.IsNullOrEmpty(userAgent.AgentString))
+                {
+                    webClient.Headers.Add("User-Agent", userAgent.AgentString);
+                }
+                newSource.SiteIcon = webClient.DownloadData($"https://icons.duckduckgo.com/ip3/{newSource.BaseUrl.Host}.ico");
 
                 return newSource;
             });
