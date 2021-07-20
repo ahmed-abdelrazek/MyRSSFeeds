@@ -3,7 +3,7 @@ using MyRSSFeeds.Core.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace MyRSSFeeds.Core.Services.Interfaces
+namespace MyRSSFeeds.Core.Contracts.Services
 {
     public interface ISourceDataService
     {

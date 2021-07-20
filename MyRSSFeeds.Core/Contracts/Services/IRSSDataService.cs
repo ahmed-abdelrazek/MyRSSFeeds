@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MyRSSFeeds.Core.Services.Interfaces
+namespace MyRSSFeeds.Core.Contracts.Services
 {
     public interface IRSSDataService
     {
@@ -18,7 +18,7 @@ namespace MyRSSFeeds.Core.Services.Interfaces
         Task<ILiteQueryable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate);
         Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip);
         Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip, int limit);
-        Task<IEnumerable<RSS>> GetFeedsDataAsync(int limit);
+        Task<ILiteQueryable<RSS>> GetFeedsDataAsync(int limit);
         Task<ILiteQueryable<RSS>> GetFeedsDataWithSourceAsync();
         Task<bool> UpdateFeedAsync(RSS rss);
     }

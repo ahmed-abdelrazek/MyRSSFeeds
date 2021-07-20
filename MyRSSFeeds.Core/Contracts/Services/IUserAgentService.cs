@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MyRSSFeeds.Core.Services.Interfaces
+namespace MyRSSFeeds.Core.Contracts.Services
 {
     public interface IUserAgentService
     {

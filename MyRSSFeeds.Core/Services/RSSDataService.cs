@@ -1,7 +1,7 @@
 ﻿using LiteDB;
+using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Models;
-using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,15 +32,15 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="limit">how many records to return</param>
         /// <returns>IEnumerable of RSS</returns>
-        public async Task<IEnumerable<RSS>> GetFeedsDataAsync(int limit)
+        public async Task<ILiteQueryable<RSS>> GetFeedsDataAsync(int limit)
         {
             return await Task.Run(() =>
             {
                 using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
                 {
                     return limit == 0
-                        ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt).ToEnumerable()
-                        : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt).Limit(limit).ToEnumerable();
+                        ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query()
+                        : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query();
                 }
             });
         }

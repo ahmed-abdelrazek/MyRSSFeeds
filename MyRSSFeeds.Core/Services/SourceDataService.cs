@@ -1,8 +1,8 @@
 ﻿using LiteDB;
+using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
-using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.IO;
 using System.Linq;
