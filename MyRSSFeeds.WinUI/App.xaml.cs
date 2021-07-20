@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using MyRSSFeeds.Activation;
 using MyRSSFeeds.Contracts.Services;
+using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.Core.Services.Interfaces;
 using MyRSSFeeds.Helpers;
 using MyRSSFeeds.Services;
 using MyRSSFeeds.ViewModels;
@@ -66,9 +66,9 @@ namespace MyRSSFeeds
             services.AddSingleton<INavigationService, NavigationService>();
 
             // Core Services
-            services.AddSingleton<IRSSDataService, RSSDataService>();
-            services.AddSingleton<ISourceDataService, SourceDataService>();
-            services.AddSingleton<IUserAgentService, UserAgentService>();
+            services.AddTransient<IRSSDataService, RSSDataService>();
+            services.AddTransient<ISourceDataService, SourceDataService>();
+            services.AddTransient<IUserAgentService, UserAgentService>();
 
             // Views and ViewModels
             services.AddTransient<ShellPage>();

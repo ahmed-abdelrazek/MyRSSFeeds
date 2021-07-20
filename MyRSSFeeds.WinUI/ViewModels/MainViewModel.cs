@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
@@ -20,6 +22,9 @@ namespace MyRSSFeeds.ViewModels
 {
     public class MainViewModel : ObservableRecipient
     {
+        private readonly IRSSDataService _rssDataService = Ioc.Default.GetService<IRSSDataService>();
+        private readonly ISourceDataService _sourceDataService = Ioc.Default.GetService<ISourceDataService>();
+
         public CancellationTokenSource TokenSource { get; set; } = null;
 
         private RSS _selectedRSS;
@@ -231,14 +236,14 @@ namespace MyRSSFeeds.ViewModels
             // Set Httpclient userAgent to the user selected one
             await RssRequest.SetCustomUserAgentAsync();
 
-            foreach (var rss in await new RSSDataService().GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+            foreach (var rss in (await _rssDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit"))).ToList())
             {
                 Feeds.Add(rss);
             }
 
             SyndicationFeed feed = null;
 
-            var sourcesDataList = await new SourceDataService().GetSourcesDataAsync();
+            var sourcesDataList = await _sourceDataService.GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
@@ -327,13 +332,13 @@ namespace MyRSSFeeds.ViewModels
                     }
 
                     //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
-                    if (syndicationItem.Title == null)
+                    if (syndicationItem.Title is null)
                     {
-                        //syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
+                        syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
                     }
-                    if (syndicationItem.Summary == null)
+                    if (syndicationItem.Summary is null)
                     {
-                        //syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
+                        syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
                     }
                     if (syndicationItem.PublishedDate.Year < 2000)
                     {
@@ -341,7 +346,7 @@ namespace MyRSSFeeds.ViewModels
                     }
 
                     Uri itemNewUri = syndicationItem.ItemUri;
-                    if (itemNewUri == null)
+                    if (itemNewUri is null)
                     {
                         if (syndicationItem.Links.Count > 0)
                         {
@@ -374,9 +379,9 @@ namespace MyRSSFeeds.ViewModels
                         });
                     }
 
-                    if (!await new RSSDataService().FeedExistAsync(rss))
+                    if (!await _rssDataService.FeedExistAsync(rss))
                     {
-                        var newRss = await new RSSDataService().AddNewFeedAsync(rss);
+                        var newRss = await _rssDataService.AddNewFeedAsync(rss);
                         Feeds.Add(newRss);
                         hasLoadedFeedNewItems = true;
                     }
@@ -386,7 +391,7 @@ namespace MyRSSFeeds.ViewModels
             if (hasLoadedFeedNewItems)
             {
                 Feeds.Clear();
-                foreach (var rss in await new RSSDataService().GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+                foreach (var rss in (await _rssDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit"))).ToList())
                 {
                     Feeds.Add(rss);
                 }
@@ -434,13 +439,13 @@ namespace MyRSSFeeds.ViewModels
             foreach (var item in Feeds.Where(x => x.IsRead == false))
             {
                 item.IsRead = true;
-                await new RSSDataService().UpdateFeedAsync(item);
+                await _rssDataService.UpdateFeedAsync(item);
             }
         }
 
         private bool CanClearFilterSource()
         {
-            return FilterSelectedSource != null;
+            return FilterSelectedSource is not null;
         }
 
         private void ClearFilterSource()
@@ -450,7 +455,7 @@ namespace MyRSSFeeds.ViewModels
 
         private bool CanClearSelectedRSS()
         {
-            return SelectedRSS != null;
+            return SelectedRSS is not null;
         }
 
         private void ClearSelectedRSS()
@@ -462,7 +467,7 @@ namespace MyRSSFeeds.ViewModels
         {
             TokenSource.Cancel();
 
-            var query = from feed in await new RSSDataService().GetFeedsDataAsync(0) select feed;
+            var query = await _rssDataService.GetFeedsDataAsync();
 
             if (FilterSelectedSource != null)
             {
@@ -482,7 +487,7 @@ namespace MyRSSFeeds.ViewModels
             }
 
             Feeds.Clear();
-            foreach (var item in query)
+            foreach (var item in query.ToList())
             {
                 Feeds.Add(item);
             }

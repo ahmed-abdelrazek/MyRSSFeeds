@@ -19,7 +19,6 @@ namespace MyRSSFeeds.ViewModels
     // https://docs.microsoft.com/microsoft-edge/webview2/get-started/winui
     public class WebViewViewModel : ObservableRecipient, INavigationAware
     {
-        // TODO WTS: Set the URI of the page to show by default
         private const string DefaultUrl = "about:blank";
         private Uri _source;
         private RSS _selectedRssItem;

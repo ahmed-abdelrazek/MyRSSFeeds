@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
 using MyRSSFeeds.Contracts.ViewModels;
+using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
-using MyRSSFeeds.Core.Services.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -18,8 +19,8 @@ namespace MyRSSFeeds.ViewModels
 {
     public class SourcesListPageViewModel : ObservableRecipient, INavigationAware
     {
-        private readonly IRSSDataService _rssDataService;
-        private readonly ISourceDataService _sourceDataService;
+        private readonly IRSSDataService _rssDataService = Ioc.Default.GetService<IRSSDataService>();
+        private readonly ISourceDataService _sourceDataService = Ioc.Default.GetService<ISourceDataService>();
 
         public CancellationTokenSource TokenSource { get; set; } = null;
 
