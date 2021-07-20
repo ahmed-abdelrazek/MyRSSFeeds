@@ -18,10 +18,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<Source>(LiteDbContext.Sources).Query().OrderByDescending(x => x.Id);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<Source>(LiteDbContext.Sources).Query().OrderByDescending(x => x.Id);
             });
         }
 
@@ -29,10 +27,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).Query();
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).Query();
             });
         }
 
@@ -43,11 +39,11 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task true if the source already exist</returns>
         public async Task<bool> SourceExistAsync(string source)
         {
-            var link = new Uri(source);
+            Uri link = new(source);
 
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 return db.GetCollection<Source>(LiteDbContext.Sources).Exists(x => x.RssUrl == link);
             });
         }
@@ -61,42 +57,33 @@ namespace MyRSSFeeds.Core.Services
         {
             var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
+            using XmlReader xmlReader = XmlReader.Create(new StringReader(feedString));
+            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+            var lastUpdatedTime = feed.LastUpdatedTime;
+            var rssItemsCount = feed.Items.Count();
+
+            if (lastUpdatedTime.Year < 2020)
             {
-                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                var lastUpdatedTime = feed.LastUpdatedTime;
-                var rssItemsCount = feed.Items.Count();
-
-                if (lastUpdatedTime.Year < 2020)
+                if (rssItemsCount > 0)
                 {
-                    if (rssItemsCount > 0)
-                    {
-                        var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
+                    var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
 
-                        if (latestDateItem is null)
-                        {
-                            latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
-                            lastUpdatedTime = DateTimeOffset.Now;
-                        }
-                        else
-                        {
-                            if (latestDateItem.PublishDate.Year < 2020)
-                            {
-                                lastUpdatedTime = DateTimeOffset.Now;
-                            }
-                            else
-                            {
-                                lastUpdatedTime = latestDateItem.PublishDate;
-                            }
-                        }
+                    if (latestDateItem is null)
+                    {
+                        latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
+                        lastUpdatedTime = DateTimeOffset.Now;
                     }
                     else
                     {
-                        lastUpdatedTime = new DateTimeOffset(2020, 10, 30, 20, 00, 00, new TimeSpan(2, 0, 0));
+                        lastUpdatedTime = latestDateItem.PublishDate.Year < 2020 ? DateTimeOffset.Now : latestDateItem.PublishDate;
                     }
                 }
-                return (true, lastUpdatedTime, rssItemsCount);
+                else
+                {
+                    lastUpdatedTime = new DateTimeOffset(2020, 10, 30, 20, 00, 00, new TimeSpan(2, 0, 0));
+                }
             }
+            return (true, lastUpdatedTime, rssItemsCount);
         }
 
         /// <summary>
@@ -123,7 +110,7 @@ namespace MyRSSFeeds.Core.Services
             {
                 using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
                 SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                var newSource = new Source
+                Source newSource = new()
                 {
                     SiteTitle = feed.Title.Text,
                     Description = feed.Description.Text,
@@ -139,14 +126,7 @@ namespace MyRSSFeeds.Core.Services
                 {
                     if (link.Uri is not null)
                     {
-                        if (link.BaseUri is null)
-                        {
-                            newSource.BaseUrl = link.Uri;
-                        }
-                        else
-                        {
-                            newSource.BaseUrl = link.BaseUri;
-                        }
+                        newSource.BaseUrl = link.BaseUri is null ? link.Uri : link.BaseUri;
                         break;
                     }
                 }
@@ -173,7 +153,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<Source>(LiteDbContext.Sources);
                 col.Insert(source);
                 return source;
@@ -184,7 +164,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<Source>(LiteDbContext.Sources);
                 col.Update(source);
                 return source;
@@ -195,7 +175,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 return db.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
             });
         }

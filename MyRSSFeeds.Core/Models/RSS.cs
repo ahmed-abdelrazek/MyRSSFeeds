@@ -18,7 +18,7 @@ namespace MyRSSFeeds.Core.Models
         [BsonIgnore]
         public string PostShortTitle
         {
-            get => string.IsNullOrEmpty(PostTitle) ? "" : PostTitle.Length > 80 ? string.Concat(PostTitle.Substring(0, 80), " ...") : PostTitle;
+            get => string.IsNullOrEmpty(PostTitle) ? "" : PostTitle.Length > 80 ? string.Concat(PostTitle.Substring(0, 80), " …") : PostTitle;
         }
 
         public Uri? URL { get; set; }
@@ -26,14 +26,14 @@ namespace MyRSSFeeds.Core.Models
         [BsonIgnore]
         public Uri LaunchURL
         {
-            get => Uri.IsWellFormedUriString(Guid, UriKind.Absolute) && (Guid.StartsWith("http://") || Guid.StartsWith("https://"))
-                    ? new Uri(Guid)
+            get => Uri.IsWellFormedUriString(ItemGuid, UriKind.Absolute) && (ItemGuid.StartsWith("http://") || ItemGuid.StartsWith("https://"))
+                    ? new Uri(ItemGuid)
                     : URL is null ? new Uri("about:blank") : URL;
         }
 
         public string? Thumbnail { get; set; }
 
-        public string? Guid { get; set; }
+        public string? ItemGuid { get; set; }
 
         public string Description { get; set; } = "";
 

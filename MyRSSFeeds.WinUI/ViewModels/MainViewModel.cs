@@ -358,14 +358,14 @@ namespace MyRSSFeeds.ViewModels
                         syndicationItem.Id = itemNewUri.ToString();
                     }
 
-                    var rss = new RSS
+                    RSS rss = new()
                     {
                         PostTitle = syndicationItem.Title.Text,
                         Description = syndicationItem.Summary.Text,
                         Authors = new List<Author>(),
                         URL = itemNewUri,
                         CreatedAt = syndicationItem.PublishedDate.DateTime,
-                        Guid = syndicationItem.Id,
+                        ItemGuid = syndicationItem.Id,
                         PostSource = sourceItem
                     };
 
@@ -469,7 +469,7 @@ namespace MyRSSFeeds.ViewModels
 
             var query = await _rssDataService.GetFeedsDataAsync();
 
-            if (FilterSelectedSource != null)
+            if (FilterSelectedSource is not null)
             {
                 query = query.Where(x => x.PostSource.Id == FilterSelectedSource.Id);
             }
@@ -487,7 +487,8 @@ namespace MyRSSFeeds.ViewModels
             }
 
             Feeds.Clear();
-            foreach (var item in query.ToList())
+
+            foreach (var item in query.OrderByDescending(x => x.CreatedAt).ToList())
             {
                 Feeds.Add(item);
             }
@@ -495,14 +496,14 @@ namespace MyRSSFeeds.ViewModels
 
         /// <summary>
         /// return back a string from the start to entered postion
-        /// then adding "..." at the end of it 
+        /// then adding "…" at the end of it 
         /// </summary>
         /// <param name="txt">the test to substring</param>
         /// <param name="endindex">intger for the end index</param>
         /// <returns>new shorted string</returns>
         private string ShortenText(string txt, int endindex)
         {
-            return txt.Length > endindex ? string.Concat(txt.Substring(0, endindex), "...") : txt;
+            return txt.Length > endindex ? string.Concat(txt.Substring(0, endindex), "…") : txt;
         }
     }
 }

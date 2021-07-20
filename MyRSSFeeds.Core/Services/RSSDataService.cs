@@ -20,10 +20,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Query().OrderByDescending(x => x.CreatedAt);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Query();
             });
         }
 
@@ -36,12 +34,10 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return limit == 0
-                        ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query()
-                        : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query();
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return limit == 0
+                    ? db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query()
+                    : db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query();
             });
         }
 
@@ -54,10 +50,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Query().Where(predicate).OrderByDescending(x => x.CreatedAt);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Query().Where(predicate).OrderByDescending(x => x.CreatedAt);
             });
         }
 
@@ -71,10 +65,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Find(predicate, skip).OrderByDescending(x => x.CreatedAt);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Find(predicate, skip).OrderByDescending(x => x.CreatedAt);
             });
         }
 
@@ -89,10 +81,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Find(predicate, skip, limit).OrderByDescending(x => x.CreatedAt);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Find(predicate, skip, limit).OrderByDescending(x => x.CreatedAt);
             });
         }
 
@@ -104,10 +94,8 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteDatabase(LiteDbContext.DbConnectionString))
-                {
-                    return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt);
-                }
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
+                return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).Query().OrderByDescending(x => x.CreatedAt);
             });
         }
 
@@ -120,9 +108,9 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                return col.FindOne(x => x.Guid == rss.Guid);
+                return col.FindOne(x => x.ItemGuid == rss.ItemGuid);
             });
         }
 
@@ -135,9 +123,9 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                return col.Exists(x => x.Guid == rss.Guid);
+                return col.Exists(x => x.ItemGuid == rss.ItemGuid);
             });
         }
 
@@ -150,7 +138,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
                 col.Insert(rss);
                 return rss;
@@ -166,7 +154,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
                 return col.Update(rss);
             });
@@ -181,7 +169,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 return db.GetCollection<RSS>(LiteDbContext.RSSs).Delete(rss.Id);
             });
         }
@@ -195,7 +183,7 @@ namespace MyRSSFeeds.Core.Services
         {
             return await Task.Run(() =>
             {
-                using var db = new LiteDatabase(LiteDbContext.DbConnectionString);
+                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
                 return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).DeleteMany(predicate);
             });
         }
