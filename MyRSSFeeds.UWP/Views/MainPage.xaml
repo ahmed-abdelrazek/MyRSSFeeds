@@ -345,7 +345,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <WebView x:Name="webView" Source="{x:Bind ViewModel.WebViewSource, Mode=OneWay}">
+                <muxc:WebView2 x:Name="webView" Source="{x:Bind ViewModel.WebViewSource, Mode=OneWay}" Background="Black">
                     <i:Interaction.Behaviors>
                         <ic:EventTriggerBehavior EventName="NavigationCompleted">
                             <ic:InvokeCommandAction Command="{x:Bind ViewModel.NavCompletedCommand}" />
@@ -357,7 +357,7 @@
                             <ic:InvokeCommandAction Command="{x:Bind ViewModel.OnNewWindowRequestedCommand}" />
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
-                </WebView>
+                </muxc:WebView2>
 
                 <StackPanel
                     HorizontalAlignment="Center"

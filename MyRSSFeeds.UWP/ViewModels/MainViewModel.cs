@@ -1,4 +1,7 @@
-﻿using MyRSSFeeds.Core.Helpers;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
+using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.UWP.Helpers;
@@ -8,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,6 +18,7 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.Web.Syndication;
 
 namespace MyRSSFeeds.UWP.ViewModels
@@ -45,22 +48,18 @@ namespace MyRSSFeeds.UWP.ViewModels
                             _selectedRSS.IsRead = true;
                             RSSDataService.UpdateFeedAsync(_selectedRSS).FireAndGet();
                         }
+
                         GetTheme();
 
-                        StringBuilder authors = new StringBuilder();
-
-                        foreach (var a in SelectedRSS.Authors)
-                        {
-                            authors.Append($"{a.Username}; ");
-                        }
+                        string authors = string.Join(';', SelectedRSS.Authors.Select(x => x.Username));
 
                         if (_appTheme == ElementTheme.Dark || (_uiTheme == "#FF000000" && _appTheme == ElementTheme.Default))
                         {
-                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .body {{ background: black }} .h1 {{ color: white; }} .h4 {{ color: white; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid-area: Title; }} .Website {{ grid-area: Website; }} .Date {{ grid-area: Date; }} .Authors {{ grid-area: Authors; }} .Details {{ grid-area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
+                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} body {{ background: black; color: white; }} h1 {{ color: white; }} h1:visited {{ color: #aaaaaa; }} a {{ color: #eeeeee; }} a:visited {{ color: #aaaaaa; }} h4 {{ color: white; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid-area: Title; }} .Title:visited {{ color: #aaaaaa; }} .Website {{ grid-area: Website; }} .Website:visited {{ grid-area: Website; }} .Date {{ grid-area: Date; }} .Authors {{ grid-area: Authors; }} Details {{ grid-area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
                         }
                         else
                         {
-                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid - area: Title; }} .Website {{ grid - area: Website; }} .Date {{ grid - area: Date; }} .Authors {{ grid - area: Authors; }} .Details {{ grid - area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
+                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid - area: Title; }} .Website {{ grid - area: Website; }} .Date {{ grid - area: Date; }} .Authors {{ grid - area: Authors; }} Details {{ grid - area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
                         }
                     }
 
@@ -244,14 +243,14 @@ namespace MyRSSFeeds.UWP.ViewModels
             {
                 if (_navCompleted == null)
                 {
-                    _navCompleted = new RelayCommand<WebViewNavigationCompletedEventArgs>(NavCompleted);
+                    _navCompleted = new RelayCommand<CoreWebView2NavigationCompletedEventArgs>(NavCompleted);
                 }
 
                 return _navCompleted;
             }
         }
 
-        private void NavCompleted(WebViewNavigationCompletedEventArgs e)
+        private void NavCompleted(CoreWebView2NavigationCompletedEventArgs e)
         {
             IsLoading = false;
         }
@@ -319,7 +318,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             IsShowingFailedMessage = false;
             IsLoading = true;
 
-            _webView?.Refresh();
+            _webView?.Reload();
         }
 
         private ICommand _refreshCommand;
@@ -330,7 +329,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             {
                 if (_refreshCommand == null)
                 {
-                    _refreshCommand = new RelayCommand(() => _webView?.Refresh());
+                    _refreshCommand = new RelayCommand(() => _webView?.Reload());
                 }
 
                 return _refreshCommand;
@@ -497,7 +496,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             WebViewSource = SelectedRSS.LaunchURL;
         }
 
-        private WebView _webView;
+        private WebView2 _webView;
 
         public MainViewModel()
         {
@@ -724,14 +723,17 @@ namespace MyRSSFeeds.UWP.ViewModels
             MarkAsReadCommand.OnCanExecuteChanged();
         }
 
-        public void Initialize(WebView webView)
+        public void Initialize(WebView2 webView)
         {
             _webView = webView;
+
             GetTheme();
+
             if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
             {
                 //dark
-                _webView.DefaultBackgroundColor = Windows.UI.Color.FromArgb(100, 0, 0, 0);
+                Environment.SetEnvironmentVariable("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", Windows.UI.Color.FromArgb(100, 0, 0, 0).ToHex());
+                _webView.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(100, 0, 0, 0));
             }
         }
 
