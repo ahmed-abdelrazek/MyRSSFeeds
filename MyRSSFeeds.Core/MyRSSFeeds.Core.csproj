@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>MyRSSFeeds.Core</RootNamespace>
-    <LangVersion>8.0</LangVersion>
-    <Version>1.2.2</Version>
-    <Company>ShababConquer</Company>
-    <Authors>Ahmed Mohamed Abdel-Razek</Authors>
-    <Product>MyRSSFeeds</Product>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>MyRSSFeeds.Core</RootNamespace>
+		<LangVersion>8.0</LangVersion>
+		<Version>1.2.2</Version>
+		<Company>ShababConquer</Company>
+		<Authors>Ahmed Mohamed Abdel-Razek</Authors>
+		<Product>MyRSSFeeds</Product>
+	</PropertyGroup>
 
-   <ItemGroup>
-     <PackageReference Include="LiteDB" Version="5.0.10" />
-     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-     <PackageReference Include="System.ServiceModel.Syndication" Version="5.0.0" />
-   </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="LiteDB" Version="5.0.17" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
+	</ItemGroup>
 </Project>
