@@ -56,10 +56,13 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
+
+        [JsonIgnore]
         public DateTimeOffset LastBuildCheck { get; set; }
 
         private DateTimeOffset _lastBuildDate;
 
+        [JsonIgnore]
         public DateTimeOffset LastBuildDate
         {
             get => _lastBuildDate;
