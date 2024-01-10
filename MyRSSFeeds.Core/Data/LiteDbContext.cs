@@ -30,7 +30,8 @@ namespace MyRSSFeeds.Core.Data
             {
                 throw new ArgumentNullException("Db Path is Null or Empty");
             }
-            ConnectionString = $"Filename={DbPath};";
+
+            ConnectionString = $"Filename={DbPath};Mode=Shared;Async=True";
 
             LiteDb = new LiteDatabase(ConnectionString);
             try
