@@ -16,34 +16,35 @@
 -->
 
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
-  <Application>
-    <!--
+	<Application>
+		<!--
       An Assembly element with Name="*Application*" applies to all assemblies in
       the application package. The asterisks are not wildcards.
     -->
-    <Assembly Name="*Application*" Dynamic="Required All" />
+		<Assembly Name="*Application*" Dynamic="Required All" />
 
 
-    <!-- Add your application specific runtime directives here. -->
+		<!-- Add your application specific runtime directives here. -->
 
+		<Type Name="Windows.Foundation.TypedEventHandler{Microsoft.UI.Xaml.Controls.WebView2,Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs}" MarshalObject="Public" />
 
-    <Type Name="Windows.Foundation.TypedEventHandler{Microsoft.UI.Xaml.Controls.NavigationView,Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs}" MarshalObject="Public" />
+		<Type Name="Windows.Foundation.TypedEventHandler{Microsoft.UI.Xaml.Controls.NavigationView,Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs}" MarshalObject="Public" />
 
-    <Type Name="Microsoft.UI.Xaml.Controls.NavigationView">
-      <Event Name="ItemInvoked" Dynamic="Required"/>
-    </Type>
+		<Type Name="Microsoft.UI.Xaml.Controls.NavigationView">
+			<Event Name="ItemInvoked" Dynamic="Required"/>
+		</Type>
 
-    <Type Name="Windows.Foundation.TypedEventHandler{Microsoft.UI.Xaml.Controls.TreeView,Microsoft.UI.Xaml.Controls.TreeViewItemInvokedEventArgs}" MarshalObject="Public" />
+		<Type Name="Windows.Foundation.TypedEventHandler{Microsoft.UI.Xaml.Controls.TreeView,Microsoft.UI.Xaml.Controls.TreeViewItemInvokedEventArgs}" MarshalObject="Public" />
 
-    <Type Name="Microsoft.UI.Xaml.Controls.TreeView">
-      <Event Name="ItemInvoked" Dynamic="Required"/>
-    </Type>
+		<Type Name="Microsoft.UI.Xaml.Controls.TreeView">
+			<Event Name="ItemInvoked" Dynamic="Required"/>
+		</Type>
 
-  </Application>
+	</Application>
 
-  <Library Name="SyndicationFeed">
-    <Assembly Name="System.ServiceModel.Syndication" Activate="Required All" Browse="Required All" Serialize="Required All" Dynamic="Required All" />
-    <Namespace Name="System.ServiceModel.Syndication" Dynamic="Required All" />
-  </Library>
+	<Library Name="SyndicationFeed">
+		<Assembly Name="System.ServiceModel.Syndication" Activate="Required All" Browse="Required All" Serialize="Required All" Dynamic="Required All" />
+		<Namespace Name="System.ServiceModel.Syndication" Dynamic="Required All" />
+	</Library>
 
 </Directives>
