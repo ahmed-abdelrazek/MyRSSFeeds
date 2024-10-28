@@ -15,7 +15,7 @@ namespace MyRSSFeeds.Core.Helpers
 
         public static async Task<string> StringifyAsync(object value)
         {
-            return await Task.Run<string>(() =>
+            return await Task.Run(() =>
             {
                 return JsonConvert.SerializeObject(value);
             });
