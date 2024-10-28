@@ -142,7 +142,7 @@ namespace OPMLCore.NET
         public override string ToString()
         {
             StringBuilder buf = new StringBuilder();
-            buf.Append("<outline");
+            buf.Append("\t<outline");
             buf.Append(GetAtrributeString("text", Text));
             buf.Append(GetAtrributeString("isComment", IsComment));
             buf.Append(GetAtrributeString("isBreakpoint", IsBreakpoint));
@@ -180,19 +180,19 @@ namespace OPMLCore.NET
             }
             else
             {
-                return $" {name}=\"{value}\"";
+                return $" {name}=\"{new System.Xml.Linq.XText(value)}\"";
             }
         }
 
         private string GetAtrributeString(string name, DateTime? value)
         {
-            if (value == null)
+            if (value == null || value == new DateTime())
             {
                 return string.Empty;
             }
             else
             {
-                return $" {name}=\"{value?.ToString("R")}\"";
+                return $" {name}=\"{new System.Xml.Linq.XText(value?.ToString("R"))}\"";
             }
         }
 

@@ -82,6 +82,11 @@ namespace OPMLCore.NET
 
         }
 
+        public Head(string title)
+        {
+            Title = title;
+        }
+
         ///<summary>
         /// Constructor
         ///</summary>
@@ -200,7 +205,7 @@ namespace OPMLCore.NET
             }
             else
             {
-                return $"<{name}>{value}</{name}>\r\n";
+                return $"<{name}>{new System.Xml.Linq.XText(value)}</{name}>\r\n";
             }
         }
         private string GetNodeString(string name, DateTime? value)
@@ -211,7 +216,7 @@ namespace OPMLCore.NET
             }
             else
             {
-                return $"<{name}>{value?.ToString("R")}</{name}>\r\n";
+                return $"<{name}>{new System.Xml.Linq.XText(value?.ToString("R"))}</{name}>\r\n";
             }
         }
 

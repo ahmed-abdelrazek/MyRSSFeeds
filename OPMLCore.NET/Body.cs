@@ -22,6 +22,11 @@ namespace OPMLCore.NET
 
         }
 
+        public Body(List<Outline> outlines)
+        {
+            Outlines = outlines;
+        }
+
         ///<summary>
         /// Constructor
         ///</summary>

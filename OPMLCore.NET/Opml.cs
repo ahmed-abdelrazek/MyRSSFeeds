@@ -56,6 +56,13 @@ namespace OPMLCore.NET
             readOpmlNodes(doc);
         }
 
+        public Opml(Head head, Body body, string version = "2.0", string encoding = "UTF-8")
+        {
+            Head = head;
+            Body = body;
+            Version = version;
+            Encoding = encoding;
+        }
 
         private void readOpmlNodes(XmlDocument doc)
         {
