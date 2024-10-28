@@ -241,10 +241,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                if (_navCompleted == null)
-                {
-                    _navCompleted = new RelayCommand<CoreWebView2NavigationCompletedEventArgs>(NavCompleted);
-                }
+                _navCompleted ??= new RelayCommand<CoreWebView2NavigationCompletedEventArgs>(NavCompleted);
 
                 return _navCompleted;
             }
@@ -261,10 +258,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                if (_navFailed == null)
-                {
-                    _navFailed = new RelayCommand<WebViewNavigationFailedEventArgs>(NavFailed);
-                }
+                _navFailed ??= new RelayCommand<WebViewNavigationFailedEventArgs>(NavFailed);
 
                 return _navFailed;
             }
@@ -282,10 +276,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                if (_onNewWindowRequestedCommand == null)
-                {
-                    _onNewWindowRequestedCommand = new RelayCommand<WebViewNewWindowRequestedEventArgs>(OnNewWindowRequested);
-                }
+                _onNewWindowRequestedCommand ??= new RelayCommand<WebViewNewWindowRequestedEventArgs>(OnNewWindowRequested);
 
                 return _onNewWindowRequestedCommand;
             }
@@ -303,10 +294,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                if (_retryCommand == null)
-                {
-                    _retryCommand = new RelayCommand(Retry);
-                }
+                _retryCommand ??= new RelayCommand(Retry);
 
                 return _retryCommand;
             }
@@ -327,10 +315,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                if (_refreshCommand == null)
-                {
-                    _refreshCommand = new RelayCommand(() => _webView?.Reload());
-                }
+                _refreshCommand ??= new RelayCommand(() => _webView?.Reload());
 
                 return _refreshCommand;
             }
@@ -555,8 +540,6 @@ namespace MyRSSFeeds.UWP.ViewModels
                 Feeds.Add(rss);
             }
 
-            SyndicationFeed feed = null;
-
             var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
 
             ProgressMax = sourcesDataList.Count();
@@ -609,6 +592,8 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                 progress.Report(++progressCount);
 
+
+                SyndicationFeed feed;
                 //if getting the feed crushed for (internet - not xml rss - other reasons)
                 //move to the next source on the list to try it instead of stopping every thing
                 try
@@ -648,14 +633,8 @@ namespace MyRSSFeeds.UWP.ViewModels
                     }
 
                     //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
-                    if (syndicationItem.Title == null)
-                    {
-                        syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
-                    }
-                    if (syndicationItem.Summary == null)
-                    {
-                        syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
-                    }
+                    syndicationItem.Title ??= new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
+                    syndicationItem.Summary ??= new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
                     if (syndicationItem.PublishedDate.Year < 2000)
                     {
                         syndicationItem.PublishedDate = syndicationItem.LastUpdatedTime.Year > 2000 ? syndicationItem.LastUpdatedTime : DateTimeOffset.Now;
