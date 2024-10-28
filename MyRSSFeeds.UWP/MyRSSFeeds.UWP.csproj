@@ -344,6 +344,10 @@
       <Project>{BF4550A3-C32B-4539-A193-82EE910DFF92}</Project>
       <Name>MyRSSFeeds.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OPMLCore.NET\OPMLCore.NET.csproj">
+      <Project>{ae62412c-74f9-4511-a187-ed9ac45b8ceb}</Project>
+      <Name>OPMLCore.NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
