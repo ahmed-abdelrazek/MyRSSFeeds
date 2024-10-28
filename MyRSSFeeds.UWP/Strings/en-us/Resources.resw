@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
+  <!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,406 +59,403 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="metadata">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" />
-							</xsd:sequence>
-							<xsd:attribute name="name" use="required" type="xsd:string" />
-							<xsd:attribute name="type" type="xsd:string" />
-							<xsd:attribute name="mimetype" type="xsd:string" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="assembly">
-						<xsd:complexType>
-							<xsd:attribute name="alias" type="xsd:string" />
-							<xsd:attribute name="name" type="xsd:string" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AppDisplayName" xml:space="preserve">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
     <value>My RSS Feeds</value>
     <comment>Application display name</comment>
   </data>
-	<data name="AppDescription" xml:space="preserve">
+  <data name="AppDescription" xml:space="preserve">
     <value>Simple and Local RSS Reader App.</value>
     <comment>Application description</comment>
   </data>
-	<data name="Shell_Main.Content" xml:space="preserve">
+  <data name="Shell_Main.Content" xml:space="preserve">
     <value>Feed</value>
     <comment>Navigation view item name for Main</comment>
   </data>
-	<data name="WebView_FailedMessage.Text" xml:space="preserve">
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
     <value>Page failed to load. Check connection and retry.</value>
     <comment>Load failure message for WebView</comment>
   </data>
-	<data name="WebView_Loading.Text" xml:space="preserve">
+  <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
     <comment>Loading message for WebView</comment>
   </data>
-	<data name="WebView_Retry.Content" xml:space="preserve">
+  <data name="WebView_Retry.Content" xml:space="preserve">
     <value>retry</value>
     <comment>Retry button for WebView</comment>
   </data>
-	<data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Back</value>
     <comment>WebView back button automation name property for WebView</comment>
   </data>
-	<data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_BrowserBackButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Back</value>
     <comment>Back button automation tooltip property for WebView</comment>
   </data>
-	<data name="WebView_BrowserForwardButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="WebView_BrowserForwardButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Forward</value>
     <comment>Forward button automation name property for WebView</comment>
   </data>
-	<data name="WebView_BrowserForwardButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_BrowserForwardButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Forward</value>
     <comment>Forward button automation tooltip property for WebView</comment>
   </data>
-	<data name="WebView_RefreshBrowserButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="WebView_RefreshBrowserButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Refresh</value>
     <comment>Refresh button automation name property for WebView</comment>
   </data>
-	<data name="WebView_RefreshBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_RefreshBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh</value>
     <comment>Refresh button automation tooltip property for WebView</comment>
   </data>
-	<data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Open in browser</value>
     <comment>Open in browser button automation name property for WebView</comment>
   </data>
-	<data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="WebView_OpenInBrowserButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Post in Your Default Browser.</value>
     <comment>Open in browser button automation tooltip property for WebView</comment>
   </data>
-	<data name="Shell_SourcesView.Content" xml:space="preserve">
+  <data name="Shell_SourcesView.Content" xml:space="preserve">
     <value>Sources</value>
     <comment>Navigation view item name for Sources</comment>
   </data>
-	<data name="ExceptionSettingsStorageExtensionsFileNameIsNullOrEmpty" xml:space="preserve">
+  <data name="ExceptionSettingsStorageExtensionsFileNameIsNullOrEmpty" xml:space="preserve">
     <value>File name is null or empty. Specify a valid file name</value>
     <comment>File name is null or empty to save file in settings storage extensions</comment>
   </data>
-	<data name="Settings_Theme.Text" xml:space="preserve">
+  <data name="Settings_Theme.Text" xml:space="preserve">
     <value>Choose Theme</value>
     <comment>Choose theme text for Settings</comment>
   </data>
-	<data name="Settings_Theme_Dark.Content" xml:space="preserve">
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
     <value>Dark</value>
     <comment>Dark theme text for Settings</comment>
   </data>
-	<data name="Settings_Theme_Default.Content" xml:space="preserve">
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
     <value>Windows default</value>
     <comment>Windows default theme text for Settings</comment>
   </data>
-	<data name="Settings_Theme_Light.Content" xml:space="preserve">
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
     <comment>Light theme text for Settings</comment>
   </data>
-	<data name="Settings_About.Text" xml:space="preserve">
+  <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
     <comment>About this application title for Settings</comment>
   </data>
-	<data name="Settings_AboutDescription.Text" xml:space="preserve">
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>Simple and Local RSS Reader App.</value>
     <comment>About this application description for Settings</comment>
   </data>
-	<data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
+  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
     <comment>Privacy Statement link content for Settings</comment>
   </data>
-	<data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://shababco.blogspot.com/p/apps-privacy-policies.html</value>
     <comment>Here is your Privacy Statement url for Settings</comment>
   </data>
-	<data name="Settings_Personalization.Text" xml:space="preserve">
+  <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
     <comment>Personalization text for Settings</comment>
   </data>
-	<data name="ExceptionEnumToBooleanConverterValueMustBeAnEnum" xml:space="preserve">
+  <data name="ExceptionEnumToBooleanConverterValueMustBeAnEnum" xml:space="preserve">
     <value>value must be an Enum!</value>
     <comment>Value must be an Enum in enum to boolean converter</comment>
   </data>
-	<data name="ExceptionEnumToBooleanConverterParameterMustBeAnEnumName" xml:space="preserve">
+  <data name="ExceptionEnumToBooleanConverterParameterMustBeAnEnumName" xml:space="preserve">
     <value>parameter must be an Enum name!</value>
     <comment>Parameter must be an Enum name in enum to boolean converter</comment>
   </data>
-	<data name="WhatsNew_Body.Text" xml:space="preserve">
-    <value>Replace WebView with WebView 2 (old edge with new chromium based edge)
-	Fix a problem with importing exported sources
-	Fix a problems with local database
-	General performance improvments and bug fixes
-	Planning on big update this year inshallah
+  <data name="WhatsNew_Body.Text" xml:space="preserve">
+    <value>Add OPML files support (Import & Export them from Settings)
+	General performance improvements and bug fixes
 	Palestine will be free ✌️🕊️</value>
     <comment>What's new prompt message body</comment>
   </data>
-	<data name="WhatsNewDialog.Title" xml:space="preserve">
+  <data name="WhatsNewDialog.Title" xml:space="preserve">
     <value>What's new in this version?</value>
     <comment>What's new prompt message title</comment>
   </data>
-	<data name="WhatsNewDialog.PrimaryButtonText" xml:space="preserve">
+  <data name="WhatsNewDialog.PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
     <comment>What's new prompt message primary button text</comment>
   </data>
-	<data name="Settings_FeedCountLimitNo.Header" xml:space="preserve">
+  <data name="Settings_FeedCountLimitNo.Header" xml:space="preserve">
     <value>Number of Feeds to show in the List</value>
   </data>
-	<data name="Settings_FeedCountLimitNote.Text" xml:space="preserve">
+  <data name="Settings_FeedCountLimitNote.Text" xml:space="preserve">
     <value>Enter 0 to show everything</value>
   </data>
-	<data name="Settings_Customize.Text" xml:space="preserve">
+  <data name="Settings_Customize.Text" xml:space="preserve">
     <value>Customize</value>
   </data>
-	<data name="CheckInternetMessageDialog" xml:space="preserve">
+  <data name="CheckInternetMessageDialog" xml:space="preserve">
     <value>Check your internet connection.</value>
   </data>
-	<data name="HttpRequestExceptionMessageDialog" xml:space="preserve">
+  <data name="HttpRequestExceptionMessageDialog" xml:space="preserve">
     <value>Please check your internet connection and make sure the app can connect to it also make sure the website and its rss feed url works.</value>
   </data>
-	<data name="MainViewModelNoSummaryFound" xml:space="preserve">
+  <data name="MainViewModelNoSummaryFound" xml:space="preserve">
     <value>No Summary Found.</value>
   </data>
-	<data name="MainViewModelNoTitleFound" xml:space="preserve">
+  <data name="MainViewModelNoTitleFound" xml:space="preserve">
     <value>No Title Found</value>
   </data>
-	<data name="SourcesViewModelSourceAddedMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceAddedMessageDialog" xml:space="preserve">
     <value>The source has been added.</value>
   </data>
-	<data name="SourcesViewModelSourceExistMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceExistMessageDialog" xml:space="preserve">
     <value>Source Already Exist.</value>
   </data>
-	<data name="SourcesViewModelSourceInfoNotValidMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceInfoNotValidMessageDialog" xml:space="preserve">
     <value>Make sure you entered a vaild working xml/rss url that allow access to anonymous visitors.</value>
   </data>
-	<data name="SourcesViewModelSourceUpdatedMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceUpdatedMessageDialog" xml:space="preserve">
     <value>The Source has been updated.</value>
   </data>
-	<data name="SourcesViewModelSourceUrlNullExceptionMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceUrlNullExceptionMessageDialog" xml:space="preserve">
     <value>Make sure you entered a Source Url.</value>
   </data>
-	<data name="WelcomeMessageForFirstRun" xml:space="preserve">
+  <data name="WelcomeMessageForFirstRun" xml:space="preserve">
     <value>Welcome To My RSS Feeds, Please add some sources to start.</value>
   </data>
-	<data name="XmlExceptionMessageDialog" xml:space="preserve">
+  <data name="XmlExceptionMessageDialog" xml:space="preserve">
     <value>Make sure you entered a vaild working xml/rss.</value>
   </data>
-	<data name="MainView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Selection</value>
   </data>
-	<data name="MainView_Filter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_Filter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Filter Content</value>
   </data>
-	<data name="MainView_FilterAuthor.Header" xml:space="preserve">
+  <data name="MainView_FilterAuthor.Header" xml:space="preserve">
     <value>Author</value>
   </data>
-	<data name="MainView_FilterClearButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_FilterClearButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Filter Source Selection</value>
   </data>
-	<data name="MainView_FilterDoneButton.Content" xml:space="preserve">
+  <data name="MainView_FilterDoneButton.Content" xml:space="preserve">
     <value>Done</value>
   </data>
-	<data name="MainView_FilterSources.Header" xml:space="preserve">
+  <data name="MainView_FilterSources.Header" xml:space="preserve">
     <value>Sources</value>
   </data>
-	<data name="MainView_FilterSources.PlaceholderText" xml:space="preserve">
+  <data name="MainView_FilterSources.PlaceholderText" xml:space="preserve">
     <value>Select a source</value>
   </data>
-	<data name="MainView_FilterTitle.Header" xml:space="preserve">
+  <data name="MainView_FilterTitle.Header" xml:space="preserve">
     <value>Title</value>
   </data>
-	<data name="MainView_FilterTitle.PlaceholderText" xml:space="preserve">
+  <data name="MainView_FilterTitle.PlaceholderText" xml:space="preserve">
     <value>Enter a Title or part of a Title</value>
   </data>
-	<data name="MainView_MarkAsRead.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_MarkAsRead.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Mark all as read</value>
   </data>
-	<data name="MainView_OpenFullPostButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_OpenFullPostButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Full Post</value>
   </data>
-	<data name="MainView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh Feeds Now</value>
   </data>
-	<data name="SourcesView_AddNewSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_AddNewSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add New Source</value>
   </data>
-	<data name="SourcesView_AddSource.Header" xml:space="preserve">
+  <data name="SourcesView_AddSource.Header" xml:space="preserve">
     <value>RSS Url</value>
   </data>
-	<data name="SourcesView_AddSource.PlaceholderText" xml:space="preserve">
+  <data name="SourcesView_AddSource.PlaceholderText" xml:space="preserve">
     <value>Required</value>
   </data>
-	<data name="SourcesView_AddSourceDoneButton.Content" xml:space="preserve">
+  <data name="SourcesView_AddSourceDoneButton.Content" xml:space="preserve">
     <value>Done</value>
   </data>
-	<data name="SourcesView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_ClearSelectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Clear Selection</value>
   </data>
-	<data name="SourcesView_DeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_DeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Delete Selected Source</value>
   </data>
-	<data name="SourcesView_DeletePopupButton.Content" xml:space="preserve">
+  <data name="SourcesView_DeletePopupButton.Content" xml:space="preserve">
     <value>Delete</value>
   </data>
-	<data name="SourcesView_DeletePopupMsg.Text" xml:space="preserve">
+  <data name="SourcesView_DeletePopupMsg.Text" xml:space="preserve">
     <value>Are you sure you want to delete selected source?</value>
   </data>
-	<data name="SourcesView_EditSelectedSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_EditSelectedSourceButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit Selected Source</value>
   </data>
-	<data name="SourcesView_EditSourceDescription.Header" xml:space="preserve">
+  <data name="SourcesView_EditSourceDescription.Header" xml:space="preserve">
     <value>Description</value>
   </data>
-	<data name="SourcesView_EditSourceDoneButton.Content" xml:space="preserve">
+  <data name="SourcesView_EditSourceDoneButton.Content" xml:space="preserve">
     <value>Done</value>
   </data>
-	<data name="SourcesView_EditSourceRssUrl.Header" xml:space="preserve">
+  <data name="SourcesView_EditSourceRssUrl.Header" xml:space="preserve">
     <value>RSS Url</value>
   </data>
-	<data name="SourcesView_EditSourceRssUrl.PlaceholderText" xml:space="preserve">
+  <data name="SourcesView_EditSourceRssUrl.PlaceholderText" xml:space="preserve">
     <value>Required</value>
   </data>
-	<data name="SourcesView_EditSourceTitle.Header" xml:space="preserve">
+  <data name="SourcesView_EditSourceTitle.Header" xml:space="preserve">
     <value>Source Name</value>
   </data>
-	<data name="SourcesView_EditSourceTitle.PlaceholderText" xml:space="preserve">
+  <data name="SourcesView_EditSourceTitle.PlaceholderText" xml:space="preserve">
     <value>Required</value>
   </data>
-	<data name="SourcesView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_RefreshButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Refresh Sources</value>
   </data>
-	<data name="MainView_FilterIsUnreadOnly.Content" xml:space="preserve">
+  <data name="MainView_FilterIsUnreadOnly.Content" xml:space="preserve">
     <value>Show Unread Only</value>
   </data>
-	<data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Export Source to the app json file.</value>
   </data>
-	<data name="Settings_BackupExportButtonTextblock.Text" xml:space="preserve">
+  <data name="Settings_BackupExportButtonTextblock.Text" xml:space="preserve">
     <value>Export</value>
   </data>
-	<data name="Settings_BackupImportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_BackupImportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Import Sources from the app json file.</value>
   </data>
-	<data name="Settings_BackupImportButtonTextblock.Text" xml:space="preserve">
+  <data name="Settings_BackupImportButtonTextblock.Text" xml:space="preserve">
     <value>Import</value>
   </data>
-	<data name="Settings_BackupSources.Text" xml:space="preserve">
+  <data name="Settings_BackupSources.Text" xml:space="preserve">
     <value>Backup Sources</value>
   </data>
-	<data name="Settings_ExportCanceledMessageDialog" xml:space="preserve">
+  <data name="Settings_ExportCanceledMessageDialog" xml:space="preserve">
     <value>Exporting operation cancelled</value>
   </data>
-	<data name="Settings_ExportErrorMessageDialog" xml:space="preserve">
+  <data name="Settings_ExportErrorMessageDialog" xml:space="preserve">
     <value>Exporting Sources Failed</value>
   </data>
-	<data name="Settings_ExportFailedMessageDialog" xml:space="preserve">
+  <data name="Settings_ExportFailedMessageDialog" xml:space="preserve">
     <value>Exporting Sources to {0} Failed</value>
   </data>
-	<data name="Settings_ExportSuccessfulMessageDialog" xml:space="preserve">
+  <data name="Settings_ExportSuccessfulMessageDialog" xml:space="preserve">
     <value>Sources exported as {0}</value>
   </data>
-	<data name="Settings_ImportCanceledMessageDialog" xml:space="preserve">
+  <data name="Settings_ImportCanceledMessageDialog" xml:space="preserve">
     <value>Importing operation cancelled</value>
   </data>
-	<data name="Settings_ImportErrorMessageDialog" xml:space="preserve">
+  <data name="Settings_ImportErrorMessageDialog" xml:space="preserve">
     <value>Importing Sources From {0} Failed</value>
   </data>
-	<data name="Settings_ImportSuccessfulMessageDialog" xml:space="preserve">
+  <data name="Settings_ImportSuccessfulMessageDialog" xml:space="preserve">
     <value>File {0} Imported</value>
   </data>
-	<data name="MainView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="MainView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cancel loading Feeds</value>
   </data>
-	<data name="SourcesView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SourcesView_CancelLoadingButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cancel Checking on Sources</value>
   </data>
-	<data name="HttpRequestException403MessageDialog" xml:space="preserve">
+  <data name="HttpRequestException403MessageDialog" xml:space="preserve">
     <value>The server understood the request, but is refusing to authorise it. Try using different "User Agent".</value>
   </data>
-	<data name="No" xml:space="preserve">
+  <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
-	<data name="SourcesViewModelSourceDeleteAllRSSMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelSourceDeleteAllRSSMessageDialog" xml:space="preserve">
     <value>Do you want to delete all the feeds for that source also?</value>
   </data>
-	<data name="Yes" xml:space="preserve">
+  <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-	<data name="SourcesViewModelExceptionMessageDialog" xml:space="preserve">
+  <data name="SourcesViewModelExceptionMessageDialog" xml:space="preserve">
     <value>An error occurred</value>
   </data>
-	<data name="SettingsViewModelAddNewAgentMessageDialog" xml:space="preserve">
+  <data name="SettingsViewModelAddNewAgentMessageDialog" xml:space="preserve">
     <value>The User Agent has been added.</value>
   </data>
-	<data name="Settings_DefaultUserAgent.Header" xml:space="preserve">
+  <data name="Settings_DefaultUserAgent.Header" xml:space="preserve">
     <value>Default User Agent</value>
   </data>
-	<data name="Settings_UserAgentAddButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_UserAgentAddButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add New User Agent.</value>
   </data>
-	<data name="Settings_UserAgentAddName.Header" xml:space="preserve">
+  <data name="Settings_UserAgentAddName.Header" xml:space="preserve">
     <value>Name</value>
   </data>
-	<data name="Settings_UserAgentAddValue.Header" xml:space="preserve">
+  <data name="Settings_UserAgentAddValue.Header" xml:space="preserve">
     <value>User Agent</value>
   </data>
-	<data name="Settings_UserAgentDeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="Settings_UserAgentDeleteButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Delete Selected User Agent.</value>
   </data>
-	<data name="Settings_UserAgents.Text" xml:space="preserve">
+  <data name="Settings_UserAgents.Text" xml:space="preserve">
     <value>User Agents</value>
   </data>
-	<data name="SettingsViewModelDeleteAgentMessageDialog" xml:space="preserve">
+  <data name="SettingsViewModelDeleteAgentMessageDialog" xml:space="preserve">
     <value>Selected User Agent has been deleted.</value>
   </data>
-	<data name="SettingsViewModelUnDeletableAgentMessageDialog" xml:space="preserve">
+  <data name="SettingsViewModelUnDeletableAgentMessageDialog" xml:space="preserve">
     <value>You can't delete that User Agent.</value>
   </data>
-	<data name="Settings_WaitAfterLastCheckNo.Header" xml:space="preserve">
+  <data name="Settings_WaitAfterLastCheckNo.Header" xml:space="preserve">
     <value>Minutes until recheck a Source to get its Feed on Refresh</value>
   </data>
-	<data name="Settings_WaitAfterLastCheckNote.Text" xml:space="preserve">
+  <data name="Settings_WaitAfterLastCheckNote.Text" xml:space="preserve">
     <value>Enter 0 to always recheck</value>
   </data>
 </root>
