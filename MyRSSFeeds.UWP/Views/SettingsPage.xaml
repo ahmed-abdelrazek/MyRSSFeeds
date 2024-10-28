@@ -1,11 +1,11 @@
 ﻿<Page
     x:Class="MyRSSFeeds.UWP.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customConverters="using:MyRSSFeeds.UWP.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:customConverters="using:MyRSSFeeds.UWP.Converters"
     xmlns:xaml="using:Windows.UI.Xaml"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
@@ -15,19 +15,19 @@
 
     <Grid Margin="{StaticResource MediumLeftRightMargin}">
         <StackPanel x:Name="ContentArea">
-            <TextBlock x:Uid="Settings_Personalization"  Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
 
-                <!--Theme-->
+                <!--  Theme  -->
                 <TextBlock x:Uid="Settings_Theme" />
 
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
                     <RadioButton
                         x:Uid="Settings_Theme_Light"
                         Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppTheme"
+                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
                         <RadioButton.CommandParameter>
                             <xaml:ElementTheme>Light</xaml:ElementTheme>
                         </RadioButton.CommandParameter>
@@ -35,9 +35,9 @@
                     <RadioButton
                         x:Uid="Settings_Theme_Dark"
                         Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppTheme"
+                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
                         <RadioButton.CommandParameter>
                             <xaml:ElementTheme>Dark</xaml:ElementTheme>
                         </RadioButton.CommandParameter>
@@ -45,9 +45,9 @@
                     <RadioButton
                         x:Uid="Settings_Theme_Default"
                         Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppTheme"
+                        IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
                         <RadioButton.CommandParameter>
                             <xaml:ElementTheme>Default</xaml:ElementTheme>
                         </RadioButton.CommandParameter>
@@ -55,60 +55,148 @@
                 </StackPanel>
             </StackPanel>
 
-            <!--Customize Feed and Check Limit-->
-            <TextBlock x:Uid="Settings_Customize" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+            <!--  Customize Feed and Check Limit  -->
+            <TextBlock
+                x:Uid="Settings_Customize"
+                Margin="0,10,0,0"
+                Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <muxc:NumberBox x:Uid="Settings_FeedCountLimitNo" Value="{x:Bind ViewModel.FeedsLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="10" LargeChange="100" />
+                <muxc:NumberBox
+                    x:Uid="Settings_FeedCountLimitNo"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    LargeChange="100"
+                    Minimum="0"
+                    SmallChange="10"
+                    SpinButtonPlacementMode="Compact"
+                    Value="{x:Bind ViewModel.FeedsLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock x:Uid="Settings_FeedCountLimitNote" />
             </StackPanel>
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <muxc:NumberBox x:Uid="Settings_WaitAfterLastCheckNo" Value="{x:Bind ViewModel.WaitAfterLastCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" SpinButtonPlacementMode="Compact" SmallChange="2" LargeChange="5" />
+                <muxc:NumberBox
+                    x:Uid="Settings_WaitAfterLastCheckNo"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    LargeChange="5"
+                    Minimum="0"
+                    SmallChange="2"
+                    SpinButtonPlacementMode="Compact"
+                    Value="{x:Bind ViewModel.WaitAfterLastCheck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock x:Uid="Settings_WaitAfterLastCheckNote" />
             </StackPanel>
 
-            <!--UserAgents-->
-            <TextBlock x:Uid="Settings_UserAgents" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+            <!--  UserAgents  -->
+            <TextBlock
+                x:Uid="Settings_UserAgents"
+                Margin="0,10,0,0"
+                Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Orientation="Horizontal">
-                <TextBox x:Uid="Settings_UserAgentAddName" Text="{x:Bind ViewModel.UserAgentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" MaxWidth="250" Margin="0,5"/>
-                <TextBox x:Uid="Settings_UserAgentAddValue" Text="{x:Bind ViewModel.UserAgentValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="150" MaxWidth="300" Margin="5"/>
-                <Button x:Uid="Settings_UserAgentAddButton" Style="{StaticResource ButtonRevealStyle}" Margin="5" VerticalAlignment="Bottom" Command="{x:Bind ViewModel.AddUserAgentCommand}">
+                <TextBox
+                    x:Uid="Settings_UserAgentAddName"
+                    MinWidth="100"
+                    MaxWidth="250"
+                    Margin="0,5"
+                    Text="{x:Bind ViewModel.UserAgentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox
+                    x:Uid="Settings_UserAgentAddValue"
+                    MinWidth="150"
+                    MaxWidth="300"
+                    Margin="5"
+                    Text="{x:Bind ViewModel.UserAgentValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button
+                    x:Uid="Settings_UserAgentAddButton"
+                    Margin="5"
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind ViewModel.AddUserAgentCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" />
                     </StackPanel>
                 </Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Uid="Settings_DefaultUserAgent" ItemsSource="{x:Bind ViewModel.UserAgents}" SelectedItem="{x:Bind ViewModel.SelectedUserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Id" MinWidth="200" MaxWidth="300" Margin="0,5"/>
-                <Button x:Uid="Settings_UserAgentDeleteButton" Style="{StaticResource ButtonRevealStyle}" Margin="5" VerticalAlignment="Bottom" Command="{x:Bind ViewModel.DeleteUserAgentCommand}">
+                <ComboBox
+                    x:Uid="Settings_DefaultUserAgent"
+                    MinWidth="200"
+                    MaxWidth="300"
+                    Margin="0,5"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{x:Bind ViewModel.UserAgents}"
+                    SelectedItem="{x:Bind ViewModel.SelectedUserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="Id" />
+                <Button
+                    x:Uid="Settings_UserAgentDeleteButton"
+                    Margin="5"
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind ViewModel.DeleteUserAgentCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
                     </StackPanel>
                 </Button>
             </StackPanel>
 
-            <!--Backups-->
-            <TextBlock x:Uid="Settings_BackupSources" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+
+            <!--  Backups  -->
+            <TextBlock
+                x:Uid="Settings_BackupSources"
+                Margin="0,10,0,0"
+                Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}" Orientation="Horizontal">
-                <Button x:Uid="BackupImportButton" Style="{StaticResource ButtonRevealStyle}" Margin="0,5" Command="{x:Bind ViewModel.ImportSourceAsJsonCommand}">
+                <Button
+                    x:Uid="Settings_BackupImportOPMLButton"
+                    Margin="0,5"
+                    Command="{x:Bind ViewModel.ImportSourcesAsOPMLCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE896;" />
-                        <TextBlock x:Uid="Settings_BackupImportButtonTextblock"/>
+                        <TextBlock x:Uid="Settings_OPMLImportButtonTextblock" />
                     </StackPanel>
                 </Button>
-                <Button x:Uid="Settings_BackupExportButton" Style="{StaticResource ButtonRevealStyle}" Margin="5" Command="{x:Bind ViewModel.ExportSourceAsJsonCommand}">
+                <Button
+                    x:Uid="Settings_BackupExportOPMLButton"
+                    Margin="5"
+                    Command="{x:Bind ViewModel.ExportSourcesAsOPMLCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE898;" />
-                        <TextBlock x:Uid="Settings_BackupExportButtonTextblock"/>
+                        <TextBlock x:Uid="Settings_OPMLExportButtonTextblock" />
                     </StackPanel>
                 </Button>
             </StackPanel>
 
-            <!--About-->
-            <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,20,0,0"/>
+            <StackPanel Margin="{StaticResource XSmallTopMargin}" Orientation="Horizontal">
+                <Button
+                    x:Uid="Settings_BackupImportButton"
+                    Margin="0,5"
+                    Command="{x:Bind ViewModel.ImportSourceAsJsonCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE896;" />
+                        <TextBlock x:Uid="Settings_BackupImportButtonTextblock" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    x:Uid="Settings_BackupExportButton"
+                    Margin="5"
+                    Command="{x:Bind ViewModel.ExportSourceAsJsonCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE898;" />
+                        <TextBlock x:Uid="Settings_BackupExportButtonTextblock" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!--  About  -->
+            <TextBlock
+                x:Uid="Settings_About"
+                Margin="0,20,0,0"
+                Style="{ThemeResource SubtitleTextBlockStyle}" />
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />

@@ -2,6 +2,7 @@
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.UWP.Helpers;
 using MyRSSFeeds.UWP.Services;
+using OPMLCore.NET;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.Popups;
@@ -97,7 +99,6 @@ namespace MyRSSFeeds.UWP.ViewModels
                             SelectedUserAgent.IsUsed = true;
                             await Core.Services.UserAgentService.UpdateAgentAsync(SelectedUserAgent).ConfigureAwait(false);
                         });
-
                     }
                 });
             }
@@ -263,10 +264,141 @@ namespace MyRSSFeeds.UWP.ViewModels
 
         public RelayCommand DeleteUserAgentCommand { get; private set; }
 
+        public RelayCommand ImportSourcesAsOPMLCommand { get; private set; }
+        public RelayCommand ExportSourcesAsOPMLCommand { get; private set; }
+
         public SettingsViewModel()
         {
             AddUserAgentCommand = new RelayCommand(async () => await AddUserAgent(), CanAddUserAgent);
             DeleteUserAgentCommand = new RelayCommand(async () => await DeleteUserAgent(), CanDeleteUserAgent);
+            ImportSourcesAsOPMLCommand = new RelayCommand(async () => await ImportSourcesAsOPML(), CanImportSourcesAsOPML);
+            ExportSourcesAsOPMLCommand = new RelayCommand(async () => await ExportSourcesAsOPML(), CanExportSourcesAsOPML);
+        }
+
+        private bool CanImportSourcesAsOPML()
+        {
+            return true;
+        }
+
+        private async Task ImportSourcesAsOPML()
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+            };
+            picker.FileTypeFilter.Add(".opml");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    // Application now has read/write access to the picked file
+                    var ffdd = await FileIO.ReadTextAsync(file);
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(await FileIO.ReadTextAsync(file));
+
+                    var opmlFile = new Opml(xmlDoc);
+
+                    foreach (var source in opmlFile.Body.Outlines)
+                    {
+                        if (await Core.Services.SourceDataService.SourceExistAsync(source.XMLUrl))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Uri.TryCreate(source.XMLUrl, UriKind.Absolute, out Uri rssUrl);
+                            Uri.TryCreate(source.HTMLUrl, UriKind.Absolute, out Uri baseUrl);
+
+                            await Core.Services.SourceDataService.AddNewSourceAsync(new Source
+                            {
+                                SiteTitle = source.Title,
+                                BaseUrl = baseUrl ?? new Uri(rssUrl.GetLeftPart(UriPartial.Authority)),
+                                RssUrl = rssUrl,
+                                Description = source.Description
+                            });
+                        }
+                    }
+                    await new MessageDialog(string.Format("Settings_ImportSuccessfulMessageDialog".GetLocalized(), file.Name)).ShowAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    await new MessageDialog(string.Format("Settings_ImportErrorMessageDialog".GetLocalized(), file.Name)).ShowAsync();
+                }
+            }
+            else
+            {
+                await new MessageDialog("Settings_ImportCanceledMessageDialog".GetLocalized()).ShowAsync();
+            }
+        }
+
+        private bool CanExportSourcesAsOPML()
+        {
+            return true;
+        }
+
+        private async Task ExportSourcesAsOPML()
+        {
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+            };
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add("OPML File", new List<string>() { ".opml" });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = "ExportedOPMLRssSources";
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    // Prevent updates to the remote version of the file until
+                    // we finish making changes and call CompleteUpdatesAsync.
+                    CachedFileManager.DeferUpdates(file);
+
+                    // write to file
+                    var allSourcesList = await Core.Services.SourceDataService.GetSourcesDataAsync();
+                    var SourcesAsOutlinesList = allSourcesList.Select(x => new Outline
+                    {
+                        Title = x.SiteTitle,
+                        Text = x.SiteTitle,
+                        Type = "rss",
+                        XMLUrl = x.RssUrl.ToString(),
+                        HTMLUrl = x.BaseUrl?.ToString(),
+                        //Description = x.Description,
+                        //Created = x.LastBuildDate.DateTime
+                    });
+
+                    var opmlFile = new Opml(new Head("My RSS Feed Sources"), new Body(SourcesAsOutlinesList.ToList()));
+
+                    await FileIO.WriteTextAsync(file, opmlFile.ToString());
+                    // Let Windows know that we're finished changing the file so
+                    // the other app can update the remote version of the file.
+                    // Completing updates may require Windows to ask for user input.
+                    Windows.Storage.Provider.FileUpdateStatus status =
+                        await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                    {
+                        await new MessageDialog(string.Format("Settings_ExportSuccessfulMessageDialog".GetLocalized(), file.Name)).ShowAsync();
+                    }
+                    else
+                    {
+                        await new MessageDialog(string.Format("Settings_ExportFailedMessageDialog".GetLocalized(), file.Name)).ShowAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    await new MessageDialog(string.Format("Settings_ExportErrorMessageDialog".GetLocalized(), file.Name)).ShowAsync();
+                }
+            }
+            else
+            {
+                await new MessageDialog("Settings_ExportCanceledMessageDialog".GetLocalized()).ShowAsync();
+            }
         }
 
         private bool CanAddUserAgent()

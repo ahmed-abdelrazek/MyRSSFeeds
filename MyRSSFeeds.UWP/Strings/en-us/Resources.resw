@@ -226,7 +226,7 @@
     <comment>Parameter must be an Enum name in enum to boolean converter</comment>
   </data>
   <data name="WhatsNew_Body.Text" xml:space="preserve">
-    <value>Add OPML files support (Import & Export them from Settings)
+    <value>Add OPML files support (Import and Export them from Settings)
 	General performance improvements and bug fixes
 	Palestine will be free ✌️🕊️</value>
     <comment>What's new prompt message body</comment>
@@ -370,6 +370,12 @@
   </data>
   <data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Export Source to the app json file.</value>
+  </data>
+   <data name="Settings_OPMLExportButtonTextblock.Text" xml:space="preserve">
+    <value>Export Sources as OPML</value>
+  </data>
+  <data name="Settings_OPMLImportButtonTextblock.Text" xml:space="preserve">
+    <value>Import Sources from OPML</value>
   </data>
   <data name="Settings_BackupExportButtonTextblock.Text" xml:space="preserve">
     <value>Export</value>
