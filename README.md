@@ -5,7 +5,9 @@
 ## My RSS Feeds
 Simple, Light and Local UWP Rss reader that doesn't required any logins or have any ads.
 
-The app runs on windows 10 1903 or higher
+The app runs on windows 10 22H2 (latest version) or higher
+
+The app now support OPML
 
 [![Build Status](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_apis/build/status/ahmed-abdelrazek.MyRSSFeeds?branchName=master)](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_build/latest?definitionId=3&branchName=master)
 
