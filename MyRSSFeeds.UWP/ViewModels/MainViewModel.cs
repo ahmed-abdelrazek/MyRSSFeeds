@@ -715,21 +715,27 @@ namespace MyRSSFeeds.UWP.ViewModels
             MarkAsReadCommand.OnCanExecuteChanged();
         }
 
-        public void Initialize(WebView2 webView)
+        public async void Initialize(WebView2 webView)
         {
             _webView = webView;
 
             GetTheme();
 
+            await _webView.EnsureCoreWebView2Async();
+
             if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
             {
-                //dark
-                Environment.SetEnvironmentVariable("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", Windows.UI.Color.FromArgb(100, 0, 0, 0).ToHex());
-                _webView.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(100, 0, 0, 0));
                 if (_webView.CoreWebView2 != null)
                 {
                     _webView.CoreWebView2.Profile.PreferredColorScheme = CoreWebView2PreferredColorScheme.Dark;
                 }
+
+                //dark
+                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body></body></html>");
+            }
+            else
+            {
+                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body></body></html>");
             }
         }
 
