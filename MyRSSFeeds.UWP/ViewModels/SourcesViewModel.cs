@@ -454,6 +454,10 @@ namespace MyRSSFeeds.UWP.ViewModels
                     {
                         item.ErrorMessage = "HttpRequestException403MessageDialog".GetLocalized();
                     }
+                    else if (ex.Message.StartsWith("Response status code does not indicate success: 302 ()."))
+                    {
+                        item.ErrorMessage = "HttpRequestException302MessageDialog".GetLocalized();
+                    }
                     else
                     {
                         item.ErrorMessage = "HttpRequestExceptionMessageDialog".GetLocalized();
@@ -463,7 +467,14 @@ namespace MyRSSFeeds.UWP.ViewModels
                 }
                 catch (XmlException ex)
                 {
-                    item.ErrorMessage = "XmlExceptionMessageDialog".GetLocalized();
+                    if (ex.Message.Contains("is not an allowed feed format."))
+                    {
+                        item.ErrorMessage = "XmlFeedFormatExceptionMessageDialog".GetLocalized();
+                    }
+                    else
+                    {
+                        item.ErrorMessage = "XmlExceptionMessageDialog".GetLocalized();
+                    }
                     Debug.WriteLine(ex);
                     item.IsError = true;
                 }
@@ -475,7 +486,14 @@ namespace MyRSSFeeds.UWP.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    item.ErrorMessage = "SourcesViewModelExceptionMessageDialog".GetLocalized();
+                    if (ex.Message.Contains("does not support RSS version"))
+                    {
+                        item.ErrorMessage = "SourcesViewModelRSSVersionExceptionMessageDialog".GetLocalized();
+                    }
+                    else
+                    {
+                        item.ErrorMessage = "SourcesViewModelExceptionMessageDialog".GetLocalized();
+                    }
                     Debug.WriteLine(ex);
                     item.IsError = true;
                 }

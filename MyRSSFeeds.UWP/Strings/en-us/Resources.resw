@@ -371,7 +371,7 @@
   <data name="Settings_BackupExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Export Source to the app json file.</value>
   </data>
-   <data name="Settings_OPMLExportButtonTextblock.Text" xml:space="preserve">
+  <data name="Settings_OPMLExportButtonTextblock.Text" xml:space="preserve">
     <value>Export Sources as OPML</value>
   </data>
   <data name="Settings_OPMLImportButtonTextblock.Text" xml:space="preserve">
@@ -463,5 +463,14 @@
   </data>
   <data name="Settings_WaitAfterLastCheckNote.Text" xml:space="preserve">
     <value>Enter 0 to always recheck</value>
+  </data>
+  <data name="SourcesViewModelRSSVersionExceptionMessageDialog" xml:space="preserve">
+    <value>The app don't support its RSS version.</value>
+  </data>
+  <data name="HttpRequestException302MessageDialog" xml:space="preserve">
+    <value>Got http 302 status redirected but the source most likely will not work.</value>
+  </data>
+  <data name="XmlFeedFormatExceptionMessageDialog" xml:space="preserve">
+    <value>Some element in the RSS are not for feed but the source most likely will work.</value>
   </data>
 </root>
