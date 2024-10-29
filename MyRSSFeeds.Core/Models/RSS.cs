@@ -22,11 +22,11 @@ namespace MyRSSFeeds.Core.Models
             {
                 if (PostTitle.Length > 80)
                 {
-                    return string.Concat(PostTitle.Substring(0, 80), " ...");
+                    return System.Net.WebUtility.HtmlDecode(string.Concat(PostTitle.Substring(0, 80), " ..."));
                 }
                 else
                 {
-                    return PostTitle;
+                    return System.Net.WebUtility.HtmlDecode(PostTitle);
                 }
             }
         }

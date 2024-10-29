@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
+using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.UWP.Views;
 using System;
@@ -22,12 +23,12 @@ namespace MyRSSFeeds.UWP.Services
                 {
                     if (SystemInformation.Instance.IsAppUpdated && !shown)
                     {
-                        var agents = await Core.Services.UserAgentService.GetAgentDataAsync(x => x.Name == "App Default");
+                        var agents = new Core.Services.UserAgentService(LiteDbContext.LiteDb).GetAgentData(x => x.Name == "App Default");
                         var updateAgent = agents.FirstOrDefault();
                         if (updateAgent != null)
                         {
                             updateAgent.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
-                            await Core.Services.UserAgentService.UpdateAgentAsync(updateAgent);
+                            new Core.Services.UserAgentService(LiteDbContext.LiteDb).UpdateAgent(updateAgent);
                         }
 
                         shown = true;

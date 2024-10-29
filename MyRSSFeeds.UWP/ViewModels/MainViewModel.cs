@@ -1,6 +1,8 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using LiteDB;
+using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
@@ -14,6 +16,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -29,6 +32,9 @@ namespace MyRSSFeeds.UWP.ViewModels
         Windows.UI.ViewManagement.UISettings _systemTheme;
         ElementTheme _appTheme;
         string _uiTheme;
+
+        private readonly RSSDataService rssDataService;
+        private readonly SourceDataService sourceDataService;
 
         public CancellationTokenSource TokenSource { get; set; } = null;
 
@@ -46,7 +52,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                         if (!_selectedRSS.IsRead)
                         {
                             _selectedRSS.IsRead = true;
-                            RSSDataService.UpdateFeedAsync(_selectedRSS).FireAndGet();
+                            rssDataService.UpdateFeed(_selectedRSS);
                         }
 
                         GetTheme();
@@ -354,7 +360,10 @@ namespace MyRSSFeeds.UWP.ViewModels
             foreach (var item in Feeds.Where(x => x.IsRead == false))
             {
                 item.IsRead = true;
-                await RSSDataService.UpdateFeedAsync(item);
+                await Task.Run(() =>
+                {
+                    rssDataService.UpdateFeed(item);
+                });
             }
         }
 
@@ -364,16 +373,16 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             get
             {
-                _filterCommand = new RelayCommand(async () => await Filter());
+                _filterCommand = new RelayCommand(Filter);
                 return _filterCommand;
             }
         }
 
-        private async Task Filter()
+        private void Filter()
         {
             TokenSource.Cancel();
 
-            var query = from feed in await RSSDataService.GetFeedsDataAsync(0) select feed;
+            var query = from feed in rssDataService.GetFeedsData(0) select feed;
 
             if (FilterSelectedSource != null)
             {
@@ -488,6 +497,10 @@ namespace MyRSSFeeds.UWP.ViewModels
             LoadCommands();
             IsLoading = true;
             WebViewSource = new Uri(_defaultUrl);
+
+            var db = new LiteDatabase(LiteDbContext.ConnectionString);
+            rssDataService = new RSSDataService(db);
+            sourceDataService = new SourceDataService(db);
             TokenSource = new CancellationTokenSource();
         }
 
@@ -535,12 +548,12 @@ namespace MyRSSFeeds.UWP.ViewModels
             // Set Httpclient userAgent to the user selected one
             await RssRequest.SetCustomUserAgentAsync();
 
-            foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+            foreach (var rss in rssDataService.GetFeedsData(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
                 Feeds.Add(rss);
             }
 
-            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+            var sourcesDataList = sourceDataService.GetSourcesData();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
@@ -612,7 +625,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                         // Saves rss items count and last check time to source 
                         sourceItem.CurrentRssItemsCount = feed.Items.Count;
                         sourceItem.LastBuildCheck = DateTimeOffset.Now;
-                        await SourceDataService.UpdateSourceAsync(sourceItem);
+                        sourceDataService.UpdateSource(sourceItem);
                     }
                 }
                 catch (Exception ex)
@@ -674,9 +687,9 @@ namespace MyRSSFeeds.UWP.ViewModels
                         });
                     }
 
-                    if (!await RSSDataService.FeedExistAsync(rss))
+                    if (!rssDataService.FeedExist(rss))
                     {
-                        var newRss = await RSSDataService.AddNewFeedAsync(rss);
+                        var newRss = rssDataService.AddNewFeed(rss);
                         Feeds.Add(newRss);
                         hasLoadedFeedNewItems = true;
 
@@ -693,7 +706,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             if (hasLoadedFeedNewItems)
             {
                 Feeds.Clear();
-                foreach (var rss in await RSSDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
+                foreach (var rss in rssDataService.GetFeedsData(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
                 {
                     Feeds.Add(rss);
                 }

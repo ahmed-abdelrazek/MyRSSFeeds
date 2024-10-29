@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LiteDB;
+using MyRSSFeeds.Core.Data;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -11,13 +13,13 @@ namespace MyRSSFeeds.Core.Helpers
     /// </summary>
     public class RssRequest
     {
-        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.2 (Windows NT 10.0; X64)";
+        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.7 (Windows NT 10.0; X64)";
 
         private static readonly HttpClient httpClient;
 
         static RssRequest()
         {
-            httpClient = new HttpClient();
+            httpClient ??= new HttpClient();
         }
 
         /// <summary>
@@ -46,15 +48,18 @@ namespace MyRSSFeeds.Core.Helpers
 
         public static async Task SetCustomUserAgentAsync()
         {
-            var agents = await Services.UserAgentService.GetAgentDataAsync(x => x.IsUsed);
-            var CurrentAgent = agents.FirstOrDefault();
-            if (CurrentAgent != null)
+            await Task.Run(() =>
             {
-                if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
+                var agents = new Services.UserAgentService(new LiteDatabase(LiteDbContext.ConnectionString)).GetAgentData(x => x.IsUsed);
+                var CurrentAgent = agents.FirstOrDefault();
+                if (CurrentAgent != null)
                 {
-                    BrowserUserAgent = CurrentAgent.AgentString;
+                    if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
+                    {
+                        BrowserUserAgent = CurrentAgent.AgentString;
+                    }
                 }
-            }
+            });
         }
 
         private static void AddHttpClientHeaders()

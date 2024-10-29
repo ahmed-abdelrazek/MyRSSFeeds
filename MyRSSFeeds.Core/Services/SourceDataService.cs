@@ -12,44 +12,33 @@ using System.Xml;
 
 namespace MyRSSFeeds.Core.Services
 {
-    public static class SourceDataService
+    public class SourceDataService
     {
-        private static IEnumerable<Source> AllFeedsBySource(LiteDatabase db)
+        private readonly LiteDatabase _liteDatabase;
+
+        public SourceDataService(LiteDatabase liteDatabase)
         {
-            return AllSources(db).Include(x => x.RSSs).FindAll();
+            _liteDatabase = liteDatabase;
         }
 
-        private static ILiteCollection<Source> AllSources(LiteDatabase db)
+        private IEnumerable<Source> AllFeedsBySource()
         {
-            return db.GetCollection<Source>(LiteDbContext.Sources);
+            return AllSources().Include(x => x.RSSs).FindAll();
         }
 
-        public static async Task<IEnumerable<Source>> GetSourcesDataAsync()
+        private ILiteCollection<Source> AllSources()
         {
-            List<Source> ls = new List<Source>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllSources(db).FindAll().OrderByDescending(x => x.Id).ToList();
-                }
-                return ls;
-            });
+            return _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
         }
 
-        public static async Task<IEnumerable<Source>> GetSourcesDataWithFeedsAsync()
+        public IEnumerable<Source> GetSourcesData()
         {
-            List<Source> ls = new List<Source>();
+            return AllSources().FindAll().OrderByDescending(x => x.Id).ToList();
+        }
 
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeedsBySource(db).ToList();
-                }
-                return ls;
-            });
+        public IEnumerable<Source> GetSourcesDataWithFeeds()
+        {
+            return AllFeedsBySource().ToList();
         }
 
         /// <summary>
@@ -57,15 +46,22 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="source">the base Uri for the source</param>
         /// <returns>Task true if the source already exist</returns>
-        public static async Task<bool> SourceExistAsync(string source)
+        public bool SourceExist(string source)
         {
             var link = new Uri(source);
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                return col.Exists(x => x.RssUrl == link);
-            });
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            return col.Exists(x => x.RssUrl == link);
+        }
+
+        /// <summary>
+        /// Check if Source Exist by its base Uri
+        /// </summary>
+        /// <param name="source">the base Uri for the source</param>
+        /// <returns>Task true if the source already exist</returns>
+        public bool SourceExist(Uri source)
+        {
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            return col.Exists(x => x.RssUrl == source);
         }
 
         /// <summary>
@@ -73,7 +69,7 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="source">string for source rss url</param>
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
-        public static async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
+        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
             var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
@@ -118,56 +114,41 @@ namespace MyRSSFeeds.Core.Services
         /// <param name="source">string for rss/xml content</param>        
         /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
-        public static async Task<Source> GetSourceInfoFromRssAsync(string source, string rssUrl)
+        public Source GetSourceInfoFromRss(string source, string rssUrl)
         {
-            return await Task.Run(() =>
-            {
-                using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
-                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
+            using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
+            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+            Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
 
-                return new Source
-                {
-                    SiteTitle = feed.Title.Text,
-                    Description = feed.Description.Text,
-                    Language = feed.Language,
-                    LastBuildDate = feed.LastUpdatedTime,
-                    BaseUrl = baseLink,
-                    RssUrl = new Uri(rssUrl),
-                    IsWorking = true
-                };
-            });
+            return new Source
+            {
+                SiteTitle = feed.Title.Text,
+                Description = feed.Description.Text,
+                Language = feed.Language,
+                LastBuildDate = feed.LastUpdatedTime,
+                BaseUrl = baseLink,
+                RssUrl = new Uri(rssUrl),
+                IsWorking = true
+            };
         }
 
-        public static async Task<Source> AddNewSourceAsync(Source source)
+        public Source AddNewSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                col.Insert(source);
-                return source;
-            });
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            col.Insert(source);
+            return source;
         }
 
-        public static async Task<Source> UpdateSourceAsync(Source source)
+        public Source UpdateSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                col.Update(source);
-                return source;
-            });
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            col.Update(source);
+            return source;
         }
 
-        public static async Task<bool> DeleteSourceAsync(Source source)
+        public bool DeleteSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                return db.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
-            });
+            return _liteDatabase.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
         }
     }
 }

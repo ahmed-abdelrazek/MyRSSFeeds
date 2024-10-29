@@ -5,20 +5,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace MyRSSFeeds.Core.Services
 {
-    public static class RSSDataService
+    public class RSSDataService
     {
+        private readonly LiteDatabase _liteDatabase;
+
+        public RSSDataService(LiteDatabase liteDatabase)
+        {
+            _liteDatabase = liteDatabase;
+        }
+
         /// <summary>
         /// Gets all the Feeds with source included
         /// </summary>
         /// <param name="db">the database context</param>
         /// <returns>IEnumerable of RSS</returns>
-        private static IEnumerable<RSS> AllFeedsWithSource(LiteDatabase db)
+        private IEnumerable<RSS> AllFeedsWithSource()
         {
-            return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).FindAll();
+            return _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).FindAll();
         }
 
         /// <summary>
@@ -26,27 +32,18 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="db">the database context</param>
         /// <returns>return IEnumerable of RSS</returns>
-        private static ILiteCollection<RSS> AllFeeds(LiteDatabase db)
+        private ILiteCollection<RSS> AllFeeds()
         {
-            return db.GetCollection<RSS>(LiteDbContext.RSSs);
+            return _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs);
         }
 
         /// <summary>
         /// Gets all saved Feeds from database 
         /// </summary>
         /// <returns>IEnumerable of RSS</returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataAsync()
+        public IEnumerable<RSS> GetFeedsData()
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeeds(db).FindAll().OrderByDescending(x => x.CreatedAt).ToList();
-                }
-                return ls;
-            });
+            return AllFeeds().FindAll().OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         /// <summary>
@@ -54,20 +51,11 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="limit">how many records to return</param>
         /// <returns>IEnumerable of RSS</returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataAsync(int limit)
+        public IEnumerable<RSS> GetFeedsData(int limit)
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = limit == 0
-                        ? AllFeedsWithSource(db).OrderByDescending(x => x.CreatedAt).ToList()
-                        : AllFeedsWithSource(db).OrderByDescending(x => x.CreatedAt).Take(limit).ToList();
-                }
-                return ls;
-            });
+            return limit == 0
+                ? AllFeedsWithSource().OrderByDescending(x => x.CreatedAt).ToList()
+                : AllFeedsWithSource().OrderByDescending(x => x.CreatedAt).Take(limit).ToList();
         }
 
         /// <summary>
@@ -75,18 +63,9 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="predicate">Where statement to filter the data</param>
         /// <returns>IEnumerable of RSS</returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate)
+        public IEnumerable<RSS> GetFeedsData(Expression<Func<RSS, bool>> predicate)
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeeds(db).Find(predicate).OrderByDescending(x => x.CreatedAt).ToList();
-                }
-                return ls;
-            });
+            return AllFeeds().Find(predicate).OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         /// <summary>
@@ -95,18 +74,9 @@ namespace MyRSSFeeds.Core.Services
         /// <param name="predicate">Where statement to filter the data</param>
         /// <param name="skip">skip number of records</param>
         /// <returns>IEnumerable of RSS<RSS></returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip)
+        public IEnumerable<RSS> GetFeedsData(Expression<Func<RSS, bool>> predicate, int skip)
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeeds(db).Find(predicate, skip).OrderByDescending(x => x.CreatedAt).ToList();
-                }
-                return ls;
-            });
+            return AllFeeds().Find(predicate, skip).OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         /// <summary>
@@ -116,36 +86,18 @@ namespace MyRSSFeeds.Core.Services
         /// <param name="skip">skip x number of records</param>
         /// <param name="limit">how many records to return</param>
         /// <returns>IEnumerable<RSS></returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataAsync(Expression<Func<RSS, bool>> predicate, int skip, int limit)
+        public IEnumerable<RSS> GetFeedsData(Expression<Func<RSS, bool>> predicate, int skip, int limit)
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeeds(db).Find(predicate, skip, limit).OrderByDescending(x => x.CreatedAt).ToList();
-                }
-                return ls;
-            });
+            return AllFeeds().Find(predicate, skip, limit).OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         /// <summary>
         /// Gets all the Feeds with source included
         /// </summary>
         /// <returns>IEnumerable of RSS</returns>
-        public static async Task<IEnumerable<RSS>> GetFeedsDataWithSourceAsync()
+        public IEnumerable<RSS> GetFeedsDataWithSource()
         {
-            List<RSS> ls = new List<RSS>();
-
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteDatabase(LiteDbContext.ConnectionString))
-                {
-                    ls = AllFeedsWithSource(db).OrderByDescending(x => x.CreatedAt).ToList();
-                }
-                return ls;
-            });
+            return AllFeedsWithSource().OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         /// <summary>
@@ -153,14 +105,10 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="rss">the rss you want to find</param>
         /// <returns>Task Rss with its info from db</returns>
-        public static async Task<RSS> GetFeedAsync(RSS rss)
+        public RSS GetFeed(RSS rss)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                return col.FindOne(x => x.Guid == rss.Guid);
-            });
+            var col = _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs);
+            return col.FindOne(x => x.Guid == rss.Guid);
         }
 
         /// <summary>
@@ -168,14 +116,10 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="rss">The RSS you want to check exist</param>
         /// <returns>reutn true if the RSS exist</returns>
-        public static async Task<bool> FeedExistAsync(RSS rss)
+        public bool FeedExist(RSS rss)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                return col.Exists(x => x.Guid == rss.Guid);
-            });
+            var col = _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs);
+            return col.Exists(x => x.Guid == rss.Guid);
         }
 
         /// <summary>
@@ -183,15 +127,11 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="rss">the new RSS you want to add</param>
         /// <returns>Task The New RSS with the id from the database</returns>
-        public static async Task<RSS> AddNewFeedAsync(RSS rss)
+        public RSS AddNewFeed(RSS rss)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                col.Insert(rss);
-                return rss.Id > 0 ? rss : null;
-            });
+            var col = _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs);
+            col.Insert(rss);
+            return rss.Id > 0 ? rss : null;
         }
 
         /// <summary>
@@ -199,14 +139,10 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="rss">the RSS you want to update</param>
         /// <returns>Task true if updated</returns>
-        public static async Task<bool> UpdateFeedAsync(RSS rss)
+        public bool UpdateFeed(RSS rss)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                var col = db.GetCollection<RSS>(LiteDbContext.RSSs);
-                return col.Update(rss);
-            });
+            var col = _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs);
+            return col.Update(rss);
         }
 
         /// <summary>
@@ -214,13 +150,9 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="rss">the RSS you want to delete</param>
         /// <returns>Task true if deleted</returns>
-        public static async Task<bool> DeleteFeedAsync(RSS rss)
+        public bool DeleteFeed(RSS rss)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                return db.GetCollection<RSS>(LiteDbContext.RSSs).Delete(rss.Id);
-            });
+            return _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs).Delete(rss.Id);
         }
 
         /// <summary>
@@ -228,13 +160,9 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="predicate">the RSS where statement</param>
         /// <returns>number of deleted items</returns>
-        public static async Task<int> DeleteManyFeedsAsync(Expression<Func<RSS, bool>> predicate)
+        public int DeleteManyFeeds(Expression<Func<RSS, bool>> predicate)
         {
-            return await Task.Run(() =>
-            {
-                using var db = new LiteDatabase(LiteDbContext.ConnectionString);
-                return db.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).DeleteMany(predicate);
-            });
+            return _liteDatabase.GetCollection<RSS>(LiteDbContext.RSSs).Include(x => x.PostSource).DeleteMany(predicate);
         }
     }
 }

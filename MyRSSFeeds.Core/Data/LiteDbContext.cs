@@ -17,7 +17,7 @@ namespace MyRSSFeeds.Core.Data
         public static string Sources { get; set; } = "Sources";
         public static string UserAgents { get; set; } = "UserAgents";
 
-        public static string ConnectionString { get; set; }
+        public static ConnectionString ConnectionString { get; set; }
 
         public static LiteDatabase LiteDb { get; set; }
 
@@ -31,7 +31,11 @@ namespace MyRSSFeeds.Core.Data
                 throw new ArgumentNullException("Db Path is Null or Empty");
             }
 
-            ConnectionString = $"Filename={DbPath};Mode=Shared;Async=True";
+            ConnectionString = new ConnectionString
+            {
+                Filename = DbPath,
+                Connection = ConnectionType.Shared
+            };
 
             LiteDb = new LiteDatabase(ConnectionString);
             try
@@ -77,6 +81,26 @@ namespace MyRSSFeeds.Core.Data
                     },
                     new UserAgent
                     {
+                        Name = "Chrome 129.0.0, Windows",
+                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.3",
+                    },
+                    new UserAgent
+                    {
+                        Name = "Edge 129.0.0, Windows",
+                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.",
+                    },
+                    new UserAgent
+                    {
+                        Name = "Firefox 130.0, Windows 10/11",
+                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+                    },
+                    new UserAgent
+                    {
+                        Name = "Chrome 129.0.0, Linux",
+                        AgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+                    },
+                    new UserAgent
+                    {
                         Name = "IE 10 Windows 8",
                         AgentString = "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)",
                     },
@@ -97,7 +121,7 @@ namespace MyRSSFeeds.Core.Data
                     },
                     new UserAgent
                     {
-                        Name = " Chrome 85 Windows 10",
+                        Name = "Chrome 85 Windows 10",
                         AgentString = " Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
                     }};
 

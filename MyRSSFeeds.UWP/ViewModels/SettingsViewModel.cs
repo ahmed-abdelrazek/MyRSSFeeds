@@ -1,5 +1,7 @@
-﻿using MyRSSFeeds.Core.Helpers;
+﻿using LiteDB;
+using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Models;
+using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.UWP.Helpers;
 using MyRSSFeeds.UWP.Services;
 using OPMLCore.NET;
@@ -21,6 +23,10 @@ namespace MyRSSFeeds.UWP.ViewModels
     // TODO WTS: Add other settings as necessary. For help see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/pages/settings.md
     public class SettingsViewModel : Observable
     {
+        private readonly RSSDataService rssDataService;
+        private readonly SourceDataService sourceDataService;
+        private readonly UserAgentService userAgentService;
+
         public bool IsLoaded { get; set; }
 
         private int _feedsLimit;
@@ -94,11 +100,9 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                     if (_selectedUserAgent != null)
                     {
-                        Core.Services.UserAgentService.ResetAgentUseAsync().FireAndGet(async () =>
-                        {
-                            SelectedUserAgent.IsUsed = true;
-                            await Core.Services.UserAgentService.UpdateAgentAsync(SelectedUserAgent).ConfigureAwait(false);
-                        });
+                        userAgentService.ResetAgentUse();
+                        SelectedUserAgent.IsUsed = true;
+                        userAgentService.UpdateAgent(SelectedUserAgent);
                     }
                 });
             }
@@ -171,7 +175,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                                     // we finish making changes and call CompleteUpdatesAsync.
                                     CachedFileManager.DeferUpdates(file);
                                     // write to file
-                                    var jsonContent = await Core.Helpers.Json.StringifyAsync(await Core.Services.SourceDataService.GetSourcesDataAsync());
+                                    var jsonContent = await Core.Helpers.Json.StringifyAsync(sourceDataService.GetSourcesData());
                                     await FileIO.WriteTextAsync(file, jsonContent);
                                     // Let Windows know that we're finished changing the file so
                                     // the other app can update the remote version of the file.
@@ -232,13 +236,13 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                                     foreach (var source in sourcesList)
                                     {
-                                        if (await Core.Services.SourceDataService.SourceExistAsync(source.RssUrl.ToString()))
+                                        if (sourceDataService.SourceExist(source.RssUrl.ToString()))
                                         {
                                             continue;
                                         }
                                         else
                                         {
-                                            await Core.Services.SourceDataService.AddNewSourceAsync(source);
+                                            sourceDataService.AddNewSource(source);
                                         }
                                     }
                                     await new MessageDialog(string.Format("Settings_ImportSuccessfulMessageDialog".GetLocalized(), file.Name)).ShowAsync();
@@ -273,6 +277,11 @@ namespace MyRSSFeeds.UWP.ViewModels
             DeleteUserAgentCommand = new RelayCommand(async () => await DeleteUserAgent(), CanDeleteUserAgent);
             ImportSourcesAsOPMLCommand = new RelayCommand(async () => await ImportSourcesAsOPML(), CanImportSourcesAsOPML);
             ExportSourcesAsOPMLCommand = new RelayCommand(async () => await ExportSourcesAsOPML(), CanExportSourcesAsOPML);
+
+            var db = new LiteDatabase(LiteDbContext.ConnectionString);
+            rssDataService = new RSSDataService(db);
+            sourceDataService = new SourceDataService(db);
+            userAgentService = new UserAgentService(db);
         }
 
         private bool CanImportSourcesAsOPML()
@@ -295,7 +304,6 @@ namespace MyRSSFeeds.UWP.ViewModels
                 try
                 {
                     // Application now has read/write access to the picked file
-                    var ffdd = await FileIO.ReadTextAsync(file);
                     var xmlDoc = new XmlDocument();
                     xmlDoc.LoadXml(await FileIO.ReadTextAsync(file));
 
@@ -303,7 +311,7 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                     foreach (var source in opmlFile.Body.Outlines)
                     {
-                        if (await Core.Services.SourceDataService.SourceExistAsync(source.XMLUrl))
+                        if (sourceDataService.SourceExist(source.XMLUrl))
                         {
                             continue;
                         }
@@ -312,7 +320,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                             Uri.TryCreate(source.XMLUrl, UriKind.Absolute, out Uri rssUrl);
                             Uri.TryCreate(source.HTMLUrl, UriKind.Absolute, out Uri baseUrl);
 
-                            await Core.Services.SourceDataService.AddNewSourceAsync(new Source
+                            sourceDataService.AddNewSource(new Source
                             {
                                 SiteTitle = source.Title,
                                 BaseUrl = baseUrl ?? new Uri(rssUrl.GetLeftPart(UriPartial.Authority)),
@@ -360,7 +368,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                     CachedFileManager.DeferUpdates(file);
 
                     // write to file
-                    var allSourcesList = await Core.Services.SourceDataService.GetSourcesDataAsync();
+                    var allSourcesList = sourceDataService.GetSourcesData();
                     var SourcesAsOutlinesList = allSourcesList.Select(x => new Outline
                     {
                         Title = x.SiteTitle,
@@ -410,7 +418,7 @@ namespace MyRSSFeeds.UWP.ViewModels
         {
             try
             {
-                await Core.Services.UserAgentService.AddNewAgentAsync(new UserAgent
+                userAgentService.AddNewAgent(new UserAgent
                 {
                     Name = UserAgentName,
                     AgentString = UserAgentValue,
@@ -437,7 +445,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             {
                 if (SelectedUserAgent.IsDeletable)
                 {
-                    await Core.Services.UserAgentService.DeleteAgentAsync(SelectedUserAgent);
+                    userAgentService.DeleteAgent(SelectedUserAgent);
 
                     await new MessageDialog("SettingsViewModelDeleteAgentMessageDialog".GetLocalized()).ShowAsync();
 
@@ -461,7 +469,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             VersionDescription = GetVersionDescription();
             IsLoaded = true;
             UserAgents.Clear();
-            foreach (var item in await Core.Services.UserAgentService.GetAgentsDataAsync())
+            foreach (var item in userAgentService.GetAgentsData())
             {
                 UserAgents.Add(item);
             }

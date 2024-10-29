@@ -1,4 +1,6 @@
-﻿using MyRSSFeeds.Core.Helpers;
+﻿using LiteDB;
+using MyRSSFeeds.Core.Data;
+using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.UWP.Helpers;
@@ -16,6 +18,9 @@ namespace MyRSSFeeds.UWP.ViewModels
 {
     public class SourcesViewModel : Observable
     {
+        private readonly RSSDataService rssDataService;
+        private readonly SourceDataService sourceDataService;
+
         public CancellationTokenSource TokenSource { get; set; } = null;
 
         private bool _isButtonEnabled;
@@ -164,7 +169,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             try
             {
                 string trimedUrl = SourceUrl.TrimEnd('/');
-                var exist = await SourceDataService.SourceExistAsync(trimedUrl);
+                var exist = sourceDataService.SourceExist(trimedUrl);
                 if (exist)
                 {
                     await new MessageDialog("SourcesViewModelSourceExistMessageDialog".GetLocalized()).ShowAsync();
@@ -175,13 +180,13 @@ namespace MyRSSFeeds.UWP.ViewModels
                     {
                         var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
 
-                        var source = await SourceDataService.GetSourceInfoFromRssAsync(feedString, trimedUrl);
+                        var source = sourceDataService.GetSourceInfoFromRss(feedString, trimedUrl);
                         if (source == null)
                         {
                             await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
                             return;
                         }
-                        Sources.Insert(0, await SourceDataService.AddNewSourceAsync(source));
+                        Sources.Insert(0, sourceDataService.AddNewSource(source));
 
                         RefreshSourcesCommand.OnCanExecuteChanged();
 
@@ -252,7 +257,7 @@ namespace MyRSSFeeds.UWP.ViewModels
                 SelectedSource.RssUrl = new Uri(SourceUrl);
                 SelectedSource.Description = SourceDescription;
 
-                var source = await SourceDataService.UpdateSourceAsync(SelectedSource);
+                var source = sourceDataService.UpdateSource(SelectedSource);
                 if (source == null)
                 {
                     await new MessageDialog("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized()).ShowAsync();
@@ -310,10 +315,10 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                 if ((int)result.Id == 0)
                 {
-                    await RSSDataService.DeleteManyFeedsAsync(x => x.PostSource.Id == SelectedSource.Id);
+                    rssDataService.DeleteManyFeeds(x => x.PostSource.Id == SelectedSource.Id);
                 }
 
-                await SourceDataService.DeleteSourceAsync(SelectedSource);
+                sourceDataService.DeleteSource(SelectedSource);
                 Sources.Remove(SelectedSource);
                 ClearPopups();
                 RefreshSourcesCommand.OnCanExecuteChanged();
@@ -383,6 +388,10 @@ namespace MyRSSFeeds.UWP.ViewModels
             RefreshSourcesCommand = new RelayCommand(async () => await RefreshSources(), CanRefreshSources);
             CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             ClearSelectedSourceCommand = new RelayCommand(ClearSelectedSource, CanClearSelectedSource);
+
+            var db = new LiteDatabase(LiteDbContext.ConnectionString);
+            rssDataService = new RSSDataService(db);
+            sourceDataService = new SourceDataService(db);
             TokenSource = new CancellationTokenSource();
         }
 
@@ -398,7 +407,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             ProgressCurrent = 0;
             Sources.Clear();
 
-            var sourcesDataList = await SourceDataService.GetSourcesDataAsync();
+            var sourcesDataList = sourceDataService.GetSourcesData();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
@@ -431,13 +440,13 @@ namespace MyRSSFeeds.UWP.ViewModels
                 try
                 {
                     item.IsChecking = true;
-                    var task = await SourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                    var task = await sourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
                     item.IsWorking = task.Item1;
                     item.LastBuildDate = task.Item2;
                     item.CurrentRssItemsCount = task.Item3;
 
                     // Saves latest build date and rss items count to source
-                    await SourceDataService.UpdateSourceAsync(item);
+                    sourceDataService.UpdateSource(item);
                 }
                 catch (HttpRequestException ex)
                 {
