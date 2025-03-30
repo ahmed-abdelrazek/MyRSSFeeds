@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.UWP.Helpers;
+﻿using MyRSSFeeds.UWP.Helpers;
 using MyRSSFeeds.UWP.Services;
 using MyRSSFeeds.UWP.Views;
 using System;
@@ -67,7 +66,7 @@ namespace MyRSSFeeds.UWP.ViewModels
             _keyboardAccelerators.Add(_backKeyboardAccelerator);
             await Task.CompletedTask;
 
-            if (SystemInformation.Instance.IsFirstRun)
+            if (Core.Data.LiteDbContext.IsFirstRun)
             {
                 var messageDialog = new MessageDialog("WelcomeMessageForFirstRun".GetLocalized());
                 await messageDialog.ShowAsync();

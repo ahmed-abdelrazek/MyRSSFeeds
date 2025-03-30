@@ -72,7 +72,7 @@ namespace MyRSSFeeds.UWP.Services
         private async Task InitializeAsync()
         {
             // if user is running the app for the first time then set the feed list limit to 1000
-            if (SystemInformation.Instance.IsFirstRun)
+            if (Core.Data.LiteDbContext.IsFirstRun)
             {
                 await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
                 await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);

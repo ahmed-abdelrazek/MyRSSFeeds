@@ -2,8 +2,10 @@
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.UWP.Services;
 using System;
+using System.IO;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 
 namespace MyRSSFeeds.UWP
@@ -34,6 +36,8 @@ namespace MyRSSFeeds.UWP
             {
                 await ActivationService.ActivateAsync(args);
             }
+
+            //await ApplicationData.Current.LocalSettings.SaveAsync<bool>("ShownWhatsNew", false);
         }
 
         protected override async void OnActivated(IActivatedEventArgs args)
@@ -43,7 +47,11 @@ namespace MyRSSFeeds.UWP
 
         private ActivationService CreateActivationService()
         {
-            return SystemInformation.Instance.IsFirstRun
+            //sets the Database Path its connection string and the database itself
+            Core.Data.LiteDbContext.DbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LiteDbMRF.db");
+            Core.Data.LiteDbContext.InitializeDatabase();
+
+            return Core.Data.LiteDbContext.IsFirstRun
                 ? new ActivationService(this, typeof(Views.SourcesViewPage), new Lazy<UIElement>(CreateShell))
                 : new ActivationService(this, typeof(Views.MainPage), new Lazy<UIElement>(CreateShell));
         }
