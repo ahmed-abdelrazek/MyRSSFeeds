@@ -11,11 +11,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="LiteDB" Version="5.0.21" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="System.ServiceModel.Syndication" Version="8.0.0" />
+		<PackageReference Include="System.ServiceModel.Syndication" Version="9.0.3" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\LiteDB\LiteDB.csproj" />
-	</ItemGroup>
 </Project>

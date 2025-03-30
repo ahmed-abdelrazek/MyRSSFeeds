@@ -143,8 +143,17 @@
     <PackageReference Include="CommunityToolkit.Uwp.Controls.Primitives">
       <Version>8.1.240916</Version>
     </PackageReference>
+    <PackageReference Include="CommunityToolkit.Uwp.Controls.Sizers">
+      <Version>8.1.240916</Version>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Uwp.Converters">
+      <Version>8.1.240916</Version>
+    </PackageReference>
     <PackageReference Include="CommunityToolkit.Uwp.Helpers">
       <Version>8.1.240916</Version>
+    </PackageReference>
+    <PackageReference Include="LiteDB">
+      <Version>5.0.21</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
@@ -152,20 +161,14 @@
     <PackageReference Include="Microsoft.Services.Store.SDK">
       <Version>10.1705.16001</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp">
-      <Version>7.1.3</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>7.1.3</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.3</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.6</Version>
+      <Version>2.8.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
-      <Version>2.0.1</Version>
+      <Version>3.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -346,10 +349,6 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LiteDB\LiteDB.csproj">
-      <Project>{5CC66291-018A-4A5A-9967-805A8C2150B7}</Project>
-      <Name>LiteDB</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MyRSSFeeds.Core\MyRSSFeeds.Core.csproj">
       <Project>{BF4550A3-C32B-4539-A193-82EE910DFF92}</Project>
       <Name>MyRSSFeeds.Core</Name>
