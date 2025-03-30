@@ -2,14 +2,13 @@
     x:Class="MyRSSFeeds.UWP.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:coreModel="using:MyRSSFeeds.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:toolkitConverters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
     x:Name="MainView"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
@@ -251,17 +250,6 @@
                 Foreground="{ThemeResource SystemBaseMediumColor}"
                 ResizeBehavior="BasedOnAlignment"
                 ResizeDirection="Auto">
-                <controls:GridSplitter.Element>
-                    <Grid>
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontFamily="Segoe MDL2 Assets"
-                            Foreground="{ThemeResource SystemBaseMediumColor}"
-                            IsHitTestVisible="False"
-                            Text="&#xE784;" />
-                    </Grid>
-                </controls:GridSplitter.Element>
             </controls:GridSplitter>
 
             <!--  Web View  -->
@@ -345,17 +333,20 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <muxc:WebView2 x:Name="webView" Source="{x:Bind ViewModel.WebViewSource, Mode=OneWay}" Background="Black">
+                <muxc:WebView2
+                    x:Name="webView"
+                    Background="Black"
+                    Source="{x:Bind ViewModel.WebViewSource, Mode=OneWay}">
                     <i:Interaction.Behaviors>
-                        <ic:EventTriggerBehavior EventName="NavigationCompleted">
-                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.NavCompletedCommand}" />
-                        </ic:EventTriggerBehavior>
-                        <ic:EventTriggerBehavior EventName="NavigationFailed">
-                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.NavFailedCommand}" />
-                        </ic:EventTriggerBehavior>
-                        <ic:EventTriggerBehavior EventName="OnNewWindowRequested">
-                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.OnNewWindowRequestedCommand}" />
-                        </ic:EventTriggerBehavior>
+                        <i:EventTriggerBehavior EventName="NavigationCompleted">
+                            <i:InvokeCommandAction Command="{x:Bind ViewModel.NavCompletedCommand}" />
+                        </i:EventTriggerBehavior>
+                        <i:EventTriggerBehavior EventName="NavigationFailed">
+                            <i:InvokeCommandAction Command="{x:Bind ViewModel.NavFailedCommand}" />
+                        </i:EventTriggerBehavior>
+                        <i:EventTriggerBehavior EventName="OnNewWindowRequested">
+                            <i:InvokeCommandAction Command="{x:Bind ViewModel.OnNewWindowRequestedCommand}" />
+                        </i:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </muxc:WebView2>
 
