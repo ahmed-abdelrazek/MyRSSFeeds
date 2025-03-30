@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.Core.Helpers;
+﻿using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.UWP.Services;
 using System;
 using System.IO;
