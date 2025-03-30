@@ -11,6 +11,7 @@ namespace MyRSSFeeds.Core.Data
 {
     public class LiteDbContext
     {
+        public static bool IsFirstRun { get; set; } = true;
         public static string DbPath { get; set; }
 
         public static string RSSs { get; set; } = "RSSs";
@@ -126,6 +127,10 @@ namespace MyRSSFeeds.Core.Data
                     }};
 
                     UserAgentsCollection.Insert(agentsList);
+                }
+                else
+                {
+                    IsFirstRun = false;
                 }
 
                 LiteDb.Rebuild(new RebuildOptions { Collation = new Collation($"{CultureInfo.CurrentCulture.TextInfo.CultureName}/IgnoreCase,IgnoreSymbols") });

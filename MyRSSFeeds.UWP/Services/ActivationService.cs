@@ -1,12 +1,11 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using MyRSSFeeds.Core.Helpers;
+﻿using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.UWP.Activation;
 using MyRSSFeeds.UWP.Helpers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -71,20 +70,20 @@ namespace MyRSSFeeds.UWP.Services
 
         private async Task InitializeAsync()
         {
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+
+            // Get App Version and Operating System Architecture to use with "user agent".
+            SystemInfo.OperatingSystemArchitecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString();
+            SystemInfo.AppVersion = $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+
             // if user is running the app for the first time then set the feed list limit to 1000
             if (Core.Data.LiteDbContext.IsFirstRun)
             {
                 await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
                 await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);
             }
-
-            // Get App Version and Operating System Architecture to use with "user agent".
-            SystemInfo.OperatingSystemArchitecture = SystemInformation.Instance.OperatingSystemArchitecture.ToString();
-            SystemInfo.AppVersion = $"{SystemInformation.Instance.ApplicationVersion.Major}.{SystemInformation.Instance.ApplicationVersion.Minor}.{SystemInformation.Instance.ApplicationVersion.Build}.{SystemInformation.Instance.ApplicationVersion.Revision}";
-
-            //sets the Database Path its connection string and the database itself
-            Core.Data.LiteDbContext.DbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LiteDbMRF.db");
-            Core.Data.LiteDbContext.InitializeDatabase();
 
             await ThemeSelectorService.InitializeAsync().ConfigureAwait(false);
         }
