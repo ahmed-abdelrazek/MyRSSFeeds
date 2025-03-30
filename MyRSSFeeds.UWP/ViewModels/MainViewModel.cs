@@ -1,5 +1,4 @@
 ﻿using LiteDB;
-using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using MyRSSFeeds.Core.Data;
@@ -16,12 +15,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.Web.Syndication;
 
 namespace MyRSSFeeds.UWP.ViewModels
@@ -57,11 +54,11 @@ namespace MyRSSFeeds.UWP.ViewModels
 
                         GetTheme();
 
-                        string authors = string.Join(';', SelectedRSS.Authors.Select(x => x.Username));
+                        string authors = string.Join(',', SelectedRSS.Authors.Select(x => x.Username));
 
                         if (_appTheme == ElementTheme.Dark || (_uiTheme == "#FF000000" && _appTheme == ElementTheme.Default))
                         {
-                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} body {{ background: black; color: white; }} h1 {{ color: white; }} h1:visited {{ color: #aaaaaa; }} a {{ color: #eeeeee; }} a:visited {{ color: #aaaaaa; }} h4 {{ color: white; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid-area: Title; }} .Title:visited {{ color: #aaaaaa; }} .Website {{ grid-area: Website; }} .Website:visited {{ grid-area: Website; }} .Date {{ grid-area: Date; }} .Authors {{ grid-area: Authors; }} Details {{ grid-area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
+                            _webView.NavigateToString($"<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\" /> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /> <title>{SelectedRSS.PostTitle}</title> <style> body {{ background: black; color: white; font-family: Arial, sans-serif; }} .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px; margin: 5px; }} h1, h4, a {{ text-decoration: none; color: white; margin: 5px; }} .TitleArea {{ display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 5px; padding: 10px; background-color: #2c2c2e; /* Darker shade for better contrast */ }} h4 {{ color: #aaaaaa; }} .TitleArea a:hover {{ text-decoration: underline; }} .Details p {{ margin-top: 10px; padding-left: 20px; /* Slightly lighter shade for details */ }} </style> </head> <body> <!-- Website information as its own row --> <div style=\"display: grid; gap: 5px; margin-bottom: 10px;\"> <div class=\"row\"> <a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\" target=\"_blank\"><i class=\"fas fa-home\"></i> {SelectedRSS.PostSource.SiteTitle}</a> <h4>{authors}</h4> </div> </div> <!-- Title, Date, and Authors in two columns --> <div class=\"container\"> <div class=\"row\"> <div class=\"col\"> <h1>{SelectedRSS.PostTitle}</h1> </div> <div class=\"col\"> <h4><a href=\"{SelectedRSS.CreatedAtLocalTime}\" target=\"_blank\">{SelectedRSS.CreatedAtLocalTime}</a></h4> </div> </div> <!-- Description --> <div class=\"Details\"><p>{SelectedRSS.Description}</p></div> </div> </body> </html>");
                         }
                         else
                         {
