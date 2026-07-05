@@ -62,7 +62,7 @@ namespace MyRSSFeeds.WinUI.Services
                 shown = true;
                 await ApplicationData.Current.LocalSettings.SaveAsync<bool>("ShownWhatsNew", shown);
                 var dialog = new WhatsNewDialog();
-                await dialog.ShowAsync();
+                await DialogService.ShowDialogAsync(dialog);
             }
         }
     }

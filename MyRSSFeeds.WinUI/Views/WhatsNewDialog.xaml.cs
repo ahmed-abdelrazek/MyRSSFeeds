@@ -14,7 +14,6 @@ namespace MyRSSFeeds.WinUI.Views
             }
 
             InitializeComponent();
-            XamlRoot = App.MainWindow.Content.XamlRoot;
         }
     }
 }
