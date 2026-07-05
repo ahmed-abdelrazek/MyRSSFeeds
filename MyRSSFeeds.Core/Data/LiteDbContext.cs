@@ -139,7 +139,7 @@ namespace MyRSSFeeds.Core.Data
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                throw ex;
+                throw;
             }
         }
     }
