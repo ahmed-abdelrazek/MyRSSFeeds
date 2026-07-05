@@ -82,6 +82,18 @@ namespace MyRSSFeeds.Core.Helpers
                     location = new Uri(url, location);
                 }
 
+                // Never downgrade to plain http when the request started on https:
+                // besides the security loss, ISPs can hijack unencrypted requests
+                // (e.g. sites 301-ing https -> http land on ISP redirect pages)
+                if (url.Scheme == Uri.UriSchemeHttps && location.Scheme == Uri.UriSchemeHttp)
+                {
+                    location = new UriBuilder(location)
+                    {
+                        Scheme = Uri.UriSchemeHttps,
+                        Port = location.IsDefaultPort ? 443 : location.Port
+                    }.Uri;
+                }
+
                 url = location;
                 response = await httpClient.SendAsync(BuildRequest(url), cancellationToken);
             }
