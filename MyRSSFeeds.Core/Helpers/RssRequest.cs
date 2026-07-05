@@ -1,7 +1,8 @@
-﻿using LiteDB;
+using LiteDB;
 using MyRSSFeeds.Core.Data;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,12 +16,13 @@ namespace MyRSSFeeds.Core.Helpers
     {
         public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.7 (Windows NT 10.0; X64)";
 
-        private static readonly HttpClient httpClient;
+        private const int MaxManualRedirects = 5;
 
-        static RssRequest()
+        private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler
         {
-            httpClient ??= new HttpClient();
-        }
+            AllowAutoRedirect = true,
+            MaxAutomaticRedirections = 10
+        });
 
         /// <summary>
         /// Gets source data from a website as string
@@ -29,20 +31,17 @@ namespace MyRSSFeeds.Core.Helpers
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
         public static async Task<string> GetFeedAsStringAsync(string url, CancellationToken cancellationToken)
         {
-            AddHttpClientHeaders();
-            HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
-            return await ReadFeedAsString(response);
+            return await GetFeedAsStringAsync(new Uri(url), cancellationToken);
         }
 
         /// <summary>
         /// Gets source data from website as string
         /// </summary>
-        /// <param name="url">Vaild url as Uri</param>        
+        /// <param name="url">Vaild url as Uri</param>
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
         public static async Task<string> GetFeedAsStringAsync(Uri url, CancellationToken cancellationToken)
         {
-            AddHttpClientHeaders();
-            HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
+            HttpResponseMessage response = await SendAsync(url, cancellationToken);
             return await ReadFeedAsString(response);
         }
 
@@ -62,11 +61,50 @@ namespace MyRSSFeeds.Core.Helpers
             });
         }
 
-        private static void AddHttpClientHeaders()
+        /// <summary>
+        /// Sends the request, following redirects HttpClient refuses to follow on
+        /// its own (e.g. https to http downgrades), so feeds that moved still load
+        /// </summary>
+        private static async Task<HttpResponseMessage> SendAsync(Uri url, CancellationToken cancellationToken)
         {
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add("Accept", "application/xml");
-            httpClient.DefaultRequestHeaders.Add("User-Agent", BrowserUserAgent);
+            HttpResponseMessage response = await httpClient.SendAsync(BuildRequest(url), cancellationToken);
+
+            for (int hop = 0; hop < MaxManualRedirects && IsRedirect(response.StatusCode); hop++)
+            {
+                Uri location = response.Headers.Location;
+                if (location == null)
+                {
+                    break;
+                }
+
+                if (!location.IsAbsoluteUri)
+                {
+                    location = new Uri(url, location);
+                }
+
+                url = location;
+                response = await httpClient.SendAsync(BuildRequest(url), cancellationToken);
+            }
+
+            return response;
+        }
+
+        private static HttpRequestMessage BuildRequest(Uri url)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            // strict "application/xml" alone makes some servers answer 406 Not Acceptable
+            request.Headers.Add("Accept", "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8");
+            request.Headers.Add("User-Agent", BrowserUserAgent);
+            return request;
+        }
+
+        private static bool IsRedirect(HttpStatusCode statusCode)
+        {
+            return statusCode is HttpStatusCode.MovedPermanently // 301
+                or HttpStatusCode.Redirect // 302
+                or HttpStatusCode.SeeOther // 303
+                or HttpStatusCode.TemporaryRedirect // 307
+                or HttpStatusCode.PermanentRedirect; // 308
         }
 
         private static async Task<string> ReadFeedAsString(HttpResponseMessage response)
