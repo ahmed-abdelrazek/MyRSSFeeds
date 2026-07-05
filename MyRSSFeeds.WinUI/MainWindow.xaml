@@ -9,23 +9,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  The system title bar can't show an icon in WinUI 3, so the window
-              draws its own: this row is registered via SetTitleBar and keeps
-              the standard drag/caption-button behavior.  -->
-        <Grid x:Name="AppTitleBar" Height="32">
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <Image Width="16" Height="16" Margin="16,0,0,0">
-                    <Image.Source>
-                        <SvgImageSource RasterizePixelHeight="32" RasterizePixelWidth="32" UriSource="ms-appx:///Assets/logo.svg" />
-                    </Image.Source>
-                </Image>
-                <TextBlock
-                    Margin="12,0,0,0"
-                    VerticalAlignment="Center"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Text="My RSS Feeds" />
-            </StackPanel>
-        </Grid>
+        <!--  The system title bar can't show an icon in WinUI 3; the WinUI
+              TitleBar control draws the icon and title declaratively and is
+              registered as the window's title bar in code-behind.  -->
+        <TitleBar x:Name="AppTitleBar" Title="My RSS Feeds">
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="ms-appx:///Assets/Square44x44Logo.altform-unplated_targetsize-48.png" />
+            </TitleBar.IconSource>
+        </TitleBar>
 
         <views:ShellPage Grid.Row="1" />
     </Grid>

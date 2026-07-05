@@ -14,6 +14,7 @@ namespace MyRSSFeeds.WinUI
             // Taskbar and Alt-Tab icon; the title bar one is XAML (AppTitleBar)
             AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "MyRSSFeeds.ico"));
 
+            // Required in code - there is no XAML equivalent for either call
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
         }
