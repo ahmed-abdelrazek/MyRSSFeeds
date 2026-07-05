@@ -217,6 +217,14 @@ namespace MyRSSFeeds.WinUI.ViewModels
                     }
                     catch (Exception ex)
                     {
+                        if (ex.Message.Contains("does not support RSS version"))
+                        {
+                            await DialogService.ShowAsync("SourcesViewModelRSSVersionExceptionMessageDialog".GetLocalized());
+                        }
+                        else
+                        {
+                            await DialogService.ShowAsync("SourcesViewModelExceptionMessageDialog".GetLocalized());
+                        }
                         Debug.WriteLine(ex);
                     }
                 }

@@ -71,7 +71,7 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
         public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
-            var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
+            var feedString = NormalizeLegacyRssVersion(await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken()));
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
             {
@@ -114,8 +114,22 @@ namespace MyRSSFeeds.Core.Services
         /// <param name="source">string for rss/xml content</param>        
         /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
+        /// <summary>
+        /// SyndicationFeed only parses RSS 2.0, but RSS 0.91-0.94 are structural
+        /// subsets of it (e.g. pcworld.com still serves 0.92) - relabel the
+        /// version so those feeds load instead of throwing NotSupportedException
+        /// </summary>
+        private static string NormalizeLegacyRssVersion(string feedXml)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(
+                feedXml,
+                "(<rss\\b[^>]*?\\bversion\\s*=\\s*\")0\\.9[1-4](\")",
+                "${1}2.0${2}");
+        }
+
         public Source GetSourceInfoFromRss(string source, string rssUrl)
         {
+            source = NormalizeLegacyRssVersion(source);
             using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
             SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
             Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
