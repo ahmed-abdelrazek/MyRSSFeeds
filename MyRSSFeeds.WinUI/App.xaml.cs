@@ -43,8 +43,9 @@ namespace MyRSSFeeds.WinUI
 
                 await ThemeSelectorService.InitializeAsync();
 
+                // MainWindow.xaml hosts ShellPage (and the custom title bar);
+                // constructing the window wires up NavigationService.Frame
                 MainWindow = new MainWindow();
-                MainWindow.Content = new Views.ShellPage();
 
                 NavigationService.Navigate(Core.Data.LiteDbContext.IsFirstRun
                     ? typeof(Views.SourcesViewPage)

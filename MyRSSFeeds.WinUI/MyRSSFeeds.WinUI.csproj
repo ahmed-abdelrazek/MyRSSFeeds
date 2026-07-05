@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Content Include="Assets\**\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\logo.svg" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\MyRSSFeeds.ico" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
