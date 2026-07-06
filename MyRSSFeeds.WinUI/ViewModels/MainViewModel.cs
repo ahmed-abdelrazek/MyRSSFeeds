@@ -50,18 +50,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                             rssDataService.UpdateFeed(_selectedRSS);
                         }
 
-                        GetTheme();
-
-                        string authors = string.Join(',', SelectedRSS.Authors.Select(x => x.Username));
-
-                        if (_appTheme == ElementTheme.Dark || (_uiTheme == "#FF000000" && _appTheme == ElementTheme.Default))
-                        {
-                            _webView.NavigateToString($"<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\" /> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /> <title>{SelectedRSS.PostTitle}</title> <style> body {{ background: black; color: white; font-family: Arial, sans-serif; }} .container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px; margin: 5px; }} h1, h4, a {{ text-decoration: none; color: white; margin: 5px; }} .TitleArea {{ display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 5px; padding: 10px; background-color: #2c2c2e; /* Darker shade for better contrast */ }} h4 {{ color: #aaaaaa; }} .TitleArea a:hover {{ text-decoration: underline; }} .Details p {{ margin-top: 10px; padding-left: 20px; /* Slightly lighter shade for details */ }} </style> </head> <body> <!-- Website information as its own row --> <div style=\"display: grid; gap: 5px; margin-bottom: 10px;\"> <div class=\"row\"> <a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\" target=\"_blank\"><i class=\"fas fa-home\"></i> {SelectedRSS.PostSource.SiteTitle}</a> <h4>{authors}</h4> </div> </div> <!-- Title, Date, and Authors in two columns --> <div class=\"container\"> <div class=\"row\"> <div class=\"col\"> <h1>{SelectedRSS.PostTitle}</h1> </div> <div class=\"col\"> <h4><a href=\"{SelectedRSS.CreatedAtLocalTime}\" target=\"_blank\">{SelectedRSS.CreatedAtLocalTime}</a></h4> </div> </div> <!-- Description --> <div class=\"Details\"><p>{SelectedRSS.Description}</p></div> </div> </body> </html>");
-                        }
-                        else
-                        {
-                            _webView.NavigateToString($"<!doctype html> <html> <head> <title>{SelectedRSS.PostTitle}</title> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> container {{ display: grid; grid-template-columns: 98%; grid-template-rows: auto max-content; gap: 5px 5px; margin: 5px; grid-auto-flow: row; grid-template-areas: \"TitleArea\" \"Details\"; }} .TitleArea {{ display: grid; grid-template-columns: auto auto auto; grid-template-rows: 1fr 1fr; gap: 1px 1px; grid-auto-flow: row; grid-template-areas: \"Title Title Title\" \"Website Date Authors\"; grid-area: TitleArea; }} .Title {{ grid - area: Title; }} .Website {{ grid - area: Website; }} .Date {{ grid - area: Date; }} .Authors {{ grid - area: Authors; }} Details {{ grid - area: Details; }} </style> </head> <body> <div class=\"container\"> <div class=\"TitleArea\"> <div class=\"Title\"><a href=\"{SelectedRSS.LaunchURL.OriginalString}\"> <h1>{SelectedRSS.PostTitle}</h1> </a></div> <div class=\"Website\"><a href=\"{SelectedRSS.PostSource.BaseUrl.OriginalString}\"> <h4>{SelectedRSS.PostSource.SiteTitle}</h4> </a></div> <div class=\"Date\"> <h4>{SelectedRSS.CreatedAtLocalTime}</h4> </div> <div class=\"Authors\">{authors}</div> </div> <div class=\"Details\"> <p>{SelectedRSS.Description}</p> </div> </div> </body> </html>");
-                        }
+                        _webView.NavigateToString(ReaderPage.BuildArticleHtml(_selectedRSS, IsDarkTheme()));
                     }
 
                     ClearSelectedRSSCommand.OnCanExecuteChanged();
@@ -252,12 +241,22 @@ namespace MyRSSFeeds.WinUI.ViewModels
         {
             IsLoading = false;
 
-            // WinUI 3's WebView2 has no NavigationFailed event; use `e.WebErrorStatus`
-            // to vary the displayed message based on the error reason
-            if (e != null && !e.IsSuccess)
+            if (e == null)
             {
-                IsShowingFailedMessage = true;
+                return;
             }
+
+            // A navigation superseded by a newer one (e.g. selecting articles
+            // quickly) completes as OperationCanceled - not a real failure
+            if (e.WebErrorStatus == CoreWebView2WebErrorStatus.OperationCanceled)
+            {
+                return;
+            }
+
+            // WinUI 3's WebView2 has no NavigationFailed event; use `e.WebErrorStatus`
+            // to vary the displayed message based on the error reason.
+            // Also clears a previously shown failure once a navigation succeeds.
+            IsShowingFailedMessage = !e.IsSuccess;
         }
 
         private ICommand _retryCommand;
@@ -428,16 +427,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             SelectedRSS = null;
             WebViewSource = new Uri(_defaultUrl);
 
-            GetTheme();
-            if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
-            {
-                //dark
-                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body></body></html>");
-            }
-            else
-            {
-                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body></body></html>");
-            }
+            _webView.NavigateToString(ReaderPage.BuildBlankHtml(IsDarkTheme()));
         }
 
         /// <summary>
@@ -687,20 +677,12 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 _webView.CoreWebView2.NewWindowRequested += (s, e) => e.Handled = true;
             }
 
-            if (_uiTheme == "#FF000000" && (_appTheme == ElementTheme.Default || _appTheme == ElementTheme.Dark))
+            if (IsDarkTheme() && _webView.CoreWebView2 != null)
             {
-                if (_webView.CoreWebView2 != null)
-                {
-                    _webView.CoreWebView2.Profile.PreferredColorScheme = CoreWebView2PreferredColorScheme.Dark;
-                }
+                _webView.CoreWebView2.Profile.PreferredColorScheme = CoreWebView2PreferredColorScheme.Dark;
+            }
 
-                //dark
-                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><style> body {{ background:black}} h1 {{ color: white;}} h4 {{ color: white;}}</style></head><body></body></html>");
-            }
-            else
-            {
-                _webView.NavigateToString($"<!doctype html><html><head><title>blank</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head><body></body></html>");
-            }
+            _webView.NavigateToString(ReaderPage.BuildBlankHtml(IsDarkTheme()));
         }
 
         private void GetTheme()
@@ -708,6 +690,13 @@ namespace MyRSSFeeds.WinUI.ViewModels
             _systemTheme = new Windows.UI.ViewManagement.UISettings();
             _uiTheme = _systemTheme.GetColorValue(Windows.UI.ViewManagement.UIColorType.Background).ToString();
             _appTheme = ThemeSelectorService.Theme;
+        }
+
+        private bool IsDarkTheme()
+        {
+            GetTheme();
+            return _appTheme == ElementTheme.Dark
+                || (_appTheme == ElementTheme.Default && _uiTheme == "#FF000000");
         }
 
         /// <summary>
