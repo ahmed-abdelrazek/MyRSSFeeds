@@ -292,7 +292,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        public RelayCommand OpenInBrowserCommand { get; private set; }
+        public RelayCommandAsync OpenInBrowserCommand { get; private set; }
 
         private bool CanOpenInBrowser()
         {
@@ -308,7 +308,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             await Windows.System.Launcher.LaunchUriAsync(SelectedRSS.LaunchURL);
         }
 
-        public RelayCommand MarkAsReadCommand { get; private set; }
+        public RelayCommandAsync MarkAsReadCommand { get; private set; }
 
         private bool CanMarkAsRead()
         {
@@ -381,7 +381,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
         /// <summary>
         /// Reloads the Feeds
         /// </summary>
-        public RelayCommand RefreshFeedsCommand { get; private set; }
+        public RelayCommandAsync RefreshFeedsCommand { get; private set; }
 
         private bool CanRefreshFeeds()
         {
@@ -463,10 +463,10 @@ namespace MyRSSFeeds.WinUI.ViewModels
         private void LoadCommands()
         {
             ClearFilterSourceCommand = new RelayCommand(ClearFilterSource, CanClearFilterSource);
-            OpenInBrowserCommand = new RelayCommand(async () => await OpenInBrowser(), CanOpenInBrowser);
-            MarkAsReadCommand = new RelayCommand(async () => await MarkAsRead(), CanMarkAsRead);
+            OpenInBrowserCommand = new RelayCommandAsync(OpenInBrowser, CanOpenInBrowser);
+            MarkAsReadCommand = new RelayCommandAsync(MarkAsRead, CanMarkAsRead);
             ClearSelectedRSSCommand = new RelayCommand(ClearSelectedRSS, CanClearSelectedRSS);
-            RefreshFeedsCommand = new RelayCommand(async () => await RefreshFeeds(), CanRefreshFeeds);
+            RefreshFeedsCommand = new RelayCommandAsync(RefreshFeeds, CanRefreshFeeds);
             CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             OpenPostInAppCommand = new RelayCommand(OpenPostInApp, CanOpenPostInApp);
         }

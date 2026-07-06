@@ -132,7 +132,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             {
                 if (_switchThemeCommand == null)
                 {
-                    _switchThemeCommand = new RelayCommand<ElementTheme>(
+                    _switchThemeCommand = new RelayCommandAsync<ElementTheme>(
                         async (param) =>
                         {
                             ElementTheme = param;
@@ -152,7 +152,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             {
                 if (_exportSourceAsJsonCommand == null)
                 {
-                    _exportSourceAsJsonCommand = new RelayCommand(
+                    _exportSourceAsJsonCommand = new RelayCommandAsync(
                         async () =>
                         {
                             var savePicker = new Windows.Storage.Pickers.FileSavePicker
@@ -214,7 +214,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             {
                 if (_importSourceAsJsonCommand == null)
                 {
-                    _importSourceAsJsonCommand = new RelayCommand(
+                    _importSourceAsJsonCommand = new RelayCommandAsync(
                         async () =>
                         {
                             var picker = new Windows.Storage.Pickers.FileOpenPicker
@@ -262,19 +262,19 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        public RelayCommand AddUserAgentCommand { get; private set; }
+        public RelayCommandAsync AddUserAgentCommand { get; private set; }
 
-        public RelayCommand DeleteUserAgentCommand { get; private set; }
+        public RelayCommandAsync DeleteUserAgentCommand { get; private set; }
 
-        public RelayCommand ImportSourcesAsOPMLCommand { get; private set; }
-        public RelayCommand ExportSourcesAsOPMLCommand { get; private set; }
+        public RelayCommandAsync ImportSourcesAsOPMLCommand { get; private set; }
+        public RelayCommandAsync ExportSourcesAsOPMLCommand { get; private set; }
 
         public SettingsViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, UserAgentService userAgentService)
         {
-            AddUserAgentCommand = new RelayCommand(async () => await AddUserAgent(), CanAddUserAgent);
-            DeleteUserAgentCommand = new RelayCommand(async () => await DeleteUserAgent(), CanDeleteUserAgent);
-            ImportSourcesAsOPMLCommand = new RelayCommand(async () => await ImportSourcesAsOPML(), CanImportSourcesAsOPML);
-            ExportSourcesAsOPMLCommand = new RelayCommand(async () => await ExportSourcesAsOPML(), CanExportSourcesAsOPML);
+            AddUserAgentCommand = new RelayCommandAsync(AddUserAgent, CanAddUserAgent);
+            DeleteUserAgentCommand = new RelayCommandAsync(DeleteUserAgent, CanDeleteUserAgent);
+            ImportSourcesAsOPMLCommand = new RelayCommandAsync(ImportSourcesAsOPML, CanImportSourcesAsOPML);
+            ExportSourcesAsOPMLCommand = new RelayCommandAsync(ExportSourcesAsOPML, CanExportSourcesAsOPML);
 
             this.rssDataService = rssDataService;
             this.sourceDataService = sourceDataService;

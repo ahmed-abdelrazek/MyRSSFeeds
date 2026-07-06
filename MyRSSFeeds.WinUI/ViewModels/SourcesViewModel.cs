@@ -147,7 +147,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
 
         public ObservableCollection<Source> Sources { get; private set; } = new ObservableCollection<Source>();
 
-        public RelayCommand AddNewSourceCommand { get; private set; }
+        public RelayCommandAsync AddNewSourceCommand { get; private set; }
 
         private bool CanAddNewSource()
         {
@@ -240,7 +240,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        public RelayCommand UpdateSourceCommand { get; private set; }
+        public RelayCommandAsync UpdateSourceCommand { get; private set; }
 
         private bool CanUpdateSource()
         {
@@ -287,7 +287,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        public RelayCommand DeleteSourceCommand { get; private set; }
+        public RelayCommandAsync DeleteSourceCommand { get; private set; }
 
         private bool CanDeleteSource()
         {
@@ -333,7 +333,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        public RelayCommand RefreshSourcesCommand { get; private set; }
+        public RelayCommandAsync RefreshSourcesCommand { get; private set; }
 
         private bool CanRefreshSources()
         {
@@ -382,10 +382,10 @@ namespace MyRSSFeeds.WinUI.ViewModels
 
         public SourcesViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, RssRequest rssRequest)
         {
-            AddNewSourceCommand = new RelayCommand(async () => await AddNewSource(), CanAddNewSource);
-            UpdateSourceCommand = new RelayCommand(async () => await UpdateSource(), CanUpdateSource);
-            DeleteSourceCommand = new RelayCommand(async () => await DeleteSource(), CanDeleteSource);
-            RefreshSourcesCommand = new RelayCommand(async () => await RefreshSources(), CanRefreshSources);
+            AddNewSourceCommand = new RelayCommandAsync(AddNewSource, CanAddNewSource);
+            UpdateSourceCommand = new RelayCommandAsync(UpdateSource, CanUpdateSource);
+            DeleteSourceCommand = new RelayCommandAsync(DeleteSource, CanDeleteSource);
+            RefreshSourcesCommand = new RelayCommandAsync(RefreshSources, CanRefreshSources);
             CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             ClearSelectedSourceCommand = new RelayCommand(ClearSelectedSource, CanClearSelectedSource);
 
