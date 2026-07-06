@@ -1,5 +1,3 @@
-using LiteDB;
-using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.WinUI.Helpers;
@@ -270,17 +268,16 @@ namespace MyRSSFeeds.WinUI.ViewModels
         public RelayCommand ImportSourcesAsOPMLCommand { get; private set; }
         public RelayCommand ExportSourcesAsOPMLCommand { get; private set; }
 
-        public SettingsViewModel()
+        public SettingsViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, UserAgentService userAgentService)
         {
             AddUserAgentCommand = new RelayCommand(async () => await AddUserAgent(), CanAddUserAgent);
             DeleteUserAgentCommand = new RelayCommand(async () => await DeleteUserAgent(), CanDeleteUserAgent);
             ImportSourcesAsOPMLCommand = new RelayCommand(async () => await ImportSourcesAsOPML(), CanImportSourcesAsOPML);
             ExportSourcesAsOPMLCommand = new RelayCommand(async () => await ExportSourcesAsOPML(), CanExportSourcesAsOPML);
 
-            var db = new LiteDatabase(LiteDbContext.ConnectionString);
-            rssDataService = new RSSDataService(db);
-            sourceDataService = new SourceDataService(db);
-            userAgentService = new UserAgentService(db);
+            this.rssDataService = rssDataService;
+            this.sourceDataService = sourceDataService;
+            this.userAgentService = userAgentService;
         }
 
         private bool CanImportSourcesAsOPML()

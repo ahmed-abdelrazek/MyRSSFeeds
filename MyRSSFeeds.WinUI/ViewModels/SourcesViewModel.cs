@@ -1,5 +1,3 @@
-using LiteDB;
-using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
@@ -19,6 +17,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
     {
         private readonly RSSDataService rssDataService;
         private readonly SourceDataService sourceDataService;
+        private readonly RssRequest rssRequest;
 
         public CancellationTokenSource TokenSource { get; set; } = null;
 
@@ -177,7 +176,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 {
                     try
                     {
-                        var feedString = await RssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
+                        var feedString = await rssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
 
                         var source = sourceDataService.GetSourceInfoFromRss(feedString, trimedUrl);
                         if (source == null)
@@ -379,7 +378,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             ClearPopups();
         }
 
-        public SourcesViewModel()
+        public SourcesViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, RssRequest rssRequest)
         {
             AddNewSourceCommand = new RelayCommand(async () => await AddNewSource(), CanAddNewSource);
             UpdateSourceCommand = new RelayCommand(async () => await UpdateSource(), CanUpdateSource);
@@ -388,9 +387,9 @@ namespace MyRSSFeeds.WinUI.ViewModels
             CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
             ClearSelectedSourceCommand = new RelayCommand(ClearSelectedSource, CanClearSelectedSource);
 
-            var db = new LiteDatabase(LiteDbContext.ConnectionString);
-            rssDataService = new RSSDataService(db);
-            sourceDataService = new SourceDataService(db);
+            this.rssDataService = rssDataService;
+            this.sourceDataService = sourceDataService;
+            this.rssRequest = rssRequest;
             TokenSource = new CancellationTokenSource();
         }
 

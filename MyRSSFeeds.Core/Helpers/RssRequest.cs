@@ -1,5 +1,4 @@
-using LiteDB;
-using MyRSSFeeds.Core.Data;
+using MyRSSFeeds.Core.Services;
 using System;
 using System.Linq;
 using System.Net;
@@ -14,7 +13,7 @@ namespace MyRSSFeeds.Core.Helpers
     /// </summary>
     public class RssRequest
     {
-        public static string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.7 (Windows NT 10.0; X64)";
+        public string BrowserUserAgent { get; set; } = "MyRSSFeeds/1.7 (Windows NT 10.0; X64)";
 
         private const int MaxManualRedirects = 5;
 
@@ -24,12 +23,19 @@ namespace MyRSSFeeds.Core.Helpers
             MaxAutomaticRedirections = 10
         });
 
+        private readonly UserAgentService _userAgentService;
+
+        public RssRequest(UserAgentService userAgentService)
+        {
+            _userAgentService = userAgentService;
+        }
+
         /// <summary>
         /// Gets source data from a website as string
         /// </summary>
         /// <param name="url">Vaild url as string</param>
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
-        public static async Task<string> GetFeedAsStringAsync(string url, CancellationToken cancellationToken)
+        public async Task<string> GetFeedAsStringAsync(string url, CancellationToken cancellationToken)
         {
             return await GetFeedAsStringAsync(new Uri(url), cancellationToken);
         }
@@ -39,24 +45,20 @@ namespace MyRSSFeeds.Core.Helpers
         /// </summary>
         /// <param name="url">Vaild url as Uri</param>
         /// <returns>Task string for the webpage source hopefully a xml one</returns>
-        public static async Task<string> GetFeedAsStringAsync(Uri url, CancellationToken cancellationToken)
+        public async Task<string> GetFeedAsStringAsync(Uri url, CancellationToken cancellationToken)
         {
-            HttpResponseMessage response = await SendAsync(url, cancellationToken);
+            using HttpResponseMessage response = await SendAsync(url, cancellationToken);
             return await ReadFeedAsString(response);
         }
 
-        public static async Task SetCustomUserAgentAsync()
+        public async Task SetCustomUserAgentAsync()
         {
             await Task.Run(() =>
             {
-                var agents = new Services.UserAgentService(new LiteDatabase(LiteDbContext.ConnectionString)).GetAgentData(x => x.IsUsed);
-                var CurrentAgent = agents.FirstOrDefault();
-                if (CurrentAgent != null)
+                var currentAgent = _userAgentService.GetAgentData(x => x.IsUsed).FirstOrDefault();
+                if (!string.IsNullOrEmpty(currentAgent?.AgentString))
                 {
-                    if (!string.IsNullOrEmpty(CurrentAgent.AgentString))
-                    {
-                        BrowserUserAgent = CurrentAgent.AgentString;
-                    }
+                    BrowserUserAgent = currentAgent.AgentString;
                 }
             });
         }
@@ -65,7 +67,7 @@ namespace MyRSSFeeds.Core.Helpers
         /// Sends the request, following redirects HttpClient refuses to follow on
         /// its own (e.g. https to http downgrades), so feeds that moved still load
         /// </summary>
-        private static async Task<HttpResponseMessage> SendAsync(Uri url, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SendAsync(Uri url, CancellationToken cancellationToken)
         {
             HttpResponseMessage response = await httpClient.SendAsync(BuildRequest(url), cancellationToken);
 
@@ -95,18 +97,24 @@ namespace MyRSSFeeds.Core.Helpers
                 }
 
                 url = location;
+                response.Dispose();
                 response = await httpClient.SendAsync(BuildRequest(url), cancellationToken);
             }
 
             return response;
         }
 
-        private static HttpRequestMessage BuildRequest(Uri url)
+        private HttpRequestMessage BuildRequest(Uri url)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             // strict "application/xml" alone makes some servers answer 406 Not Acceptable
             request.Headers.Add("Accept", "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8");
-            request.Headers.Add("User-Agent", BrowserUserAgent);
+            // the agent can be user-provided (or empty when system info was missing at
+            // first-run seeding) so add it leniently instead of throwing FormatException
+            if (!string.IsNullOrWhiteSpace(BrowserUserAgent))
+            {
+                request.Headers.TryAddWithoutValidation("User-Agent", BrowserUserAgent);
+            }
             return request;
         }
 

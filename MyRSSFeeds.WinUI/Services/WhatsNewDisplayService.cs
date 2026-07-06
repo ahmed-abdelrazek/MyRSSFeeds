@@ -1,8 +1,7 @@
-using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
+using MyRSSFeeds.Core.Services;
 using MyRSSFeeds.WinUI.Helpers;
 using MyRSSFeeds.WinUI.Views;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -51,12 +50,12 @@ namespace MyRSSFeeds.WinUI.Services
 
             if (isAppUpdated && !shown)
             {
-                var agents = new Core.Services.UserAgentService(LiteDbContext.LiteDb).GetAgentData(x => x.Name == "App Default");
-                var updateAgent = agents.FirstOrDefault();
+                var userAgentService = App.GetService<UserAgentService>();
+                var updateAgent = userAgentService.GetAgentData(x => x.Name == "App Default").FirstOrDefault();
                 if (updateAgent != null)
                 {
                     updateAgent.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
-                    new Core.Services.UserAgentService(LiteDbContext.LiteDb).UpdateAgent(updateAgent);
+                    userAgentService.UpdateAgent(updateAgent);
                 }
 
                 shown = true;

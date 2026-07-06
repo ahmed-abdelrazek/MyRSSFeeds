@@ -8,7 +8,7 @@ namespace MyRSSFeeds.WinUI.Views
 {
     public sealed partial class MainPage : Page
     {
-        public MainViewModel ViewModel { get; } = new MainViewModel();
+        public MainViewModel ViewModel { get; } = App.GetService<MainViewModel>();
 
         public MainPage()
         {

@@ -1,7 +1,5 @@
-using LiteDB;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
@@ -30,6 +28,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
 
         private readonly RSSDataService rssDataService;
         private readonly SourceDataService sourceDataService;
+        private readonly RssRequest rssRequest;
 
         public CancellationTokenSource TokenSource { get; set; } = null;
 
@@ -448,15 +447,15 @@ namespace MyRSSFeeds.WinUI.ViewModels
 
         private WebView2 _webView;
 
-        public MainViewModel()
+        public MainViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, RssRequest rssRequest)
         {
             LoadCommands();
             IsLoading = true;
             WebViewSource = new Uri(_defaultUrl);
 
-            var db = new LiteDatabase(LiteDbContext.ConnectionString);
-            rssDataService = new RSSDataService(db);
-            sourceDataService = new SourceDataService(db);
+            this.rssDataService = rssDataService;
+            this.sourceDataService = sourceDataService;
+            this.rssRequest = rssRequest;
             TokenSource = new CancellationTokenSource();
         }
 
@@ -502,7 +501,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
             await WhatsNewDisplayService.ShowIfAppropriateAsync();
 
             // Set Httpclient userAgent to the user selected one
-            await RssRequest.SetCustomUserAgentAsync();
+            await rssRequest.SetCustomUserAgentAsync();
 
             foreach (var rss in rssDataService.GetFeedsData(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
@@ -565,7 +564,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 //move to the next source on the list to try it instead of stopping every thing
                 try
                 {
-                    var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
+                    var feedString = await rssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
                     feed = new SyndicationFeed();
 
                     if (string.IsNullOrWhiteSpace(feedString))

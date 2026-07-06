@@ -6,7 +6,7 @@ namespace MyRSSFeeds.WinUI.Views
 {
     public sealed partial class SettingsPage : Page
     {
-        public SettingsViewModel ViewModel { get; } = new SettingsViewModel();
+        public SettingsViewModel ViewModel { get; } = App.GetService<SettingsViewModel>();
 
         public SettingsPage()
         {

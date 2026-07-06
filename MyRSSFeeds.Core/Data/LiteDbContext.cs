@@ -1,4 +1,4 @@
-﻿using LiteDB;
+using LiteDB;
 using LiteDB.Engine;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
@@ -20,12 +20,11 @@ namespace MyRSSFeeds.Core.Data
 
         public static ConnectionString ConnectionString { get; set; }
 
-        public static LiteDatabase LiteDb { get; set; }
-
         /// <summary>
         /// Set the Database Connection string and initialize the database
         /// </summary>
-        public static void InitializeDatabase()
+        /// <returns>The open database; the caller owns it for the lifetime of the app</returns>
+        public static LiteDatabase InitializeDatabase()
         {
             if (string.IsNullOrEmpty(DbPath))
             {
@@ -38,45 +37,41 @@ namespace MyRSSFeeds.Core.Data
                 Connection = ConnectionType.Shared
             };
 
-            LiteDb = new LiteDatabase(ConnectionString);
+            var liteDb = new LiteDatabase(ConnectionString);
             try
             {
-                LiteDb.Mapper.RegisterType<Uri>
+                liteDb.Mapper.RegisterType<Uri>
                 (
                     serialize: (uri) => uri.AbsoluteUri,
                     deserialize: (bson) => new Uri(bson.AsString)
                 );
 
-                LiteDb.Mapper.Entity<RSS>()
+                liteDb.Mapper.Entity<RSS>()
                     .DbRef(x => x.PostSource, Sources);
 
-                LiteDb.Mapper.Entity<Source>()
+                liteDb.Mapper.Entity<Source>()
                     .DbRef(x => x.RSSs, RSSs);
 
-                var RSSsCollection = LiteDb.GetCollection<RSS>(RSSs).Query();
+                var RSSsCollection = liteDb.GetCollection<RSS>(RSSs).Query();
                 RSSsCollection.ToEnumerable();
-                var SourcesCollection = LiteDb.GetCollection<Source>(Sources).Query();
+                var SourcesCollection = liteDb.GetCollection<Source>(Sources).Query();
                 SourcesCollection.ToEnumerable();
 
-                var UserAgentsCollection = LiteDb.GetCollection<UserAgent>(UserAgents);
+                var UserAgentsCollection = liteDb.GetCollection<UserAgent>(UserAgents);
                 if (UserAgentsCollection.Count() == 0)
                 {
                     //get the system info to add to the user agent
                     //if one of them is missing will just put an empty string
                     // and the http client will see that and use the default hardcoded one there
-                    if (string.IsNullOrEmpty(SystemInfo.AppVersion) || string.IsNullOrEmpty(SystemInfo.OperatingSystemArchitecture))
-                    {
-                        RssRequest.BrowserUserAgent = string.Empty;
-                    }
-                    else
-                    {
-                        RssRequest.BrowserUserAgent = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
-                    }
+                    string defaultAgentString =
+                        string.IsNullOrEmpty(SystemInfo.AppVersion) || string.IsNullOrEmpty(SystemInfo.OperatingSystemArchitecture)
+                            ? string.Empty
+                            : $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
 
                     var agentsList = new List<UserAgent> {
                     new UserAgent{
                         Name = "App Default",
-                        AgentString = RssRequest.BrowserUserAgent,
+                        AgentString = defaultAgentString,
                         IsUsed = true,
                         IsDeletable = false
                     },
@@ -133,12 +128,13 @@ namespace MyRSSFeeds.Core.Data
                     IsFirstRun = false;
                 }
 
-                LiteDb.Rebuild(new RebuildOptions { Collation = new Collation($"{CultureInfo.CurrentCulture.TextInfo.CultureName}/IgnoreCase,IgnoreSymbols") });
-                LiteDb.Dispose();
+                liteDb.Rebuild(new RebuildOptions { Collation = new Collation($"{CultureInfo.CurrentCulture.TextInfo.CultureName}/IgnoreCase,IgnoreSymbols") });
+                return liteDb;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                liteDb.Dispose();
                 throw;
             }
         }

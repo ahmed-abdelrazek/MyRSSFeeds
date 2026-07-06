@@ -13,10 +13,12 @@ namespace MyRSSFeeds.Core.Services
     public class SourceDataService
     {
         private readonly LiteDatabase _liteDatabase;
+        private readonly RssRequest _rssRequest;
 
-        public SourceDataService(LiteDatabase liteDatabase)
+        public SourceDataService(LiteDatabase liteDatabase, RssRequest rssRequest)
         {
             _liteDatabase = liteDatabase;
+            _rssRequest = rssRequest;
         }
 
         private IEnumerable<Source> AllFeedsBySource()
@@ -69,7 +71,7 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
         public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
-            var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
+            var feedString = await _rssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
             SyndicationFeed feed = FeedLoader.Load(feedString);
             var lastUpdatedTime = feed.LastUpdatedTime;
