@@ -121,11 +121,13 @@ namespace MyRSSFeeds.Core.Services
             SyndicationFeed feed = FeedLoader.Load(source);
             Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
 
+            // title and description are optional in Atom (no <subtitle>) and often
+            // missing from real-world RSS, so don't crash on feeds that omit them
             return new Source
             {
-                SiteTitle = feed.Title.Text,
-                Description = feed.Description.Text,
-                Language = feed.Language,
+                SiteTitle = feed.Title?.Text?.Trim() ?? new Uri(rssUrl).Host,
+                Description = feed.Description?.Text?.Trim(),
+                Language = feed.Language?.Trim(),
                 LastBuildDate = feed.LastUpdatedTime,
                 BaseUrl = baseLink,
                 RssUrl = new Uri(rssUrl),
