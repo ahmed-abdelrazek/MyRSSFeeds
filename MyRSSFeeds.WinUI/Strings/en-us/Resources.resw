@@ -422,6 +422,9 @@
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Ok</value>
+  </data>
   <data name="SourcesViewModelSourceDeleteAllRSSMessageDialog" xml:space="preserve">
     <value>Do you want to delete all the feeds for that source also?</value>
   </data>

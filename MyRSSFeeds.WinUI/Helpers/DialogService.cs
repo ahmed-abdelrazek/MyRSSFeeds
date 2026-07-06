@@ -18,7 +18,7 @@ namespace MyRSSFeeds.WinUI.Helpers
             {
                 Title = title,
                 Content = message,
-                CloseButtonText = "Ok"
+                CloseButtonText = "Ok".GetLocalized()
             };
 
             await ShowDialogAsync(dialog);
