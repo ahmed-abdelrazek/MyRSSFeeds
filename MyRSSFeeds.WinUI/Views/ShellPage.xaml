@@ -19,8 +19,8 @@
 
     <winui:NavigationView
         x:Name="navigationView"
-        IsBackButtonVisible="Visible"
-        IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+        IsBackButtonVisible="Collapsed"
+        IsTitleBarAutoPaddingEnabled="False"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}"
         IsSettingsVisible="True"
         ExpandedModeThresholdWidth="1280"

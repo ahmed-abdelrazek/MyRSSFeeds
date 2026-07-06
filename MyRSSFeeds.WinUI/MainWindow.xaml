@@ -15,7 +15,12 @@
         <!--  The icon file must have a qualifier-free name: MRT parses tokens
               like targetsize-48/altform-unplated out of asset filenames, so
               ms-appx URIs that include them resolve to nothing.  -->
-        <TitleBar x:Name="AppTitleBar" Title="My RSS Feeds">
+        <TitleBar
+            x:Name="AppTitleBar"
+            Title="My RSS Feeds"
+            BackRequested="AppTitleBar_BackRequested"
+            IsBackButtonVisible="True"
+            IsBackButtonEnabled="False">
             <TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/TitleBarLogo.png" />
             </TitleBar.IconSource>

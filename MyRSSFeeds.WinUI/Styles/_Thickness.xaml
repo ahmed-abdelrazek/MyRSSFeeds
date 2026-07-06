@@ -28,4 +28,8 @@
     <Thickness x:Key="XXSmallTopRightBottomMargin">0, 4, 4, 4</Thickness>
     <!--  MasterDetail size margins  -->
     <Thickness x:Key="DetailPageMargin">52,40,52,0</Thickness>
+
+    <!--  Compact NavigationView page header: the WinUI default reserves a
+          large top margin above the header, wasting vertical space  -->
+    <Thickness x:Key="NavigationViewHeaderMargin">12,0,12,0</Thickness>
 </ResourceDictionary>

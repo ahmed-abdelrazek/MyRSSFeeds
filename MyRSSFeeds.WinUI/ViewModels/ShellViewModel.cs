@@ -18,18 +18,11 @@ namespace MyRSSFeeds.WinUI.ViewModels
         private readonly KeyboardAccelerator _altLeftKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu);
         private readonly KeyboardAccelerator _backKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.GoBack);
 
-        private bool _isBackEnabled;
         private IList<KeyboardAccelerator> _keyboardAccelerators;
         private NavigationView _navigationView;
         private NavigationViewItem _selected;
         private ICommand _loadedCommand;
         private ICommand _itemInvokedCommand;
-
-        public bool IsBackEnabled
-        {
-            get { return _isBackEnabled; }
-            set { Set(ref _isBackEnabled, value); }
-        }
 
         public NavigationViewItem Selected
         {
@@ -52,8 +45,6 @@ namespace MyRSSFeeds.WinUI.ViewModels
             NavigationService.Frame = frame;
             NavigationService.NavigationFailed += Frame_NavigationFailed;
             NavigationService.Navigated += Frame_Navigated;
-            NavigationService.OnCurrentPageCanGoBackChanged += OnCurrentPageCanGoBackChanged;
-            _navigationView.BackRequested += OnBackRequested;
         }
 
         private async void OnLoaded()
@@ -85,22 +76,15 @@ namespace MyRSSFeeds.WinUI.ViewModels
             }
         }
 
-        private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-        {
-            NavigationService.GoBack();
-        }
-
         private void Frame_NavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw e.Exception;
         }
 
-        private void OnCurrentPageCanGoBackChanged(object sender, bool currentPageCanGoBack)
-            => IsBackEnabled = NavigationService.CanGoBack || currentPageCanGoBack;
-
+        // back navigation state and the back button itself live in the title bar
+        // (MainWindow) - this handler only keeps the NavigationView selection in sync
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
-            IsBackEnabled = NavigationService.CanGoBack;
             if (e.SourcePageType == typeof(SettingsPage))
             {
                 Selected = _navigationView.SettingsItem as NavigationViewItem;
