@@ -1,3 +1,4 @@
+using MyRSSFeeds.WinUI.Extensions;
 using MyRSSFeeds.WinUI.Helpers;
 using MyRSSFeeds.WinUI.Services;
 using MyRSSFeeds.WinUI.Views;

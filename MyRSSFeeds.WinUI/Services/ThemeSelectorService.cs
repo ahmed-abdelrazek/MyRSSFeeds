@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml;
-using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Extensions;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;

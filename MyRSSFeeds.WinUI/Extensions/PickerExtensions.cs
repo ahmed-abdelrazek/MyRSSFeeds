@@ -1,4 +1,4 @@
-namespace MyRSSFeeds.WinUI.Helpers
+namespace MyRSSFeeds.WinUI.Extensions
 {
     // In WinUI 3 desktop apps, Windows.Storage.Pickers must be parented to a window handle
     // before use or they throw / fail silently.

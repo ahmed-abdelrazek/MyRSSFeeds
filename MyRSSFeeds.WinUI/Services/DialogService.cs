@@ -1,9 +1,10 @@
 using Microsoft.UI.Xaml.Controls;
+using MyRSSFeeds.WinUI.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MyRSSFeeds.WinUI.Helpers
+namespace MyRSSFeeds.WinUI.Services
 {
     // Replaces UWP MessageDialog which requires HWND interop and is deprecated in desktop apps.
     // Only one ContentDialog can be open per window in WinUI 3 (a second ShowAsync crashes the

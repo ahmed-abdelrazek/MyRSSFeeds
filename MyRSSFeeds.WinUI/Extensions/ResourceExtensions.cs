@@ -1,6 +1,6 @@
 using Microsoft.Windows.ApplicationModel.Resources;
 
-namespace MyRSSFeeds.WinUI.Helpers
+namespace MyRSSFeeds.WinUI.Extensions
 {
     internal static class ResourceExtensions
     {

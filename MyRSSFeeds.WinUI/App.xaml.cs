@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Extensions;
 using MyRSSFeeds.WinUI.Services;
 using MyRSSFeeds.WinUI.ViewModels;
 using System.IO;

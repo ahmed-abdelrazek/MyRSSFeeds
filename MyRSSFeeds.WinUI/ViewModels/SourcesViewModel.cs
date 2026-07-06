@@ -1,7 +1,9 @@
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
+using MyRSSFeeds.WinUI.Extensions;
 using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

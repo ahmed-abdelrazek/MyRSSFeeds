@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Core;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
+using MyRSSFeeds.WinUI.Extensions;
 using MyRSSFeeds.WinUI.Helpers;
 using MyRSSFeeds.WinUI.Services;
 using System;

@@ -1,4 +1,4 @@
-using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Extensions;
 using System;
 using Microsoft.UI.Xaml.Data;
 

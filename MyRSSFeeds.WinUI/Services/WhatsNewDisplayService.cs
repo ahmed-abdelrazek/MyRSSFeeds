@@ -1,6 +1,6 @@
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Extensions;
 using MyRSSFeeds.WinUI.Views;
 using System.Linq;
 using System.Threading.Tasks;
