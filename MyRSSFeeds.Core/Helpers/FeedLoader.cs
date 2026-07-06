@@ -9,12 +9,16 @@ using System.Xml.Linq;
 namespace MyRSSFeeds.Core.Helpers
 {
     /// <summary>
-    /// Loads a syndication feed from xml, falling back to a hand-rolled parser
-    /// for legacy RSS versions (0.91-0.94) that Rss20FeedFormatter refuses -
-    /// sites like pcworld.com still serve RSS 0.92
+    /// Loads a syndication feed from xml, falling back to hand-rolled parsers
+    /// for formats SyndicationFeed.Load refuses: legacy RSS versions (0.91-0.94,
+    /// sites like pcworld.com still serve RSS 0.92) and RDF/RSS 1.0 (slashdot.org)
     /// </summary>
     public static class FeedLoader
     {
+        private static readonly XNamespace RdfNs = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+        private static readonly XNamespace Rss10Ns = "http://purl.org/rss/1.0/";
+        private static readonly XNamespace DublinCoreNs = "http://purl.org/dc/elements/1.1/";
+
         public static SyndicationFeed Load(string feedXml)
         {
             try
@@ -28,6 +32,75 @@ namespace MyRSSFeeds.Core.Helpers
             {
                 return ParseLegacyRss(feedXml);
             }
+            catch (Exception ex) when (ex.Message.Contains("is not an allowed feed format"))
+            {
+                var root = XDocument.Parse(feedXml).Root;
+                if (root?.Name != RdfNs + "RDF")
+                {
+                    throw;
+                }
+                return ParseRdfRss(root);
+            }
+        }
+
+        /// <summary>
+        /// RDF/RSS 1.0 parser. The channel holds the feed metadata while the
+        /// items sit next to it, and dates/authors come from Dublin Core.
+        /// </summary>
+        private static SyndicationFeed ParseRdfRss(XElement root)
+        {
+            var channel = root.Element(Rss10Ns + "channel")
+                ?? throw new XmlException("The feed has no rdf/channel element.");
+
+            var feed = new SyndicationFeed
+            {
+                Title = new TextSyndicationContent(channel.Element(Rss10Ns + "title")?.Value),
+                Description = new TextSyndicationContent(channel.Element(Rss10Ns + "description")?.Value),
+                Language = channel.Element(DublinCoreNs + "language")?.Value
+            };
+
+            if (TryParseUri(channel.Element(Rss10Ns + "link")?.Value, out Uri channelLink))
+            {
+                feed.Links.Add(new SyndicationLink(channelLink));
+            }
+
+            if (TryParseDate(channel.Element(DublinCoreNs + "date")?.Value, out DateTimeOffset updated))
+            {
+                feed.LastUpdatedTime = updated;
+            }
+
+            feed.Items = root.Elements(Rss10Ns + "item").Select(ParseRdfItem).ToList();
+            return feed;
+        }
+
+        private static SyndicationItem ParseRdfItem(XElement item)
+        {
+            var syndicationItem = new SyndicationItem
+            {
+                Title = new TextSyndicationContent(item.Element(Rss10Ns + "title")?.Value),
+                Summary = new TextSyndicationContent(item.Element(Rss10Ns + "description")?.Value)
+            };
+
+            string link = item.Element(Rss10Ns + "link")?.Value;
+            if (TryParseUri(link, out Uri itemLink))
+            {
+                syndicationItem.Links.Add(new SyndicationLink(itemLink));
+            }
+
+            syndicationItem.Id = item.Attribute(RdfNs + "about")?.Value ?? link;
+
+            if (TryParseDate(item.Element(DublinCoreNs + "date")?.Value, out DateTimeOffset published))
+            {
+                syndicationItem.PublishDate = published;
+            }
+
+            string author = item.Element(DublinCoreNs + "creator")?.Value;
+            if (!string.IsNullOrWhiteSpace(author))
+            {
+                syndicationItem.Authors.Add(new SyndicationPerson(author));
+            }
+
+            return syndicationItem;
         }
 
         /// <summary>
