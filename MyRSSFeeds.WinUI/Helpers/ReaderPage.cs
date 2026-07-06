@@ -23,7 +23,7 @@ namespace MyRSSFeeds.WinUI.Helpers
             string title = WebUtility.HtmlEncode(WebUtility.HtmlDecode(item.PostTitle));
             string siteTitle = WebUtility.HtmlEncode(item.PostSource?.SiteTitle);
             string date = WebUtility.HtmlEncode(item.CreatedAtLocalTime.ToString());
-            string authors = WebUtility.HtmlEncode(string.Join(", ", item.Authors?.Select(x => x.Username) ?? Enumerable.Empty<string>()));
+            string authors = WebUtility.HtmlEncode(string.Join(", ", item.Authors?.Select(x => x.Username) ?? []));
             string siteUrl = WebUtility.HtmlEncode(item.PostSource?.BaseUrl?.OriginalString);
             string articleUrl = WebUtility.HtmlEncode(item.LaunchURL?.OriginalString);
 
