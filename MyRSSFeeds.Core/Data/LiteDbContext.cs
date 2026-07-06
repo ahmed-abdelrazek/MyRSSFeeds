@@ -20,6 +20,18 @@ namespace MyRSSFeeds.Core.Data
 
         public static ConnectionString ConnectionString { get; set; }
 
+        private const string FirefoxAgentName = "Firefox 152, Windows";
+        private const string FirefoxAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0";
+        private const string EdgeAgentName = "Edge 150, Windows";
+        private const string EdgeAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0";
+        private const string ChromeWindowsAgentName = "Chrome 149, Windows";
+        private const string ChromeWindowsAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
+        private const string ChromeLinuxAgentName = "Chrome 149, Linux";
+        private const string ChromeLinuxAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
+        private const string LegacyEdgeAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763";
+        private const string LegacyFirefoxAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0";
+        private const string LegacyChromeAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
+
         /// <summary>
         /// Set the Database Connection string and initialize the database
         /// </summary>
@@ -77,23 +89,23 @@ namespace MyRSSFeeds.Core.Data
                     },
                     new UserAgent
                     {
-                        Name = "Chrome 129.0.0, Windows",
-                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.3",
+                        Name = ChromeWindowsAgentName,
+                        AgentString = ChromeWindowsAgentString,
                     },
                     new UserAgent
                     {
-                        Name = "Edge 129.0.0, Windows",
-                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.",
+                        Name = EdgeAgentName,
+                        AgentString = EdgeAgentString,
                     },
                     new UserAgent
                     {
-                        Name = "Firefox 130.0, Windows 10/11",
-                        AgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+                        Name = FirefoxAgentName,
+                        AgentString = FirefoxAgentString,
                     },
                     new UserAgent
                     {
-                        Name = "Chrome 129.0.0, Linux",
-                        AgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+                        Name = ChromeLinuxAgentName,
+                        AgentString = ChromeLinuxAgentString,
                     },
                     new UserAgent
                     {
@@ -103,7 +115,7 @@ namespace MyRSSFeeds.Core.Data
                     new UserAgent
                     {
                         Name = "MS Edge Windows 10",
-                        AgentString = " Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763",
+                        AgentString = LegacyEdgeAgentString,
                     },
                     new UserAgent
                     {
@@ -113,12 +125,12 @@ namespace MyRSSFeeds.Core.Data
                     new UserAgent
                     {
                         Name = "Firefox 73 Windows 10",
-                        AgentString = " Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0",
+                        AgentString = LegacyFirefoxAgentString,
                     },
                     new UserAgent
                     {
                         Name = "Chrome 85 Windows 10",
-                        AgentString = " Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+                        AgentString = LegacyChromeAgentString,
                     }};
 
                     UserAgentsCollection.Insert(agentsList);
@@ -126,6 +138,7 @@ namespace MyRSSFeeds.Core.Data
                 else
                 {
                     IsFirstRun = false;
+                    MigrateBuiltInUserAgents(UserAgentsCollection);
                 }
 
                 liteDb.Rebuild(new RebuildOptions { Collation = new Collation($"{CultureInfo.CurrentCulture.TextInfo.CultureName}/IgnoreCase,IgnoreSymbols") });
@@ -136,6 +149,50 @@ namespace MyRSSFeeds.Core.Data
                 Debug.WriteLine(ex);
                 liteDb.Dispose();
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Databases seeded by older versions carry outdated or typo'd browser agent
+        /// strings (truncated "Safari/537.3", leading spaces, stale versions). Fix the
+        /// known built-in entries in place - matched by their exact seeded names so
+        /// user-added agents are never touched. IsUsed flags are preserved and the
+        /// renames make re-runs no-ops.
+        /// </summary>
+        private static void MigrateBuiltInUserAgents(ILiteCollection<UserAgent> agents)
+        {
+            var fixes = new (string OldName, string NewName, string NewAgentString)[]
+            {
+                ("Firefox 130.0, Windows 10/11", FirefoxAgentName, FirefoxAgentString),
+                ("Edge 129.0.0, Windows", EdgeAgentName, EdgeAgentString),
+                ("Chrome 129.0.0, Windows", ChromeWindowsAgentName, ChromeWindowsAgentString),
+                ("Chrome 129.0.0, Linux", ChromeLinuxAgentName, ChromeLinuxAgentString),
+                ("MS Edge Windows 10", "MS Edge Windows 10", LegacyEdgeAgentString),
+                ("Firefox 73 Windows 10", "Firefox 73 Windows 10", LegacyFirefoxAgentString),
+                ("Chrome 85 Windows 10", "Chrome 85 Windows 10", LegacyChromeAgentString),
+            };
+
+            foreach (var (oldName, newName, newAgentString) in fixes)
+            {
+                var agent = agents.FindOne(x => x.Name == oldName);
+                if (agent != null && (agent.Name != newName || agent.AgentString != newAgentString))
+                {
+                    agent.Name = newName;
+                    agent.AgentString = newAgentString;
+                    agents.Update(agent);
+                }
+            }
+
+            // databases seeded before system info was available at startup carry an
+            // empty "App Default" string, silently falling back to the hardcoded agent
+            if (!string.IsNullOrEmpty(SystemInfo.AppVersion) && !string.IsNullOrEmpty(SystemInfo.OperatingSystemArchitecture))
+            {
+                var appDefault = agents.FindOne(x => x.Name == "App Default");
+                if (appDefault != null && string.IsNullOrEmpty(appDefault.AgentString))
+                {
+                    appDefault.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
+                    agents.Update(appDefault);
+                }
             }
         }
     }
