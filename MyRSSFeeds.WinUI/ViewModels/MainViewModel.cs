@@ -565,7 +565,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 //move to the next source on the list to try it instead of stopping every thing
                 try
                 {
-                    var feedString = await rssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
+                    var (feedString, usedBrowserUserAgent) = await rssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token, sourceItem.UseBrowserUserAgent);
                     feed = new SyndicationFeed();
 
                     if (string.IsNullOrWhiteSpace(feedString))
@@ -576,7 +576,12 @@ namespace MyRSSFeeds.WinUI.ViewModels
                     {
                         feed.Load(feedString);
 
-                        // Saves rss items count and last check time to source 
+                        if (usedBrowserUserAgent)
+                        {
+                            sourceItem.UseBrowserUserAgent = true;
+                        }
+
+                        // Saves rss items count and last check time to source
                         sourceItem.CurrentRssItemsCount = feed.Items.Count;
                         sourceItem.LastBuildCheck = DateTimeOffset.Now;
                         sourceDataService.UpdateSource(sourceItem);

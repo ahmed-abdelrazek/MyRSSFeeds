@@ -178,7 +178,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 {
                     try
                     {
-                        var feedString = await rssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
+                        var (feedString, usedBrowserUserAgent) = await rssRequest.GetFeedAsStringAsync(trimedUrl, TokenSource.Token);
 
                         var source = sourceDataService.GetSourceInfoFromRss(feedString, trimedUrl);
                         if (source == null)
@@ -186,6 +186,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                             await DialogService.ShowAsync("SourcesViewModelSourceInfoNotValidMessageDialog".GetLocalized());
                             return;
                         }
+                        source.UseBrowserUserAgent = usedBrowserUserAgent;
                         Sources.Insert(0, sourceDataService.AddNewSource(source));
 
                         RefreshSourcesCommand.OnCanExecuteChanged();
@@ -440,7 +441,7 @@ namespace MyRSSFeeds.WinUI.ViewModels
                 try
                 {
                     item.IsChecking = true;
-                    var task = await sourceDataService.IsSourceWorkingAsync(item.RssUrl.AbsoluteUri);
+                    var task = await sourceDataService.IsSourceWorkingAsync(item);
                     item.IsWorking = task.Item1;
                     item.LastBuildDate = task.Item2;
                     item.CurrentRssItemsCount = task.Item3;

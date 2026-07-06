@@ -67,11 +67,16 @@ namespace MyRSSFeeds.Core.Services
         /// <summary>
         /// checks if a source works with last updated time and rss items count
         /// </summary>
-        /// <param name="source">string for source rss url</param>
+        /// <param name="source">the source to check, its UseBrowserUserAgent gets set
+        /// when the site turns out to need the fallback browser user agent</param>
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
-        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
+        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(Source source)
         {
-            var feedString = await _rssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
+            var (feedString, usedBrowserUserAgent) = await _rssRequest.GetFeedAsStringAsync(source.RssUrl, new System.Threading.CancellationToken(), source.UseBrowserUserAgent);
+            if (usedBrowserUserAgent)
+            {
+                source.UseBrowserUserAgent = true;
+            }
 
             SyndicationFeed feed = FeedLoader.Load(feedString);
             var lastUpdatedTime = feed.LastUpdatedTime;

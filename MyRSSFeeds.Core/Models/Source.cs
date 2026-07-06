@@ -103,6 +103,10 @@ namespace MyRSSFeeds.Core.Models
 
         public string Language { get; set; }
 
+        // Set when the site rejects the selected user agent with 403 Forbidden
+        // but accepts a browser one - future requests then skip the failing attempt
+        public bool UseBrowserUserAgent { get; set; }
+
         private bool _isChecking;
 
         [JsonIgnore]
