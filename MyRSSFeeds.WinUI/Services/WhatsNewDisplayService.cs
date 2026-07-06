@@ -13,56 +13,41 @@ namespace MyRSSFeeds.WinUI.Services
     // also update the default UserAgent used with the httpclient
     public static class WhatsNewDisplayService
     {
-        private static bool shown = false;
-        private static bool isAppUpdated = false;
-
         internal static async Task ShowIfAppropriateAsync()
         {
-            Package package = Package.Current;
-            PackageId packageId = package.Id;
-            PackageVersion version = packageId.Version;
-            if (int.TryParse($"{version.Major}{version.Minor}{version.Build}{version.Revision}", out int currentVersion))
-            {
-                int lastVersionMajor = 1;
-                int lastVersionMinor = 7;
-                int lastVersionBuild = 0;
-                int lastVersionRevision = 0;
+            PackageVersion version = Package.Current.Id.Version;
+            string currentVersion = $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
 
-                if (lastVersionMajor >= version.Major)
-                {
-                    isAppUpdated = true;
-                }
-                else if (lastVersionMajor >= version.Major && lastVersionMinor >= version.Minor)
-                {
-                    isAppUpdated = true;
-                }
-                else if (lastVersionMajor >= version.Major && lastVersionMinor >= version.Minor && lastVersionBuild >= version.Build)
-                {
-                    isAppUpdated = true;
-                }
-                else if (lastVersionMajor >= version.Major && lastVersionMinor >= version.Minor && lastVersionBuild >= version.Build && lastVersionRevision >= version.Revision)
-                {
-                    isAppUpdated = true;
-                }
+            string lastVersionSeen = await ApplicationData.Current.LocalSettings.ReadAsync<string>("LastVersionSeen");
+
+            if (string.IsNullOrEmpty(lastVersionSeen))
+            {
+                // fresh install (or first run after this setting was introduced):
+                // nothing changed for this user, just remember where they start
+                await ApplicationData.Current.LocalSettings.SaveAsync("LastVersionSeen", currentVersion);
+                return;
             }
 
-            shown = await ApplicationData.Current.LocalSettings.ReadAsync<bool>("ShownWhatsNew");
-
-            if (isAppUpdated && !shown)
+            if (lastVersionSeen == currentVersion)
             {
-                var userAgentService = App.GetService<UserAgentService>();
-                var updateAgent = userAgentService.GetAgentData(x => x.Name == "App Default").FirstOrDefault();
-                if (updateAgent != null)
-                {
-                    updateAgent.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
-                    userAgentService.UpdateAgent(updateAgent);
-                }
-
-                shown = true;
-                await ApplicationData.Current.LocalSettings.SaveAsync<bool>("ShownWhatsNew", shown);
-                var dialog = new WhatsNewDialog();
-                await DialogService.ShowDialogAsync(dialog);
+                return;
             }
+
+            // the app was updated - stamp the new version on the default user agent
+            var userAgentService = App.GetService<UserAgentService>();
+            var updateAgent = userAgentService.GetAgentData(x => x.Name == "App Default").FirstOrDefault();
+            if (updateAgent != null)
+            {
+                updateAgent.AgentString = $"MyRSSFeeds/{SystemInfo.AppVersion} (Windows NT 10.0; {SystemInfo.OperatingSystemArchitecture})";
+                userAgentService.UpdateAgent(updateAgent);
+            }
+
+            // saved before showing so the dialog can't reappear within the session
+            // (this runs on every MainPage load) or if it is dismissed by a crash
+            await ApplicationData.Current.LocalSettings.SaveAsync("LastVersionSeen", currentVersion);
+
+            var dialog = new WhatsNewDialog();
+            await DialogService.ShowDialogAsync(dialog);
         }
     }
 }
