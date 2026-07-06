@@ -4,11 +4,9 @@ using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace MyRSSFeeds.Core.Services
 {
@@ -71,67 +69,49 @@ namespace MyRSSFeeds.Core.Services
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
         public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
         {
-            var feedString = NormalizeLegacyRssVersion(await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken()));
+            var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(feedString)))
+            SyndicationFeed feed = FeedLoader.Load(feedString);
+            var lastUpdatedTime = feed.LastUpdatedTime;
+            var rssItemsCount = feed.Items.Count();
+
+            if (lastUpdatedTime.Year < 2020)
             {
-                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                var lastUpdatedTime = feed.LastUpdatedTime;
-                var rssItemsCount = feed.Items.Count();
-
-                if (lastUpdatedTime.Year < 2020)
+                if (rssItemsCount > 0)
                 {
-                    if (rssItemsCount > 0)
-                    {
-                        var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
+                    var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
 
-                        if (latestDateItem == null || lastUpdatedTime.Year < 2020)
-                        {
-                            latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
-                            lastUpdatedTime = latestDateItem.LastUpdatedTime;
-                        }
-                        else
-                        {
-                            lastUpdatedTime = latestDateItem.PublishDate;
-                        }
-                        if (lastUpdatedTime.Year < 2020)
-                        {
-                            lastUpdatedTime = DateTimeOffset.Now;
-                        }
+                    if (latestDateItem == null || lastUpdatedTime.Year < 2020)
+                    {
+                        latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
+                        lastUpdatedTime = latestDateItem.LastUpdatedTime;
                     }
                     else
                     {
-                        lastUpdatedTime = new DateTimeOffset(2020, 10, 30, 20, 00, 00, new TimeSpan(2, 0, 0));
+                        lastUpdatedTime = latestDateItem.PublishDate;
+                    }
+                    if (lastUpdatedTime.Year < 2020)
+                    {
+                        lastUpdatedTime = DateTimeOffset.Now;
                     }
                 }
-                return (true, lastUpdatedTime, rssItemsCount);
+                else
+                {
+                    lastUpdatedTime = new DateTimeOffset(2020, 10, 30, 20, 00, 00, new TimeSpan(2, 0, 0));
+                }
             }
+            return (true, lastUpdatedTime, rssItemsCount);
         }
 
         /// <summary>
         /// Get source info from rss url
         /// </summary>
-        /// <param name="source">string for rss/xml content</param>        
+        /// <param name="source">string for rss/xml content</param>
         /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
-        /// <summary>
-        /// SyndicationFeed only parses RSS 2.0, but RSS 0.91-0.94 are structural
-        /// subsets of it (e.g. pcworld.com still serves 0.92) - relabel the
-        /// version so those feeds load instead of throwing NotSupportedException
-        /// </summary>
-        private static string NormalizeLegacyRssVersion(string feedXml)
-        {
-            return System.Text.RegularExpressions.Regex.Replace(
-                feedXml,
-                "(<rss\\b[^>]*?\\bversion\\s*=\\s*\")0\\.9[1-4](\")",
-                "${1}2.0${2}");
-        }
-
         public Source GetSourceInfoFromRss(string source, string rssUrl)
         {
-            source = NormalizeLegacyRssVersion(source);
-            using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
-            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+            SyndicationFeed feed = FeedLoader.Load(source);
             Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
 
             return new Source
