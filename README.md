@@ -8,7 +8,7 @@ Simple, light and local WinUI 3 RSS reader that doesn't require any login or sho
 - Built with WinUI 3 (Windows App SDK) and .NET 10
 - Runs on Windows 10 22H2 or higher (x86, x64 and ARM64)
 - Supports OPML import and export
-- Better support on ARM64 devices (Snapdragon Copilot+ PCs)
+- Better support for ARM64 devices (Snapdragon Copilot+ PCs)
 
 [![Build Status](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_apis/build/status/ahmed-abdelrazek.MyRSSFeeds?branchName=master)](https://ahmedflix25.visualstudio.com/My%20Rss%20Feed/_build/latest?definitionId=3&branchName=master)
 
