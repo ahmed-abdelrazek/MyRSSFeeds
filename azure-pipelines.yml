@@ -36,6 +36,7 @@ steps:
       -p:UapAppxPackageBuildMode=StoreUpload
       -p:AppxPackageDir="$(appxPackageDir)"
       -p:AppxPackageSigningEnabled=false
+      -p:AppxSymbolPackageEnabled=false
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
