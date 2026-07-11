@@ -4,6 +4,7 @@
 
 trigger:
 - master
+- main
 
 pool:
   vmImage: 'windows-latest'
@@ -21,12 +22,6 @@ steps:
     packageType: 'sdk'
     version: '10.0.x'
 
-- task: DownloadSecureFile@1
-  name: signingCert
-  displayName: 'Download signing certificate'
-  inputs:
-    secureFile: 'MyFeeds_TemporaryKey.pfx'
-
 - task: DotNetCoreCLI@2
   displayName: 'Build MSIX bundle ($(appxBundlePlatforms))'
   inputs:
@@ -40,9 +35,7 @@ steps:
       -p:GenerateAppxPackageOnBuild=true
       -p:UapAppxPackageBuildMode=StoreUpload
       -p:AppxPackageDir="$(appxPackageDir)"
-      -p:AppxPackageSigningEnabled=true
-      -p:PackageCertificateThumbprint=""
-      -p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"
+      -p:AppxPackageSigningEnabled=false
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
