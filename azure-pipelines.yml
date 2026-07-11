@@ -1,47 +1,41 @@
-# Universal Windows Platform
-# Build a Universal Windows Platform project using Visual Studio.
-# Add steps that test and distribute an app, save build artifacts, and more:
+# WinUI 3 (Windows App SDK) packaged desktop app
+# Builds one multi-platform MSIX bundle (.msixupload) for Store submission.
 # https://aka.ms/yaml
 
 trigger:
 - master
+- main
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'x86|x64|ARM'
+  project: 'MyRSSFeeds.WinUI/MyRSSFeeds.WinUI.csproj'
   buildConfiguration: 'Release'
+  appxBundlePlatforms: 'x86|x64|ARM64'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: DownloadSecureFile@1
-  name: signingCert
-  displayName: 'Download CA certificate'
+- task: UseDotNet@2
+  displayName: 'Install .NET 10 SDK'
   inputs:
-    secureFile: 'MyFeeds_TemporaryKey.pfx'
+    packageType: 'sdk'
+    version: '10.0.x'
 
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'Build MSIX bundle ($(appxBundlePlatforms))'
   inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    platform: 'x86'
-    solution: '$(solution)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint="" /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"'
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**\bin\$(BuildConfiguration)\**'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    command: 'build'
+    projects: '$(project)'
+    arguments: >-
+      -c $(buildConfiguration)
+      -p:Platform=x64
+      -p:AppxBundlePlatforms="$(appxBundlePlatforms)"
+      -p:AppxBundle=Always
+      -p:GenerateAppxPackageOnBuild=true
+      -p:UapAppxPackageBuildMode=StoreUpload
+      -p:AppxPackageDir="$(appxPackageDir)"
+      -p:AppxPackageSigningEnabled=false
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
