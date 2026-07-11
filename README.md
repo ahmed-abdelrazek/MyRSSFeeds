@@ -5,8 +5,7 @@
 ## My RSS Feeds
 Simple, Light and Local UWP Rss reader that doesn't required any logins or have any ads.
 
-The app runs on windows 10 22H2 (latest version) or higher and support arm64 devices
-
+The app runs on windows 10 22H2 (latest version) or higher
 The app now support OPML
 The app now should run better on ARM64 devices (Snapdragon Copilot+ PCs)
 
