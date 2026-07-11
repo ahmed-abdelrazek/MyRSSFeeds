@@ -1,25 +1,25 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-
-using Microsoft.UI.Xaml.Controls;
-
-using MyRSSFeeds.ViewModels;
+using MyRSSFeeds.Core.Helpers;
+using MyRSSFeeds.WinUI.ViewModels;
 using System;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
-namespace MyRSSFeeds.Views
+namespace MyRSSFeeds.WinUI.Views
 {
     public sealed partial class MainPage : Page
     {
-        public MainViewModel ViewModel { get; }
+        public MainViewModel ViewModel { get; } = App.GetService<MainViewModel>();
 
         public MainPage()
         {
-            ViewModel = Ioc.Default.GetService<MainViewModel>();
             InitializeComponent();
+            ViewModel.Initialize(webView);
         }
 
-        private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            await ViewModel.LoadDataAsync(new Progress<int>(percent => ViewModel.ProgressCurrent = percent), ViewModel.TokenSource.Token);
+            base.OnNavigatedTo(e);
+            ViewModel.LoadDataAsync(new Progress<int>(percent => ViewModel.ProgressCurrent = percent), ViewModel.TokenSource.Token).FireAndGet();
         }
     }
 }

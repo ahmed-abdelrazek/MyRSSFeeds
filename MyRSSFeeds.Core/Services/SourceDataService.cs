@@ -1,35 +1,44 @@
 ﻿using LiteDB;
-using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Data;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace MyRSSFeeds.Core.Services
 {
-    public class SourceDataService : ISourceDataService
+    public class SourceDataService
     {
-        public async Task<ILiteQueryable<Source>> GetSourcesDataAsync()
+        private readonly LiteDatabase _liteDatabase;
+        private readonly RssRequest _rssRequest;
+
+        public SourceDataService(LiteDatabase liteDatabase, RssRequest rssRequest)
         {
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                return db.GetCollection<Source>(LiteDbContext.Sources).Query().OrderByDescending(x => x.Id);
-            });
+            _liteDatabase = liteDatabase;
+            _rssRequest = rssRequest;
         }
 
-        public async Task<ILiteQueryable<Source>> GetSourcesDataWithFeedsAsync()
+        private IEnumerable<Source> AllFeedsBySource()
         {
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                return db.GetCollection<Source>(LiteDbContext.Sources).Include(x => x.RSSs).Query();
-            });
+            return AllSources().Include(x => x.RSSs).FindAll();
+        }
+
+        private ILiteCollection<Source> AllSources()
+        {
+            return _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+        }
+
+        public IEnumerable<Source> GetSourcesData()
+        {
+            return AllSources().FindAll().OrderByDescending(x => x.Id).ToList();
+        }
+
+        public IEnumerable<Source> GetSourcesDataWithFeeds()
+        {
+            return AllFeedsBySource().ToList();
         }
 
         /// <summary>
@@ -37,28 +46,39 @@ namespace MyRSSFeeds.Core.Services
         /// </summary>
         /// <param name="source">the base Uri for the source</param>
         /// <returns>Task true if the source already exist</returns>
-        public async Task<bool> SourceExistAsync(string source)
+        public bool SourceExist(string source)
         {
-            Uri link = new(source);
+            var link = new Uri(source);
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            return col.Exists(x => x.RssUrl == link);
+        }
 
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                return db.GetCollection<Source>(LiteDbContext.Sources).Exists(x => x.RssUrl == link);
-            });
+        /// <summary>
+        /// Check if Source Exist by its base Uri
+        /// </summary>
+        /// <param name="source">the base Uri for the source</param>
+        /// <returns>Task true if the source already exist</returns>
+        public bool SourceExist(Uri source)
+        {
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            return col.Exists(x => x.RssUrl == source);
         }
 
         /// <summary>
         /// checks if a source works with last updated time and rss items count
         /// </summary>
-        /// <param name="source">string for source rss url</param>
+        /// <param name="source">the source to check, its UseBrowserUserAgent gets set
+        /// when the site turns out to need the fallback browser user agent</param>
         /// <returns>Task (true if works, datetime offset for the last time website updated, int for rss items count)</returns>
-        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(string source)
+        public async Task<(bool, DateTimeOffset, int)> IsSourceWorkingAsync(Source source)
         {
-            var feedString = await RssRequest.GetFeedAsStringAsync(source, new System.Threading.CancellationToken());
+            var (feedString, usedBrowserUserAgent) = await _rssRequest.GetFeedAsStringAsync(source.RssUrl, new System.Threading.CancellationToken(), source.UseBrowserUserAgent);
+            if (usedBrowserUserAgent)
+            {
+                source.UseBrowserUserAgent = true;
+            }
 
-            using XmlReader xmlReader = XmlReader.Create(new StringReader(feedString));
-            SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
+            SyndicationFeed feed = FeedLoader.Load(feedString);
             var lastUpdatedTime = feed.LastUpdatedTime;
             var rssItemsCount = feed.Items.Count();
 
@@ -68,14 +88,18 @@ namespace MyRSSFeeds.Core.Services
                 {
                     var latestDateItem = feed.Items.OrderByDescending(x => x.PublishDate).FirstOrDefault();
 
-                    if (latestDateItem is null)
+                    if (latestDateItem == null || lastUpdatedTime.Year < 2020)
                     {
                         latestDateItem = feed.Items.OrderByDescending(x => x.LastUpdatedTime).FirstOrDefault();
-                        lastUpdatedTime = DateTimeOffset.Now;
+                        lastUpdatedTime = latestDateItem.LastUpdatedTime;
                     }
                     else
                     {
-                        lastUpdatedTime = latestDateItem.PublishDate.Year < 2020 ? DateTimeOffset.Now : latestDateItem.PublishDate;
+                        lastUpdatedTime = latestDateItem.PublishDate;
+                    }
+                    if (lastUpdatedTime.Year < 2020)
+                    {
+                        lastUpdatedTime = DateTimeOffset.Now;
                     }
                 }
                 else
@@ -89,95 +113,45 @@ namespace MyRSSFeeds.Core.Services
         /// <summary>
         /// Get source info from rss url
         /// </summary>
-        /// <param name="source">string for rss/xml content</param>        
+        /// <param name="source">string for rss/xml content</param>
         /// <param name="rssUrl">string for source rss url</param>
         /// <returns>Task Source with all of its info or null of there is a problem</returns>
-        public async Task<Source?> GetSourceInfoFromRssAsync(string? source, string? rssUrl)
+        public Source GetSourceInfoFromRss(string source, string rssUrl)
         {
-            if (string.IsNullOrEmpty(source))
+            SyndicationFeed feed = FeedLoader.Load(source);
+            Uri baseLink = feed.Links.FirstOrDefault(x => x.MediaType == null)?.Uri;
+
+            // title and description are optional in Atom (no <subtitle>) and often
+            // missing from real-world RSS, so don't crash on feeds that omit them
+            return new Source
             {
-                return null;
-            }
-
-            if (string.IsNullOrEmpty(rssUrl))
-            {
-                return null;
-            }
-
-            var userAgent = await new UserAgentService().GetCurrentAgentAsync();
-
-            return await Task.Run(() =>
-            {
-                using XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { Async = true, IgnoreWhitespace = true, IgnoreComments = true });
-                SyndicationFeed feed = SyndicationFeed.Load(xmlReader);
-                Source newSource = new()
-                {
-                    SiteTitle = feed.Title.Text,
-                    Description = feed.Description.Text,
-                    Language = feed.Language,
-                    LastBuildCheck = feed.LastUpdatedTime,
-                    LastBuildDate = feed.LastUpdatedTime,
-                    RssUrl = new Uri(rssUrl),
-                    IsWorking = true
-                };
-
-                // try to get the base url for the feed from the rss xml
-                foreach (var link in feed.Links.Where(x => x.MediaType is null))
-                {
-                    if (link.Uri is not null)
-                    {
-                        newSource.BaseUrl = link.BaseUri is null ? link.Uri : link.BaseUri;
-                        break;
-                    }
-                }
-
-                // try to get the base url for the feed from the rss url
-                if (newSource.BaseUrl is null || newSource.BaseUrl == new Uri("about:blank"))
-                {
-                    newSource.BaseUrl = new Uri(new Uri(rssUrl).Host);
-                }
-
-                // try to get the favicon for the site via duckduckgo service
-                System.Net.WebClient webClient = new();
-                if (!string.IsNullOrEmpty(userAgent.AgentString))
-                {
-                    webClient.Headers.Add("User-Agent", userAgent.AgentString);
-                }
-                newSource.SiteIcon = webClient.DownloadData($"https://icons.duckduckgo.com/ip3/{newSource.BaseUrl.Host}.ico");
-
-                return newSource;
-            });
+                SiteTitle = feed.Title?.Text?.Trim() ?? new Uri(rssUrl).Host,
+                Description = feed.Description?.Text?.Trim(),
+                Language = feed.Language?.Trim(),
+                LastBuildDate = feed.LastUpdatedTime,
+                BaseUrl = baseLink,
+                RssUrl = new Uri(rssUrl),
+                IsWorking = true
+            };
         }
 
-        public async Task<Source> AddNewSourceAsync(Source source)
+        public Source AddNewSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                col.Insert(source);
-                return source;
-            });
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            col.Insert(source);
+            return source;
         }
 
-        public async Task<Source> UpdateSourceAsync(Source source)
+        public Source UpdateSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                var col = db.GetCollection<Source>(LiteDbContext.Sources);
-                col.Update(source);
-                return source;
-            });
+            var col = _liteDatabase.GetCollection<Source>(LiteDbContext.Sources);
+            col.Update(source);
+            return source;
         }
 
-        public async Task<bool> DeleteSourceAsync(Source source)
+        public bool DeleteSource(Source source)
         {
-            return await Task.Run(() =>
-            {
-                using LiteDatabase db = new(LiteDbContext.DbConnectionString);
-                return db.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
-            });
+            return _liteDatabase.GetCollection<Source>(LiteDbContext.Sources).Delete(source.Id);
         }
     }
 }

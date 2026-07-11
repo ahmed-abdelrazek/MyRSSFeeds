@@ -1,20 +1,21 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-
+using MyRSSFeeds.WinUI.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
-using MyRSSFeeds.ViewModels;
-
-namespace MyRSSFeeds.Views
+namespace MyRSSFeeds.WinUI.Views
 {
-    // TODO WTS: Change the URL for your privacy policy, currently set to https://YourPrivacyUrlGoesHere
     public sealed partial class SettingsPage : Page
     {
-        public SettingsViewModel ViewModel { get; }
+        public SettingsViewModel ViewModel { get; } = App.GetService<SettingsViewModel>();
 
         public SettingsPage()
         {
-            ViewModel = Ioc.Default.GetService<SettingsViewModel>();
             InitializeComponent();
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            await ViewModel.InitializeAsync();
         }
     }
 }

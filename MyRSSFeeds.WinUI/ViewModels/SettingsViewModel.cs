@@ -1,23 +1,119 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
-using MyRSSFeeds.Contracts.Services;
-using MyRSSFeeds.Helpers;
+using MyRSSFeeds.Core.Models;
+using MyRSSFeeds.Core.Services;
+using MyRSSFeeds.WinUI.Extensions;
+using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Services;
+using OPMLCore.NET;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml;
 using Windows.ApplicationModel;
+using Windows.Storage;
+using Microsoft.UI.Xaml;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.WinUI.ViewModels
 {
-    public class SettingsViewModel : ObservableRecipient
+    // TODO WTS: Add other settings as necessary. For help see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/pages/settings.md
+    public class SettingsViewModel : Observable
     {
-        private readonly IThemeSelectorService _themeSelectorService;
-        private ElementTheme _elementTheme;
+        private readonly RSSDataService rssDataService;
+        private readonly SourceDataService sourceDataService;
+        private readonly UserAgentService userAgentService;
+
+        public bool IsLoaded { get; set; }
+
+        private int _feedsLimit;
+
+        public int FeedsLimit
+        {
+            get => _feedsLimit;
+            set
+            {
+                Set(ref _feedsLimit, value, nameof(FeedsLimit), () =>
+                {
+                    ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", value).ConfigureAwait(false);
+                });
+            }
+        }
+
+        private int _waitAfterLastCheck;
+
+        public int WaitAfterLastCheck
+        {
+            get => _waitAfterLastCheck;
+            set
+            {
+                Set(ref _waitAfterLastCheck, value, nameof(WaitAfterLastCheck), () =>
+                {
+                    ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", value).ConfigureAwait(false);
+                });
+            }
+        }
+
+        private string _userAgentName;
+
+        public string UserAgentName
+        {
+            get => _userAgentName;
+            set
+            {
+                Set(ref _userAgentName, value, nameof(UserAgentName), () =>
+                {
+                    AddUserAgentCommand.OnCanExecuteChanged();
+                });
+            }
+        }
+
+        private string _userAgentValue;
+
+        public string UserAgentValue
+        {
+            get => _userAgentValue;
+            set
+            {
+                Set(ref _userAgentValue, value, nameof(UserAgentValue), () =>
+                {
+                    AddUserAgentCommand.OnCanExecuteChanged();
+                });
+            }
+        }
+
+        public ObservableCollection<UserAgent> UserAgents { get; private set; } = new ObservableCollection<UserAgent>();
+
+        private UserAgent _selectedUserAgent;
+
+        public UserAgent SelectedUserAgent
+        {
+            get => _selectedUserAgent;
+            set
+            {
+                Set(ref _selectedUserAgent, value, nameof(SelectedUserAgent), () =>
+                {
+                    DeleteUserAgentCommand.OnCanExecuteChanged();
+
+                    if (_selectedUserAgent != null)
+                    {
+                        userAgentService.ResetAgentUse();
+                        SelectedUserAgent.IsUsed = true;
+                        userAgentService.UpdateAgent(SelectedUserAgent);
+                    }
+                });
+            }
+        }
+
+        private ElementTheme _elementTheme = ThemeSelectorService.Theme;
 
         public ElementTheme ElementTheme
         {
             get { return _elementTheme; }
 
-            set { SetProperty(ref _elementTheme, value); }
+            set { Set(ref _elementTheme, value); }
         }
 
         private string _versionDescription;
@@ -26,7 +122,7 @@ namespace MyRSSFeeds.ViewModels
         {
             get { return _versionDescription; }
 
-            set { SetProperty(ref _versionDescription, value); }
+            set { Set(ref _versionDescription, value); }
         }
 
         private ICommand _switchThemeCommand;
@@ -35,16 +131,13 @@ namespace MyRSSFeeds.ViewModels
         {
             get
             {
-                if (_switchThemeCommand is null)
+                if (_switchThemeCommand == null)
                 {
-                    _switchThemeCommand = new RelayCommand<ElementTheme>(
+                    _switchThemeCommand = new RelayCommandAsync<ElementTheme>(
                         async (param) =>
                         {
-                            if (ElementTheme != param)
-                            {
-                                ElementTheme = param;
-                                await _themeSelectorService.SetThemeAsync(param);
-                            }
+                            ElementTheme = param;
+                            await ThemeSelectorService.SetThemeAsync(param);
                         });
                 }
 
@@ -52,11 +145,333 @@ namespace MyRSSFeeds.ViewModels
             }
         }
 
-        public SettingsViewModel(IThemeSelectorService themeSelectorService)
+        private ICommand _exportSourceAsJsonCommand;
+
+        public ICommand ExportSourceAsJsonCommand
         {
-            _themeSelectorService = themeSelectorService;
-            _elementTheme = _themeSelectorService.Theme;
+            get
+            {
+                if (_exportSourceAsJsonCommand == null)
+                {
+                    _exportSourceAsJsonCommand = new RelayCommandAsync(
+                        async () =>
+                        {
+                            var savePicker = new Windows.Storage.Pickers.FileSavePicker
+                            {
+                                SuggestedStartLocation =
+                                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+                            }.InitializeForMainWindow();
+                            // Dropdown of file types the user can save the file as
+                            savePicker.FileTypeChoices.Add("JSON File", new List<string>() { ".json" });
+                            // Default file name if the user does not type one in or select a file to replace
+                            savePicker.SuggestedFileName = "ExportedRssSources";
+                            StorageFile file = await savePicker.PickSaveFileAsync();
+                            if (file != null)
+                            {
+                                try
+                                {
+                                    // Prevent updates to the remote version of the file until
+                                    // we finish making changes and call CompleteUpdatesAsync.
+                                    CachedFileManager.DeferUpdates(file);
+                                    // write to file
+                                    var jsonContent = JsonSerializer.Serialize(sourceDataService.GetSourcesData());
+                                    await FileIO.WriteTextAsync(file, jsonContent);
+                                    // Let Windows know that we're finished changing the file so
+                                    // the other app can update the remote version of the file.
+                                    // Completing updates may require Windows to ask for user input.
+                                    Windows.Storage.Provider.FileUpdateStatus status =
+                                        await CachedFileManager.CompleteUpdatesAsync(file);
+                                    if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                                    {
+                                        await DialogService.ShowAsync(string.Format("Settings_ExportSuccessfulMessageDialog".GetLocalized(), file.Name));
+                                    }
+                                    else
+                                    {
+                                        await DialogService.ShowAsync(string.Format("Settings_ExportFailedMessageDialog".GetLocalized(), file.Name));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine(ex);
+                                    await DialogService.ShowAsync(string.Format("Settings_ExportErrorMessageDialog".GetLocalized(), file.Name));
+                                }
+                            }
+                            else
+                            {
+                                await DialogService.ShowAsync("Settings_ExportCanceledMessageDialog".GetLocalized());
+                            }
+                        });
+                }
+
+                return _exportSourceAsJsonCommand;
+            }
+        }
+
+        private ICommand _importSourceAsJsonCommand;
+
+        public ICommand ImportSourceAsJsonCommand
+        {
+            get
+            {
+                if (_importSourceAsJsonCommand == null)
+                {
+                    _importSourceAsJsonCommand = new RelayCommandAsync(
+                        async () =>
+                        {
+                            var picker = new Windows.Storage.Pickers.FileOpenPicker
+                            {
+                                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
+                                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+                            }.InitializeForMainWindow();
+                            picker.FileTypeFilter.Add(".json");
+
+                            StorageFile file = await picker.PickSingleFileAsync();
+                            if (file != null)
+                            {
+                                try
+                                {
+                                    // Application now has read/write access to the picked file
+                                    var sourcesList = JsonSerializer.Deserialize<List<Source>>(await FileIO.ReadTextAsync(file));
+
+                                    foreach (var source in sourcesList)
+                                    {
+                                        if (sourceDataService.SourceExist(source.RssUrl.ToString()))
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            sourceDataService.AddNewSource(source);
+                                        }
+                                    }
+                                    await DialogService.ShowAsync(string.Format("Settings_ImportSuccessfulMessageDialog".GetLocalized(), file.Name));
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine(ex);
+                                    await DialogService.ShowAsync(string.Format("Settings_ImportErrorMessageDialog".GetLocalized(), file.Name));
+                                }
+                            }
+                            else
+                            {
+                                await DialogService.ShowAsync("Settings_ImportCanceledMessageDialog".GetLocalized());
+                            }
+                        });
+                }
+
+                return _importSourceAsJsonCommand;
+            }
+        }
+
+        public RelayCommandAsync AddUserAgentCommand { get; private set; }
+
+        public RelayCommandAsync DeleteUserAgentCommand { get; private set; }
+
+        public RelayCommandAsync ImportSourcesAsOPMLCommand { get; private set; }
+        public RelayCommandAsync ExportSourcesAsOPMLCommand { get; private set; }
+
+        public SettingsViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, UserAgentService userAgentService)
+        {
+            AddUserAgentCommand = new RelayCommandAsync(AddUserAgent, CanAddUserAgent);
+            DeleteUserAgentCommand = new RelayCommandAsync(DeleteUserAgent, CanDeleteUserAgent);
+            ImportSourcesAsOPMLCommand = new RelayCommandAsync(ImportSourcesAsOPML, CanImportSourcesAsOPML);
+            ExportSourcesAsOPMLCommand = new RelayCommandAsync(ExportSourcesAsOPML, CanExportSourcesAsOPML);
+
+            this.rssDataService = rssDataService;
+            this.sourceDataService = sourceDataService;
+            this.userAgentService = userAgentService;
+        }
+
+        private bool CanImportSourcesAsOPML()
+        {
+            return true;
+        }
+
+        private async Task ImportSourcesAsOPML()
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+            }.InitializeForMainWindow();
+            picker.FileTypeFilter.Add(".opml");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    // Application now has read/write access to the picked file
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(await FileIO.ReadTextAsync(file));
+
+                    var opmlFile = new Opml(xmlDoc);
+
+                    foreach (var source in opmlFile.Body.Outlines)
+                    {
+                        if (sourceDataService.SourceExist(source.XMLUrl))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Uri.TryCreate(source.XMLUrl, UriKind.Absolute, out Uri rssUrl);
+                            Uri.TryCreate(source.HTMLUrl, UriKind.Absolute, out Uri baseUrl);
+
+                            sourceDataService.AddNewSource(new Source
+                            {
+                                SiteTitle = source.Title,
+                                BaseUrl = baseUrl ?? new Uri(rssUrl.GetLeftPart(UriPartial.Authority)),
+                                RssUrl = rssUrl,
+                                Description = source.Description
+                            });
+                        }
+                    }
+                    await DialogService.ShowAsync(string.Format("Settings_ImportSuccessfulMessageDialog".GetLocalized(), file.Name));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    await DialogService.ShowAsync(string.Format("Settings_ImportErrorMessageDialog".GetLocalized(), file.Name));
+                }
+            }
+            else
+            {
+                await DialogService.ShowAsync("Settings_ImportCanceledMessageDialog".GetLocalized());
+            }
+        }
+
+        private bool CanExportSourcesAsOPML()
+        {
+            return true;
+        }
+
+        private async Task ExportSourcesAsOPML()
+        {
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary
+            }.InitializeForMainWindow();
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add("OPML File", new List<string>() { ".opml" });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = "ExportedOPMLRssSources";
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    // Prevent updates to the remote version of the file until
+                    // we finish making changes and call CompleteUpdatesAsync.
+                    CachedFileManager.DeferUpdates(file);
+
+                    // write to file
+                    var allSourcesList = sourceDataService.GetSourcesData();
+                    var SourcesAsOutlinesList = allSourcesList.Select(x => new Outline
+                    {
+                        Title = x.SiteTitle,
+                        Text = x.SiteTitle,
+                        Type = "rss",
+                        XMLUrl = x.RssUrl.ToString(),
+                        HTMLUrl = x.BaseUrl?.ToString(),
+                        //Description = x.Description,
+                        //Created = x.LastBuildDate.DateTime
+                    });
+
+                    var opmlFile = new Opml(new Head("My RSS Feed Sources"), new Body(SourcesAsOutlinesList.ToList()));
+
+                    await FileIO.WriteTextAsync(file, opmlFile.ToString());
+                    // Let Windows know that we're finished changing the file so
+                    // the other app can update the remote version of the file.
+                    // Completing updates may require Windows to ask for user input.
+                    Windows.Storage.Provider.FileUpdateStatus status =
+                        await CachedFileManager.CompleteUpdatesAsync(file);
+                    if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                    {
+                        await DialogService.ShowAsync(string.Format("Settings_ExportSuccessfulMessageDialog".GetLocalized(), file.Name));
+                    }
+                    else
+                    {
+                        await DialogService.ShowAsync(string.Format("Settings_ExportFailedMessageDialog".GetLocalized(), file.Name));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    await DialogService.ShowAsync(string.Format("Settings_ExportErrorMessageDialog".GetLocalized(), file.Name));
+                }
+            }
+            else
+            {
+                await DialogService.ShowAsync("Settings_ExportCanceledMessageDialog".GetLocalized());
+            }
+        }
+
+        private bool CanAddUserAgent()
+        {
+            return !string.IsNullOrWhiteSpace(UserAgentName) && !string.IsNullOrWhiteSpace(UserAgentValue);
+        }
+
+        private async Task AddUserAgent()
+        {
+            try
+            {
+                userAgentService.AddNewAgent(new UserAgent
+                {
+                    Name = UserAgentName,
+                    AgentString = UserAgentValue,
+                    IsDeletable = true,
+                    IsUsed = false
+                });
+
+                await DialogService.ShowAsync("SettingsViewModelAddNewAgentMessageDialog".GetLocalized());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        private bool CanDeleteUserAgent()
+        {
+            return SelectedUserAgent != null;
+        }
+
+        private async Task DeleteUserAgent()
+        {
+            try
+            {
+                if (SelectedUserAgent.IsDeletable)
+                {
+                    userAgentService.DeleteAgent(SelectedUserAgent);
+
+                    await DialogService.ShowAsync("SettingsViewModelDeleteAgentMessageDialog".GetLocalized());
+
+                    SelectedUserAgent = UserAgents.SingleOrDefault(x => x.IsDeletable == false);
+                }
+                else
+                {
+                    await DialogService.ShowAsync("SettingsViewModelUnDeletableAgentMessageDialog".GetLocalized());
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        public async Task InitializeAsync()
+        {
+            FeedsLimit = await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit");
+            WaitAfterLastCheck = await ApplicationData.Current.LocalSettings.ReadAsync<int>("WaitAfterLastCheck");
             VersionDescription = GetVersionDescription();
+            IsLoaded = true;
+            UserAgents.Clear();
+            foreach (var item in userAgentService.GetAgentsData())
+            {
+                UserAgents.Add(item);
+            }
+            SelectedUserAgent = UserAgents.SingleOrDefault(x => x.IsUsed);
         }
 
         private string GetVersionDescription()

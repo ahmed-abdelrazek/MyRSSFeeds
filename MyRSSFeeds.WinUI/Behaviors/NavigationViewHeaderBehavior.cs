@@ -1,9 +1,8 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Xaml.Interactivity;
+using MyRSSFeeds.WinUI.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Xaml.Interactivity;
-using MyRSSFeeds.Contracts.Services;
 
 namespace MyRSSFeeds.Behaviors
 {
@@ -65,15 +64,13 @@ namespace MyRSSFeeds.Behaviors
         {
             base.OnAttached();
             _current = this;
-            var navigationService = Ioc.Default.GetService<INavigationService>();
-            navigationService.Navigated += OnNavigated;
+            NavigationService.Navigated += OnNavigated;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            var navigationService = Ioc.Default.GetService<INavigationService>();
-            navigationService.Navigated -= OnNavigated;
+            NavigationService.Navigated -= OnNavigated;
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -90,7 +87,7 @@ namespace MyRSSFeeds.Behaviors
 
         private void UpdateHeader()
         {
-            if (_currentPage is not null)
+            if (_currentPage != null)
             {
                 var headerMode = GetHeaderMode(_currentPage);
                 if (headerMode == NavigationViewHeaderMode.Never)
@@ -101,30 +98,16 @@ namespace MyRSSFeeds.Behaviors
                 else
                 {
                     var headerFromPage = GetHeaderContext(_currentPage);
-                    if (headerFromPage is not null)
-                    {
-                        AssociatedObject.Header = headerFromPage;
-                    }
-                    else
-                    {
-                        AssociatedObject.Header = DefaultHeader;
-                    }
+                    AssociatedObject.Header = headerFromPage ?? DefaultHeader;
 
-                    if (headerMode == NavigationViewHeaderMode.Always)
-                    {
-                        AssociatedObject.AlwaysShowHeader = true;
-                    }
-                    else
-                    {
-                        AssociatedObject.AlwaysShowHeader = false;
-                    }
+                    AssociatedObject.AlwaysShowHeader = headerMode == NavigationViewHeaderMode.Always;
                 }
             }
         }
 
         private void UpdateHeaderTemplate()
         {
-            if (_currentPage is not null)
+            if (_currentPage != null)
             {
                 var headerTemplate = GetHeaderTemplate(_currentPage);
                 AssociatedObject.HeaderTemplate = headerTemplate ?? DefaultHeaderTemplate;

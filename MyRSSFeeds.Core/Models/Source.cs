@@ -14,15 +14,13 @@ namespace MyRSSFeeds.Core.Models
 
         public int Id { get; set; }
 
-        public string? SiteTitle { get; set; }
+        public string SiteTitle { get; set; }
 
-        public byte[]? SiteIcon { get; set; }
+        public Uri BaseUrl { get; set; }
 
-        public Uri BaseUrl { get; set; } = new("about:blank");
+        public Uri RssUrl { get; set; }
 
-        public Uri RssUrl { get; set; } = new("about:blank");
-
-        private string _description = "";
+        private string _description;
 
         public string Description
         {
@@ -58,10 +56,13 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
+
+        [JsonIgnore]
         public DateTimeOffset LastBuildCheck { get; set; }
 
         private DateTimeOffset _lastBuildDate;
 
+        [JsonIgnore]
         public DateTimeOffset LastBuildDate
         {
             get => _lastBuildDate;
@@ -75,7 +76,7 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        private string _localLastBuildDate = "";
+        private string _localLastBuildDate;
 
         [JsonIgnore]
         [BsonIgnore]
@@ -100,7 +101,11 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        public string Language { get; set; } = "en";
+        public string Language { get; set; }
+
+        // Set when the site rejects the selected user agent with 403 Forbidden
+        // but accepts a browser one - future requests then skip the failing attempt
+        public bool UseBrowserUserAgent { get; set; }
 
         private bool _isChecking;
 
@@ -141,11 +146,11 @@ namespace MyRSSFeeds.Core.Models
             }
         }
 
-        private string? _errorMessage;
+        private string _errorMessage;
 
         [JsonIgnore]
         [BsonIgnore]
-        public string? ErrorMessage
+        public string ErrorMessage
         {
             get { return _errorMessage; }
             set

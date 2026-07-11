@@ -1,12 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
-using MyRSSFeeds.Core.Contracts.Services;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Models;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.Helpers;
+using MyRSSFeeds.WinUI.Extensions;
+using MyRSSFeeds.WinUI.Helpers;
+using MyRSSFeeds.WinUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,14 +15,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
+using Microsoft.UI.Xaml;
 using Windows.Web.Syndication;
 
-namespace MyRSSFeeds.ViewModels
+namespace MyRSSFeeds.WinUI.ViewModels
 {
-    public class MainViewModel : ObservableRecipient
+    public class MainViewModel : Observable
     {
-        private readonly IRSSDataService _rssDataService = Ioc.Default.GetService<IRSSDataService>();
-        private readonly ISourceDataService _sourceDataService = Ioc.Default.GetService<ISourceDataService>();
+        private const string _defaultUrl = "about:blank";
+        Windows.UI.ViewManagement.UISettings _systemTheme;
+        ElementTheme _appTheme;
+        string _uiTheme;
+
+        private readonly RSSDataService rssDataService;
+        private readonly SourceDataService sourceDataService;
+        private readonly RssRequest rssRequest;
 
         public CancellationTokenSource TokenSource { get; set; } = null;
 
@@ -31,37 +37,61 @@ namespace MyRSSFeeds.ViewModels
 
         public RSS SelectedRSS
         {
-            get => _selectedRSS;
+            get { return _selectedRSS; }
             set
             {
-                if (SetProperty(ref _selectedRSS, value))
+                Set(ref _selectedRSS, value, nameof(SelectedRSS), () =>
                 {
-                    if (_selectedRSS is not null)
+                    if (_selectedRSS != null)
                     {
                         if (!_selectedRSS.IsRead)
                         {
                             _selectedRSS.IsRead = true;
-                            new RSSDataService().UpdateFeedAsync(_selectedRSS).FireAndGet();
+                            rssDataService.UpdateFeed(_selectedRSS);
                         }
+
+                        _webView.NavigateToString(ReaderPage.BuildArticleHtml(_selectedRSS, IsDarkTheme()));
                     }
-                    ClearSelectedRSSCommand.NotifyCanExecuteChanged();
-                };
+
+                    ClearSelectedRSSCommand.OnCanExecuteChanged();
+                    OpenInBrowserCommand.OnCanExecuteChanged();
+                    OpenPostInAppCommand.OnCanExecuteChanged();
+                });
             }
         }
 
         public ObservableCollection<RSS> Feeds { get; private set; } = new ObservableCollection<RSS>();
 
+        private Uri _webViewSource;
+
+        public Uri WebViewSource
+        {
+            get { return _webViewSource; }
+            set
+            {
+                Set(ref _webViewSource, value, nameof(WebViewSource), () =>
+                {
+                    OpenInBrowserCommand.OnCanExecuteChanged();
+                    OpenPostInAppCommand.OnCanExecuteChanged();
+                });
+            }
+        }
+
         private bool _isLoadingData;
 
         public bool IsLoadingData
         {
-            get => _isLoadingData;
+            get
+            {
+                return _isLoadingData;
+            }
             set
             {
-                if (SetProperty(ref _isLoadingData, value))
+                Set(ref _isLoadingData, value, nameof(IsLoadingData), () =>
                 {
-                    ((AsyncRelayCommand)RefreshFeedsCommand).NotifyCanExecuteChanged();
-                };
+                    RefreshFeedsCommand.OnCanExecuteChanged();
+                    CancelLoadingCommand.OnCanExecuteChanged();
+                });
             }
         }
 
@@ -69,17 +99,20 @@ namespace MyRSSFeeds.ViewModels
 
         public bool IsLoading
         {
-            get => _isLoading;
+            get
+            {
+                return _isLoading;
+            }
             set
             {
-                if (SetProperty(ref _isLoading, value))
+                Set(ref _isLoading, value, nameof(IsLoading), () =>
                 {
                     if (value)
                     {
                         IsShowingFailedMessage = false;
                     }
                     IsLoadingVisibility = value ? Visibility.Visible : Visibility.Collapsed;
-                };
+                });
             }
         }
 
@@ -87,25 +120,28 @@ namespace MyRSSFeeds.ViewModels
 
         public Visibility IsLoadingVisibility
         {
-            get => _isLoadingVisibility;
-            set => SetProperty(ref _isLoadingVisibility, value);
+            get { return _isLoadingVisibility; }
+            set { Set(ref _isLoadingVisibility, value); }
         }
 
         private bool _isShowingFailedMessage;
 
         public bool IsShowingFailedMessage
         {
-            get => _isShowingFailedMessage;
+            get
+            {
+                return _isShowingFailedMessage;
+            }
             set
             {
-                if (SetProperty(ref _isShowingFailedMessage, value))
+                Set(ref _isShowingFailedMessage, value, nameof(IsShowingFailedMessage), () =>
                 {
 
                     if (value)
                     {
                         IsLoading = false;
                     }
-                };
+                });
                 FailedMesageVisibility = value ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -114,8 +150,8 @@ namespace MyRSSFeeds.ViewModels
 
         public Visibility FailedMesageVisibility
         {
-            get => _failedMesageVisibility;
-            set => SetProperty(ref _failedMesageVisibility, value);
+            get { return _failedMesageVisibility; }
+            set { Set(ref _failedMesageVisibility, value); }
         }
 
         public ObservableCollection<Source> FilterSources { get; private set; } = new ObservableCollection<Source>();
@@ -124,13 +160,13 @@ namespace MyRSSFeeds.ViewModels
 
         public Source FilterSelectedSource
         {
-            get => _filterSelectedSource;
+            get { return _filterSelectedSource; }
             set
             {
-                if (SetProperty(ref _filterSelectedSource, value))
+                Set(ref _filterSelectedSource, value, nameof(FilterSelectedSource), () =>
                 {
-                    ((RelayCommand)ClearFilterSourceCommand).NotifyCanExecuteChanged();
-                };
+                    ClearFilterSourceCommand.OnCanExecuteChanged();
+                });
             }
         }
 
@@ -138,83 +174,312 @@ namespace MyRSSFeeds.ViewModels
 
         public string FilterTitle
         {
-            get => _filterTitle;
-            set => SetProperty(ref _filterTitle, value);
+            get { return _filterTitle; }
+            set
+            {
+                Set(ref _filterTitle, value);
+            }
         }
 
         private string _filterCreator;
 
         public string FilterCreator
         {
-            get => _filterCreator;
-            set => SetProperty(ref _filterCreator, value);
+            get { return _filterCreator; }
+            set
+            {
+                Set(ref _filterCreator, value);
+            }
         }
 
         private bool _filterIsUnreadOnly;
 
         public bool FilterIsUnreadOnly
         {
-            get => _filterIsUnreadOnly;
-            set => SetProperty(ref _filterIsUnreadOnly, value);
+            get { return _filterIsUnreadOnly; }
+            set
+            {
+                Set(ref _filterIsUnreadOnly, value);
+            }
         }
 
         private int _progressMax;
 
         public int ProgressMax
         {
-            get => _progressMax;
-            set => SetProperty(ref _progressMax, value);
+            get { return _progressMax; }
+            set
+            {
+                Set(ref _progressMax, value);
+            }
         }
 
         private int _progressCurrent;
 
         public int ProgressCurrent
         {
-            get => _progressCurrent;
-            set => SetProperty(ref _progressCurrent, value);
+            get { return _progressCurrent; }
+            set
+            {
+                Set(ref _progressCurrent, value);
+            }
         }
 
-        public ICommand MarkAsReadCommand { get; private set; }
+        private ICommand _navCompleted;
 
-        public ICommand FilterCommand { get; private set; }
+        public ICommand NavCompletedCommand
+        {
+            get
+            {
+                _navCompleted ??= new RelayCommand<CoreWebView2NavigationCompletedEventArgs>(NavCompleted);
+
+                return _navCompleted;
+            }
+        }
+
+        private void NavCompleted(CoreWebView2NavigationCompletedEventArgs e)
+        {
+            IsLoading = false;
+
+            if (e == null)
+            {
+                return;
+            }
+
+            // A navigation superseded by a newer one (e.g. selecting articles
+            // quickly) completes as OperationCanceled - not a real failure
+            if (e.WebErrorStatus == CoreWebView2WebErrorStatus.OperationCanceled)
+            {
+                return;
+            }
+
+            // WinUI 3's WebView2 has no NavigationFailed event; use `e.WebErrorStatus`
+            // to vary the displayed message based on the error reason.
+            // Also clears a previously shown failure once a navigation succeeds.
+            IsShowingFailedMessage = !e.IsSuccess;
+        }
+
+        private ICommand _retryCommand;
+
+        public ICommand RetryCommand
+        {
+            get
+            {
+                _retryCommand ??= new RelayCommand(Retry);
+
+                return _retryCommand;
+            }
+        }
+
+        //reload the built-in browser
+        private void Retry()
+        {
+            IsShowingFailedMessage = false;
+            IsLoading = true;
+
+            _webView?.Reload();
+        }
+
+        private ICommand _refreshCommand;
+
+        public ICommand RefreshCommand
+        {
+            get
+            {
+                _refreshCommand ??= new RelayCommand(() => _webView?.Reload());
+
+                return _refreshCommand;
+            }
+        }
+
+        public RelayCommandAsync OpenInBrowserCommand { get; private set; }
+
+        private bool CanOpenInBrowser()
+        {
+            return SelectedRSS != null && SelectedRSS.LaunchURL != null;
+        }
+
+        /// <summary>
+        /// Open selected rss as full post in the user default browser
+        /// </summary>
+        /// <returns>Task Type</returns>
+        private async Task OpenInBrowser()
+        {
+            await Windows.System.Launcher.LaunchUriAsync(SelectedRSS.LaunchURL);
+        }
+
+        public RelayCommandAsync MarkAsReadCommand { get; private set; }
+
+        private bool CanMarkAsRead()
+        {
+            return IsLoadingData == false && Feeds.Any(x => x.IsRead == false);
+        }
+
+        /// <summary>
+        /// Gets every item in the feed and change any unread item to read
+        /// then updateing the database with it
+        /// </summary>
+        /// <returns>Task Type</returns>
+        private async Task MarkAsRead()
+        {
+            foreach (var item in Feeds.Where(x => x.IsRead == false))
+            {
+                item.IsRead = true;
+                await Task.Run(() =>
+                {
+                    rssDataService.UpdateFeed(item);
+                });
+            }
+        }
+
+        private ICommand _filterCommand;
+
+        public ICommand FilterCommand
+        {
+            get
+            {
+                _filterCommand = new RelayCommand(Filter);
+                return _filterCommand;
+            }
+        }
+
+        private void Filter()
+        {
+            TokenSource.Cancel();
+
+            var query = from feed in rssDataService.GetFeedsData(0) select feed;
+
+            if (FilterSelectedSource != null)
+            {
+                query = query.Where(x => x.PostSource.Id == FilterSelectedSource.Id);
+            }
+            if (!string.IsNullOrWhiteSpace(FilterTitle))
+            {
+                query = query.Where(x => x.PostTitle.ToLower().Contains(FilterTitle.ToLower()));
+            }
+            if (!string.IsNullOrWhiteSpace(FilterCreator))
+            {
+                query = query.Where(x => x.Authors.Any(x => x.Email.ToLower() == FilterCreator.ToLower()));
+            }
+            if (FilterIsUnreadOnly)
+            {
+                query = query.Where(x => x.IsRead == false);
+            }
+
+            Feeds.Clear();
+            foreach (var item in query)
+            {
+                Feeds.Add(item);
+            }
+        }
 
         /// <summary>
         /// Clears selected source from the Filter ComboBox
         /// </summary>
-        public ICommand ClearFilterSourceCommand { get; private set; }
+        public RelayCommand ClearFilterSourceCommand { get; private set; }
 
         /// <summary>
         /// Reloads the Feeds
         /// </summary>
-        public ICommand RefreshFeedsCommand { get; private set; }
+        public RelayCommandAsync RefreshFeedsCommand { get; private set; }
+
+        private bool CanRefreshFeeds()
+        {
+            return !IsLoadingData;
+        }
+
+        /// <summary>
+        /// Reloads the feed by calling LoadDataAsync()
+        /// </summary>
+        /// <returns>Task Type</returns>
+        private async Task RefreshFeeds()
+        {
+            await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
+        }
 
         /// <summary>
         /// Stop loading online data from sources
         /// </summary>
-        public ICommand CancelLoadingCommand { get; private set; }
+        public RelayCommand CancelLoadingCommand { get; private set; }
+
+        private bool CanCancelLoading()
+        {
+            return IsLoadingData;
+        }
+
+        private void CancelLoading()
+        {
+            TokenSource.Cancel();
+        }
 
         /// <summary>
         /// Clear the Selected rss property from the list and retun the built-in browser to blank
         /// </summary>
         public RelayCommand ClearSelectedRSSCommand { get; private set; }
 
-        public MainViewModel()
+        private bool CanClearSelectedRSS()
+        {
+            return SelectedRSS != null;
+        }
+
+        private void ClearSelectedRSS()
+        {
+            SelectedRSS = null;
+            WebViewSource = new Uri(_defaultUrl);
+
+            _webView.NavigateToString(ReaderPage.BuildBlankHtml(IsDarkTheme()));
+        }
+
+        /// <summary>
+        /// Open the full post in app built-in browser
+        /// </summary>
+        public RelayCommand OpenPostInAppCommand { get; private set; }
+
+        private bool CanOpenPostInApp()
+        {
+            return SelectedRSS != null && (WebViewSource != SelectedRSS.LaunchURL);
+        }
+
+        private void OpenPostInApp()
         {
             IsLoading = true;
-            TokenSource = new CancellationTokenSource();
+            WebViewSource = SelectedRSS.LaunchURL;
+        }
+
+        private WebView2 _webView;
+
+        public MainViewModel(RSSDataService rssDataService, SourceDataService sourceDataService, RssRequest rssRequest)
+        {
             LoadCommands();
+            IsLoading = true;
+            WebViewSource = new Uri(_defaultUrl);
+
+            this.rssDataService = rssDataService;
+            this.sourceDataService = sourceDataService;
+            this.rssRequest = rssRequest;
+            TokenSource = new CancellationTokenSource();
         }
 
         private void LoadCommands()
         {
-            CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
-            FilterCommand = new AsyncRelayCommand(Filter);
             ClearFilterSourceCommand = new RelayCommand(ClearFilterSource, CanClearFilterSource);
-            MarkAsReadCommand = new AsyncRelayCommand(MarkAsReadAsync, CanMarkAsRead);
+            OpenInBrowserCommand = new RelayCommandAsync(OpenInBrowser, CanOpenInBrowser);
+            MarkAsReadCommand = new RelayCommandAsync(MarkAsRead, CanMarkAsRead);
             ClearSelectedRSSCommand = new RelayCommand(ClearSelectedRSS, CanClearSelectedRSS);
-            RefreshFeedsCommand = new AsyncRelayCommand(RefreshFeedAsync, CanRefreshFeeds);
+            RefreshFeedsCommand = new RelayCommandAsync(RefreshFeeds, CanRefreshFeeds);
+            CancelLoadingCommand = new RelayCommand(CancelLoading, CanCancelLoading);
+            OpenPostInAppCommand = new RelayCommand(OpenPostInApp, CanOpenPostInApp);
         }
 
+        private bool CanClearFilterSource()
+        {
+            return FilterSelectedSource != null;
+        }
+
+        private void ClearFilterSource()
+        {
+            FilterSelectedSource = null;
+        }
 
         /// <summary>
         /// Gets all the feeds from database (with-in limits in settings)
@@ -233,22 +498,23 @@ namespace MyRSSFeeds.ViewModels
             ProgressCurrent = 0;
             bool hasLoadedFeedNewItems = false;
 
-            // Set Httpclient userAgent to the user selected one
-            await RssRequest.SetCustomUserAgentAsync();
+            // Shows the user what's new in this version
+            await WhatsNewDisplayService.ShowIfAppropriateAsync();
 
-            foreach (var rss in (await _rssDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit"))).ToList())
+            // Set Httpclient userAgent to the user selected one
+            await rssRequest.SetCustomUserAgentAsync();
+
+            foreach (var rss in rssDataService.GetFeedsData(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
             {
                 Feeds.Add(rss);
             }
 
-            SyndicationFeed feed = null;
-
-            var sourcesDataList = await _sourceDataService.GetSourcesDataAsync();
+            var sourcesDataList = sourceDataService.GetSourcesData();
 
             ProgressMax = sourcesDataList.Count();
             int progressCount = 0;
 
-            foreach (var source in sourcesDataList.ToList())
+            foreach (var source in sourcesDataList)
             {
                 FilterSources.Add(source);
 
@@ -256,16 +522,16 @@ namespace MyRSSFeeds.ViewModels
                 {
                     IsLoadingData = false;
                     TokenSource = new CancellationTokenSource();
-                    ((AsyncRelayCommand)MarkAsReadCommand).NotifyCanExecuteChanged();
+                    MarkAsReadCommand.OnCanExecuteChanged();
                     return;
                 }
             }
             // if there is no internet just cut our loses and get out of here we already loaded the local data
-            //if (!new NetworkInformationHelper().HasInternetAccess)
-            //{
-            //    await new MessageDialog("CheckInternetMessageDialog".GetLocalized()).ShowAsync();
-            //    return;
-            //}
+            if (!new NetworkInformationHelper().HasInternetAccess)
+            {
+                await DialogService.ShowAsync("CheckInternetMessageDialog".GetLocalized());
+                return;
+            }
             var WaitAfterLastCheckInMinutes = await ApplicationData.Current.LocalSettings.ReadAsync<int>("WaitAfterLastCheck");
 
             foreach (var sourceItem in FilterSources)
@@ -274,30 +540,32 @@ namespace MyRSSFeeds.ViewModels
                 {
                     IsLoadingData = false;
                     TokenSource = new CancellationTokenSource();
-                    ((AsyncRelayCommand)MarkAsReadCommand).NotifyCanExecuteChanged();
+                    MarkAsReadCommand.OnCanExecuteChanged();
                     return;
                 }
 
                 // don't get source feed if x number of minutes haven't passed since the last one - default is 2 hours
                 var checkSourceAfter = sourceItem.LastBuildCheck.AddMinutes(WaitAfterLastCheckInMinutes);
 
-                if (checkSourceAfter >= DateTimeOffset.Now && Feeds.Count > 0)
+                if (checkSourceAfter >= DateTimeOffset.Now)
                 {
                     continue;
                 }
 
-                //if (!new NetworkInformationHelper().HasInternetAccess)
-                //{
-                //    continue;
-                //}
+                if (!new NetworkInformationHelper().HasInternetAccess)
+                {
+                    continue;
+                }
 
                 progress.Report(++progressCount);
 
+
+                SyndicationFeed feed;
                 //if getting the feed crushed for (internet - not xml rss - other reasons)
                 //move to the next source on the list to try it instead of stopping every thing
                 try
                 {
-                    var feedString = await RssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token);
+                    var (feedString, usedBrowserUserAgent) = await rssRequest.GetFeedAsStringAsync(sourceItem.RssUrl, token, sourceItem.UseBrowserUserAgent);
                     feed = new SyndicationFeed();
 
                     if (string.IsNullOrWhiteSpace(feedString))
@@ -308,10 +576,15 @@ namespace MyRSSFeeds.ViewModels
                     {
                         feed.Load(feedString);
 
-                        // Saves rss items count and last check time to source 
+                        if (usedBrowserUserAgent)
+                        {
+                            sourceItem.UseBrowserUserAgent = true;
+                        }
+
+                        // Saves rss items count and last check time to source
                         sourceItem.CurrentRssItemsCount = feed.Items.Count;
                         sourceItem.LastBuildCheck = DateTimeOffset.Now;
-                        await new SourceDataService().UpdateSourceAsync(sourceItem);
+                        sourceDataService.UpdateSource(sourceItem);
                     }
                 }
                 catch (Exception ex)
@@ -327,26 +600,20 @@ namespace MyRSSFeeds.ViewModels
                     {
                         IsLoadingData = false;
                         TokenSource = new CancellationTokenSource();
-                        ((AsyncRelayCommand)MarkAsReadCommand).NotifyCanExecuteChanged();
+                        MarkAsReadCommand.OnCanExecuteChanged();
                         return;
                     }
 
                     //handle edge cases like when they don't send that stuff or misplace them like freaking reddit r/worldnews
-                    if (syndicationItem.Title is null)
-                    {
-                        syndicationItem.Title = new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
-                    }
-                    if (syndicationItem.Summary is null)
-                    {
-                        syndicationItem.Summary = new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
-                    }
+                    syndicationItem.Title ??= new SyndicationText("MainViewModelNoTitleFound".GetLocalized());
+                    syndicationItem.Summary ??= new SyndicationText("MainViewModelNoSummaryFound".GetLocalized());
                     if (syndicationItem.PublishedDate.Year < 2000)
                     {
                         syndicationItem.PublishedDate = syndicationItem.LastUpdatedTime.Year > 2000 ? syndicationItem.LastUpdatedTime : DateTimeOffset.Now;
                     }
 
                     Uri itemNewUri = syndicationItem.ItemUri;
-                    if (itemNewUri is null)
+                    if (itemNewUri == null)
                     {
                         if (syndicationItem.Links.Count > 0)
                         {
@@ -358,14 +625,14 @@ namespace MyRSSFeeds.ViewModels
                         syndicationItem.Id = itemNewUri.ToString();
                     }
 
-                    RSS rss = new()
+                    var rss = new RSS
                     {
                         PostTitle = syndicationItem.Title.Text,
                         Description = syndicationItem.Summary.Text,
                         Authors = new List<Author>(),
                         URL = itemNewUri,
                         CreatedAt = syndicationItem.PublishedDate.DateTime,
-                        ItemGuid = syndicationItem.Id,
+                        Guid = syndicationItem.Id,
                         PostSource = sourceItem
                     };
 
@@ -379,9 +646,9 @@ namespace MyRSSFeeds.ViewModels
                         });
                     }
 
-                    if (!await _rssDataService.FeedExistAsync(rss))
+                    if (!rssDataService.FeedExist(rss))
                     {
-                        var newRss = await _rssDataService.AddNewFeedAsync(rss);
+                        var newRss = rssDataService.AddNewFeed(rss);
                         Feeds.Add(newRss);
                         hasLoadedFeedNewItems = true;
                     }
@@ -391,119 +658,62 @@ namespace MyRSSFeeds.ViewModels
             if (hasLoadedFeedNewItems)
             {
                 Feeds.Clear();
-                foreach (var rss in (await _rssDataService.GetFeedsDataAsync(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit"))).ToList())
+                foreach (var rss in rssDataService.GetFeedsData(await ApplicationData.Current.LocalSettings.ReadAsync<int>("FeedsLimit")))
                 {
                     Feeds.Add(rss);
                 }
             }
             IsLoadingData = false;
-            ((AsyncRelayCommand)MarkAsReadCommand).NotifyCanExecuteChanged();
+            MarkAsReadCommand.OnCanExecuteChanged();
         }
 
-        private bool CanCancelLoading()
+        public async void Initialize(WebView2 webView)
         {
-            return IsLoadingData;
-        }
+            _webView = webView;
 
-        private void CancelLoading()
-        {
-            TokenSource.Cancel();
-        }
+            GetTheme();
 
-        private bool CanRefreshFeeds()
-        {
-            return !IsLoadingData;
-        }
+            await _webView.EnsureCoreWebView2Async();
 
-        /// <summary>
-        /// Reloads the feed by calling LoadDataAsync()
-        /// </summary>
-        /// <returns>Task Type</returns>
-        private async Task RefreshFeedAsync()
-        {
-            await LoadDataAsync(new Progress<int>(percent => ProgressCurrent = percent), TokenSource.Token);
-        }
-
-        private bool CanMarkAsRead()
-        {
-            return IsLoadingData == false && Feeds.Any(x => x.IsRead == false);
-        }
-
-        /// <summary>
-        /// Gets every item in the feed and change any unread item to read
-        /// then updateing the database with it
-        /// </summary>
-        /// <returns>Task Type</returns>
-        private async Task MarkAsReadAsync()
-        {
-            foreach (var item in Feeds.Where(x => x.IsRead == false))
+            if (_webView.CoreWebView2 != null)
             {
-                item.IsRead = true;
-                await _rssDataService.UpdateFeedAsync(item);
-            }
-        }
-
-        private bool CanClearFilterSource()
-        {
-            return FilterSelectedSource is not null;
-        }
-
-        private void ClearFilterSource()
-        {
-            FilterSelectedSource = null;
-        }
-
-        private bool CanClearSelectedRSS()
-        {
-            return SelectedRSS is not null;
-        }
-
-        private void ClearSelectedRSS()
-        {
-            SelectedRSS = null;
-        }
-
-        private async Task Filter()
-        {
-            TokenSource.Cancel();
-
-            var query = await _rssDataService.GetFeedsDataAsync();
-
-            if (FilterSelectedSource is not null)
-            {
-                query = query.Where(x => x.PostSource.Id == FilterSelectedSource.Id);
-            }
-            if (!string.IsNullOrWhiteSpace(FilterTitle))
-            {
-                query = query.Where(x => x.PostTitle.ToLower().Contains(FilterTitle.ToLower()));
-            }
-            if (!string.IsNullOrWhiteSpace(FilterCreator))
-            {
-                query = query.Where(x => x.Authors.Any(x => x.Email.ToLower() == FilterCreator.ToLower()));
-            }
-            if (FilterIsUnreadOnly)
-            {
-                query = query.Where(x => x.IsRead == false);
+                // Block all requests to open a new window (WinUI 3's WebView2 control
+                // has no NewWindowRequested event; hook the CoreWebView2 one instead)
+                _webView.CoreWebView2.NewWindowRequested += (s, e) => e.Handled = true;
             }
 
-            Feeds.Clear();
-
-            foreach (var item in query.OrderByDescending(x => x.CreatedAt).ToList())
+            if (IsDarkTheme() && _webView.CoreWebView2 != null)
             {
-                Feeds.Add(item);
+                _webView.CoreWebView2.Profile.PreferredColorScheme = CoreWebView2PreferredColorScheme.Dark;
             }
+
+            _webView.NavigateToString(ReaderPage.BuildBlankHtml(IsDarkTheme()));
+        }
+
+        private void GetTheme()
+        {
+            _systemTheme = new Windows.UI.ViewManagement.UISettings();
+            _uiTheme = _systemTheme.GetColorValue(Windows.UI.ViewManagement.UIColorType.Background).ToString();
+            _appTheme = ThemeSelectorService.Theme;
+        }
+
+        private bool IsDarkTheme()
+        {
+            GetTheme();
+            return _appTheme == ElementTheme.Dark
+                || (_appTheme == ElementTheme.Default && _uiTheme == "#FF000000");
         }
 
         /// <summary>
         /// return back a string from the start to entered postion
-        /// then adding "…" at the end of it 
+        /// then adding "..." at the end of it 
         /// </summary>
         /// <param name="txt">the test to substring</param>
         /// <param name="endindex">intger for the end index</param>
         /// <returns>new shorted string</returns>
         private string ShortenText(string txt, int endindex)
         {
-            return txt.Length > endindex ? string.Concat(txt.Substring(0, endindex), "…") : txt;
+            return txt.Length > endindex ? string.Concat(txt.Substring(0, endindex), "...") : txt;
         }
     }
 }

@@ -1,107 +1,105 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.WinUI.Helpers;
+using LiteDB;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using MyRSSFeeds.Activation;
-using MyRSSFeeds.Contracts.Services;
-using MyRSSFeeds.Core.Contracts.Services;
 using MyRSSFeeds.Core.Helpers;
 using MyRSSFeeds.Core.Services;
-using MyRSSFeeds.Helpers;
-using MyRSSFeeds.Services;
-using MyRSSFeeds.ViewModels;
-using MyRSSFeeds.Views;
-using System;
+using MyRSSFeeds.WinUI.Extensions;
+using MyRSSFeeds.WinUI.Services;
+using MyRSSFeeds.WinUI.ViewModels;
 using System.IO;
-using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 
-// To learn more about WinUI3, see: https://docs.microsoft.com/windows/apps/winui/winui3/.
-namespace MyRSSFeeds
+namespace MyRSSFeeds.WinUI
 {
-    public partial class App : Application
+    public sealed partial class App : Application
     {
-        public static Window MainWindow { get; set; } = new Window { Title = "AppDisplayName".GetLocalized() };
+        public static Window MainWindow { get; private set; }
+
+        private static System.IServiceProvider _services;
+
+        public static T GetService<T>() where T : class => _services.GetRequiredService<T>();
+
+        private static System.IServiceProvider ConfigureServices(LiteDatabase db)
+        {
+            return new ServiceCollection()
+                .AddSingleton(db)
+                .AddSingleton<UserAgentService>()
+                .AddSingleton<RSSDataService>()
+                .AddSingleton<SourceDataService>()
+                .AddSingleton<RssRequest>()
+                .AddTransient<ShellViewModel>()
+                .AddTransient<MainViewModel>()
+                .AddTransient<SourcesViewModel>()
+                .AddTransient<SettingsViewModel>()
+                .BuildServiceProvider();
+        }
 
         public App()
         {
             InitializeComponent();
-            UnhandledException += App_UnhandledException;
-            Ioc.Default.ConfigureServices(ConfigureServices());
-        }
 
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            // TODO WTS: Please log and handle the exception as appropriate to your scenario
-            // For more info see https://docs.microsoft.com/windows/winui/api/microsoft.ui.xaml.unhandledexceptioneventargs
-            System.Diagnostics.Debug.WriteLine(e);
+            // XamlParseException and friends carry almost no detail in WinUI 3;
+            // log crashes to LocalState\unhandled.log so they are diagnosable
+            UnhandledException += (s, e) => LogCrash(e.Message, e.Exception);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            base.OnLaunched(args);
-
-            await InitializeAsync();
-
-            var activationService = Ioc.Default.GetService<IActivationService>();
-            await activationService.ActivateAsync(args);
-        }
-
-        private IServiceProvider ConfigureServices()
-        {
-            var services = new ServiceCollection();
-
-            // Default Activation Handler
-            services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
-
-            // Other Activation Handlers
-
-            // Services
-            services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-            services.AddTransient<IWebViewService, WebViewService>();
-            services.AddTransient<INavigationViewService, NavigationViewService>();
-
-            services.AddSingleton<IActivationService, ActivationService>();
-            services.AddSingleton<IPageService, PageService>();
-            services.AddSingleton<INavigationService, NavigationService>();
-
-            // Core Services
-            services.AddTransient<IRSSDataService, RSSDataService>();
-            services.AddTransient<ISourceDataService, SourceDataService>();
-            services.AddTransient<IUserAgentService, UserAgentService>();
-
-            // Views and ViewModels
-            services.AddTransient<ShellPage>();
-            services.AddTransient<ShellViewModel>();
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<MainPage>();
-            services.AddTransient<SourcesListPageViewModel>();
-            services.AddTransient<SourcesListPage>();
-            services.AddTransient<WebViewViewModel>();
-            services.AddTransient<SettingsViewModel>();
-            services.AddTransient<SettingsPage>();
-            return services.BuildServiceProvider();
-        }
-
-        private async Task InitializeAsync()
-        {
-            // if user is running the app for the first time then set the feed list limit to 1000
-            if (SystemInformation.Instance.IsFirstRun)
+            try
             {
-                await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
-                await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);
+                // Get App Version and Operating System Architecture to use with "user agent".
+                // Must be set before InitializeDatabase so first-run seeding builds a
+                // real "App Default" agent string instead of an empty one
+                var version = Package.Current.Id.Version;
+                SystemInfo.OperatingSystemArchitecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString();
+                SystemInfo.AppVersion = $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+
+                //sets the Database Path its connection string and the database itself
+                Core.Data.LiteDbContext.DbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LiteDbMRF.db");
+                var db = Core.Data.LiteDbContext.InitializeDatabase();
+                _services = ConfigureServices(db);
+
+                // if user is running the app for the first time then set the feed list limit to 1000
+                if (Core.Data.LiteDbContext.IsFirstRun)
+                {
+                    await ApplicationData.Current.LocalSettings.SaveAsync("FeedsLimit", 1000);
+                    await ApplicationData.Current.LocalSettings.SaveAsync("WaitAfterLastCheck", 120);
+                }
+
+                await ThemeSelectorService.InitializeAsync();
+
+                // MainWindow.xaml hosts ShellPage (and the custom title bar);
+                // constructing the window wires up NavigationService.Frame
+                MainWindow = new MainWindow();
+
+                // the container never disposes instance registrations
+                MainWindow.Closed += (s, e) => db.Dispose();
+
+                NavigationService.Navigate(Core.Data.LiteDbContext.IsFirstRun
+                    ? typeof(Views.SourcesViewPage)
+                    : typeof(Views.MainPage));
+
+                await ThemeSelectorService.SetRequestedThemeAsync();
+
+                MainWindow.Activate();
             }
+            catch (System.Exception ex)
+            {
+                LogCrash("OnLaunched failed", ex);
+                throw;
+            }
+        }
 
-            // Get App Version and Operating System Architecture to use with "user agent".
-            SystemInfo.OperatingSystemArchitecture = SystemInformation.Instance.OperatingSystemArchitecture.ToString();
-            SystemInfo.AppVersion = $"{SystemInformation.Instance.ApplicationVersion.Major}.{SystemInformation.Instance.ApplicationVersion.Minor}.{SystemInformation.Instance.ApplicationVersion.Build}.{SystemInformation.Instance.ApplicationVersion.Revision}";
-
-            //sets the Database Path its connection string and the database itself
-            string dbName = "LiteDbMRF.db";
-            var dbFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, dbName);
-
-            Core.Data.LiteDbContext.DbConnectionString = new LiteDB.ConnectionString { Filename = dbFile, Connection = LiteDB.ConnectionType.Shared };
-            Core.Data.LiteDbContext.InitializeDatabase();
+        private static void LogCrash(string message, System.Exception exception)
+        {
+            try
+            {
+                File.AppendAllText(
+                    Path.Combine(ApplicationData.Current.LocalFolder.Path, "unhandled.log"),
+                    $"[{System.DateTime.Now:O}] {message}\r\n{exception}\r\n\r\n");
+            }
+            catch { }
         }
     }
 }

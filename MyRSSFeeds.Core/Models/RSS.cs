@@ -13,29 +13,47 @@ namespace MyRSSFeeds.Core.Models
 
         public int Id { get; set; }
 
-        public string? PostTitle { get; set; }
+        public string PostTitle { get; set; }
 
         [BsonIgnore]
         public string PostShortTitle
         {
-            get => string.IsNullOrEmpty(PostTitle) ? "" : PostTitle.Length > 80 ? string.Concat(PostTitle.Substring(0, 80), " …") : PostTitle;
+            get
+            {
+                if (PostTitle.Length > 80)
+                {
+                    return System.Net.WebUtility.HtmlDecode(string.Concat(PostTitle.Substring(0, 80), " ..."));
+                }
+                else
+                {
+                    return System.Net.WebUtility.HtmlDecode(PostTitle);
+                }
+            }
         }
 
-        public Uri? URL { get; set; }
+        public Uri URL { get; set; }
 
         [BsonIgnore]
         public Uri LaunchURL
         {
-            get => Uri.IsWellFormedUriString(ItemGuid, UriKind.Absolute) && (ItemGuid.StartsWith("http://") || ItemGuid.StartsWith("https://"))
-                    ? new Uri(ItemGuid)
-                    : URL is null ? new Uri("about:blank") : URL;
+            get
+            {
+                if (Uri.IsWellFormedUriString(Guid, UriKind.Absolute) && (Guid.StartsWith("http://") || Guid.StartsWith("https://")))
+                {
+                    return new Uri(Guid);
+                }
+                else
+                {
+                    return URL;
+                }
+            }
         }
 
-        public string? Thumbnail { get; set; }
+        public string Thumbnail { get; set; }
 
-        public string? ItemGuid { get; set; }
+        public string Guid { get; set; }
 
-        public string Description { get; set; } = "";
+        public string Description { get; set; }
 
         public virtual ICollection<Author> Authors { get; set; }
 
@@ -48,10 +66,13 @@ namespace MyRSSFeeds.Core.Models
 
         public bool IsRead
         {
-            get => _isRead;
-            set => Set(ref _isRead, value);
+            get { return _isRead; }
+            set
+            {
+                Set(ref _isRead, value);
+            }
         }
 
-        public virtual Source? PostSource { get; set; }
+        public virtual Source PostSource { get; set; }
     }
 }

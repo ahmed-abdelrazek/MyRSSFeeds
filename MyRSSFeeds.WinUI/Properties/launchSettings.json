@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyRSSFeeds.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MyRSSFeeds.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,25 +1,23 @@
-﻿using Microsoft.UI.Xaml;
-using MyRSSFeeds.Contracts.Services;
-using MyRSSFeeds.Helpers;
+using Microsoft.UI.Xaml;
+using MyRSSFeeds.WinUI.Extensions;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace MyRSSFeeds.Services
+namespace MyRSSFeeds.WinUI.Services
 {
-    public class ThemeSelectorService : IThemeSelectorService
+    public static class ThemeSelectorService
     {
         private const string SettingsKey = "AppBackgroundRequestedTheme";
 
-        public ElementTheme Theme { get; set; } = ElementTheme.Default;
+        public static ElementTheme Theme { get; set; } = ElementTheme.Default;
 
-        public async Task InitializeAsync()
+        public static async Task InitializeAsync()
         {
             Theme = await LoadThemeFromSettingsAsync();
-            await Task.CompletedTask;
         }
 
-        public async Task SetThemeAsync(ElementTheme theme)
+        public static async Task SetThemeAsync(ElementTheme theme)
         {
             Theme = theme;
 
@@ -27,17 +25,17 @@ namespace MyRSSFeeds.Services
             await SaveThemeInSettingsAsync(Theme);
         }
 
-        public async Task SetRequestedThemeAsync()
+        public static Task SetRequestedThemeAsync()
         {
-            if (App.MainWindow.Content is FrameworkElement rootElement)
+            if (App.MainWindow?.Content is FrameworkElement frameworkElement)
             {
-                rootElement.RequestedTheme = Theme;
+                frameworkElement.RequestedTheme = Theme;
             }
 
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        private async Task<ElementTheme> LoadThemeFromSettingsAsync()
+        private static async Task<ElementTheme> LoadThemeFromSettingsAsync()
         {
             ElementTheme cacheTheme = ElementTheme.Default;
             string themeName = await ApplicationData.Current.LocalSettings.ReadAsync<string>(SettingsKey);
@@ -50,7 +48,7 @@ namespace MyRSSFeeds.Services
             return cacheTheme;
         }
 
-        private async Task SaveThemeInSettingsAsync(ElementTheme theme)
+        private static async Task SaveThemeInSettingsAsync(ElementTheme theme)
         {
             await ApplicationData.Current.LocalSettings.SaveAsync(SettingsKey, theme.ToString());
         }
